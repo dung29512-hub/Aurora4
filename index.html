@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aurora Store</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span data-i18n="topbar.ship">🎁 Freeship nội thành cho đơn từ 199K</span>
+      <span data-i18n="topbar.phone">☎ 09xx xxx xxx</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="index.html" aria-label="Aurora Store">
+        <span class="logo__mark">✦</span>
+        <span class="logo__text">Aurora Store</span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav__link is-active" href="index.html" data-i18n="nav.home">Trang chủ</a>
+        <a class="nav__link" href="shop.html" data-i18n="nav.shop">Shop</a>
+
+        <!-- Mega menu (đa cấp) -->
+        <div class="nav__dropdown">
+          <button class="nav__btn" type="button" data-i18n="nav.category">Danh mục ▾</button>
+
+          <div class="mega">
+            <div class="mega__col">
+              <p class="mega__title" data-i18n="mega.plush">Gấu bông</p>
+              <a class="mega__link" href="shop.html" data-i18n="mega.plush.mini">Gấu mini</a>
+              <a class="mega__link" href="shop.html" data-i18n="mega.plush.medium">Gấu size vừa</a>
+              <a class="mega__link" href="shop.html" data-i18n="mega.plush.large">Gấu size lớn</a>
+            </div>
+
+            <div class="mega__col">
+              <p class="mega__title" data-i18n="mega.stationery">Văn phòng phẩm</p>
+              <a class="mega__link" href="shop.html" data-i18n="mega.stationery.pen">Bút bi</a>
+              <a class="mega__link" href="shop.html" data-i18n="mega.stationery.notebook">Sổ tay</a>
+              <a class="mega__link" href="shop.html" data-i18n="mega.stationery.tape">Băng keo / Kẹp giấy</a>
+            </div>
+
+            <div class="mega__col mega__promo">
+              <p class="mega__badge" data-i18n="mega.badge.new">New</p>
+              <p class="mega__promoTitle" data-i18n="mega.promo.title">Bộ “Aurora Stationery”</p>
+              <p class="mega__promoText" data-i18n="mega.promo.desc">Set bút + sổ + sticker, quà tặng siêu xinh.</p>
+              <a class="btn btn--dark" href="shop.html" data-i18n="btn.viewNow">Xem ngay</a>
+            </div>
+          </div>
+        </div>
+
+        <a class="nav__link" href="#contact" data-i18n="nav.contact">Liên hệ</a>
+      </nav>
+
+      <div class="actions">
+        <!-- Language dropdown -->
+        <div class="lang">
+          <button class="lang__btn" type="button" id="langBtn">VI ▾</button>
+          <div class="lang__menu" id="langMenu">
+            <button class="lang__item" data-lang="vi">Tiếng Việt</button>
+            <button class="lang__item" data-lang="ko">한국어</button>
+            <button class="lang__item" data-lang="fr">Français</button>
+            <button class="lang__item" data-lang="ja">日本語</button>
+          </div>
+        </div>
+
+        <a class="iconBtn" href="cart.html" aria-label="Giỏ hàng">
+          🛒 <span class="badge">0</span>
+        </a>
+        <a class="btn btn--primary" href="shop.html" data-i18n="btn.buyNow">Mua ngay</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero (banner) -->
+    <section class="hero">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="pill" data-i18n="hero.pill">✨ Cute • Cozy • Office</p>
+
+          <h1 data-i18n="hero.title">
+            Gấu bông & Văn phòng phẩm<br/>xinh xắn cho mỗi ngày
+          </h1>
+
+          <p class="muted" data-i18n="hero.desc">
+            Aurora Store – nơi bạn tìm thấy gấu bông mềm mại, bút bi mượt tay và đồ dùng học tập siêu “chill”.
+          </p>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="shop.html" data-i18n="hero.ctaShop">Khám phá Shop</a>
+            <a class="btn btn--ghost" href="#featured" data-i18n="hero.ctaFeatured">Sản phẩm nổi bật</a>
+          </div>
+
+          <div class="hero__stats">
+            <div class="stat">
+              <div class="stat__num">1200+</div>
+              <div class="stat__label" data-i18n="hero.stats.orders">đơn hàng demo</div>
+            </div>
+            <div class="stat">
+              <div class="stat__num">4.9★</div>
+              <div class="stat__label" data-i18n="hero.stats.rating">đánh giá</div>
+            </div>
+            <div class="stat">
+              <div class="stat__num">24h</div>
+              <div class="stat__label" data-i18n="hero.stats.process">xử lý đơn</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__media">
+          <img class="hero__img" src="assets/img/banner.jpg"
+               alt="Aurora Store banner"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
+
+          <div class="hero__placeholder" style="display:none;">
+            <div class="sparkle">✦</div>
+            <p data-i18n="hero.bannerHint">(Thêm ảnh banner vào assets/img/banner.jpg)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="section.categories">Danh mục</h2>
+          <a class="link" href="shop.html" data-i18n="link.viewAll">Xem tất cả →</a>
+        </div>
+
+        <div class="grid grid--4">
+          <a class="catCard" href="shop.html">
+            <div class="catCard__icon">🧸</div>
+            <div class="catCard__title" data-i18n="cat.plush.title">Gấu bông</div>
+            <div class="catCard__desc" data-i18n="cat.plush.desc">Mềm – êm – nhiều size</div>
+          </a>
+
+          <a class="catCard" href="shop.html">
+            <div class="catCard__icon">🖊️</div>
+            <div class="catCard__title" data-i18n="cat.pen.title">Bút bi</div>
+            <div class="catCard__desc" data-i18n="cat.pen.desc">Mượt tay, nhiều màu</div>
+          </a>
+
+          <a class="catCard" href="shop.html">
+            <div class="catCard__icon">📒</div>
+            <div class="catCard__title" data-i18n="cat.notebook.title">Sổ tay</div>
+            <div class="catCard__desc" data-i18n="cat.notebook.desc">Ghi chép & planner</div>
+          </a>
+
+          <a class="catCard" href="shop.html">
+            <div class="catCard__icon">📎</div>
+            <div class="catCard__title" data-i18n="cat.accessory.title">Phụ kiện</div>
+            <div class="catCard__desc" data-i18n="cat.accessory.desc">Kẹp giấy, băng keo…</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured products -->
+    <section id="featured" class="section">
+      <div class="container">
+        <div class="section__head">
+          <h2 data-i18n="section.featured">Sản phẩm nổi bật</h2>
+          <a class="link" href="shop.html" data-i18n="link.viewAll">Xem tất cả →</a>
+        </div>
+
+        <div class="grid grid--4">
+          <a class="productCard" href="product.html">
+            <div class="productCard__imgWrap">
+              <img src="assets/img/teddy-1.jpg" alt="Gấu bông Aurora Bear"
+                   onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');"/>
+              <span class="tag" data-i18n="tag.hot">Hot</span>
+            </div>
+            <div class="productCard__body">
+              <!-- Nếu bạn muốn dịch cả tên sản phẩm thì giữ data-i18n. Nếu muốn giữ nguyên, bỏ data-i18n đi. -->
+              <div class="productCard__name" data-i18n="p1.name">Gấu bông “Aurora Bear”</div>
+              <div class="productCard__meta">
+                <span class="price">189.000₫</span>
+                <span class="muted" data-i18n="stock.in">• còn hàng</span>
+              </div>
+              <button class="btn btn--dark btn--full" type="button" data-i18n="btn.detail">Xem chi tiết</button>
+            </div>
+          </a>
+
+          <a class="productCard" href="product.html">
+            <div class="productCard__imgWrap">
+              <img src="assets/img/pen-1.jpg" alt="Bút bi gel 0.5"
+                   onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');"/>
+              <span class="tag tag--soft" data-i18n="tag.new">New</span>
+            </div>
+            <div class="productCard__body">
+              <div class="productCard__name" data-i18n="p2.name">Bút bi gel 0.5 (set 5 màu)</div>
+              <div class="productCard__meta">
+                <span class="price">59.000₫</span>
+                <span class="muted" data-i18n="badge.best">• bán chạy</span>
+              </div>
+              <button class="btn btn--dark btn--full" type="button" data-i18n="btn.detail">Xem chi tiết</button>
+            </div>
+          </a>
+
+          <a class="productCard" href="product.html">
+            <div class="productCard__imgWrap">
+              <img src="assets/img/notebook-1.jpg" alt="Sổ tay Aurora"
+                   onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');"/>
+              <span class="tag">-15%</span>
+            </div>
+            <div class="productCard__body">
+              <div class="productCard__name" data-i18n="p3.name">Sổ tay Aurora (A5, 120 trang)</div>
+              <div class="productCard__meta">
+                <span class="price">79.000₫</span>
+                <span class="muted" data-i18n="badge.gift">• quà tặng</span>
+              </div>
+              <button class="btn btn--dark btn--full" type="button" data-i18n="btn.detail">Xem chi tiết</button>
+            </div>
+          </a>
+
+          <a class="productCard" href="product.html">
+            <div class="productCard__imgWrap">
+              <img src="assets/img/stationery-1.jpg" alt="Bộ văn phòng phẩm"
+                   onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');"/>
+              <span class="tag tag--soft" data-i18n="tag.combo">Combo</span>
+            </div>
+            <div class="productCard__body">
+              <div class="productCard__name" data-i18n="p4.name">Combo văn phòng phẩm “Study Kit”</div>
+              <div class="productCard__meta">
+                <span class="price">129.000₫</span>
+                <span class="muted" data-i18n="badge.save">• tiết kiệm</span>
+              </div>
+              <button class="btn btn--dark btn--full" type="button" data-i18n="btn.detail">Xem chi tiết</button>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="section">
+      <div class="container">
+        <div class="contactCard">
+          <div>
+            <h2 data-i18n="contact.title">Liên hệ</h2>
+            <p class="muted" data-i18n="contact.desc">Địa chỉ demo: Hải Phòng • Email: aurorastore@gmail.com</p>
+            <div class="social">
+              <a class="social__chip" href="#" aria-label="Facebook" data-i18n="social.facebook">📘 Facebook</a>
+              <a class="social__chip" href="#" aria-label="Instagram" data-i18n="social.instagram">📸 Instagram</a>
+              <a class="social__chip" href="#" aria-label="TikTok" data-i18n="social.tiktok">🎵 TikTok</a>
+            </div>
+          </div>
+          <div class="mapFake" data-i18n="map.hint">
+            (Ngày 6 sẽ nhúng Google Map iframe)
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div>
+        <div class="footer__brand">✦ Aurora Store</div>
+        <p class="muted" data-i18n="footer.desc">Website demo TMĐT (thuần HTML/CSS/JS), chạy local.</p>
+      </div>
+        <div class="footer__title" data-i18n="footer.policy">Chính sách</div>
+        <ul class="footer__list">
+          <li data-i18n="footer.return">Đổi trả</li>
+          <li data-i18n="footer.shipping">Vận chuyển</li>
+          <li data-i18n="footer.privacy">Bảo mật</li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer__title" data-i18n="footer.support">Hỗ trợ</div>
+        <ul class="footer__list">
+          <li data-i18n="footer.howto">Hướng dẫn mua hàng</li>
+          <li data-i18n="footer.contact">Liên hệ</li>
+          <li data-i18n="footer.faq">FAQ</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2026 Aurora Store</div>
+  </footer>
+
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

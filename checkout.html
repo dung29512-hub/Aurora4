@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Thanh toán | Aurora Store</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="container topbar__inner">
+      <span>🎁 Freeship nội thành cho đơn từ 199K</span>
+      <span>☎ 09xx xxx xxx</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="index.html" aria-label="Aurora Store">
+        <span class="logo__mark">✦</span>
+        <span class="logo__text">Aurora Store</span>
+      </a>
+
+      <nav class="nav">
+        <a class="nav__link" href="index.html">Trang chủ</a>
+        <a class="nav__link" href="shop.html">Shop</a>
+        <a class="nav__link" href="cart.html">Giỏ hàng</a>
+      </nav>
+
+      <div class="actions">
+        <a class="iconBtn" href="cart.html" aria-label="Giỏ hàng">
+          🛒 <span class="badge">0</span>
+        </a>
+        <a class="btn btn--primary" href="shop.html">Mua ngay</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Thanh toán</h1>
+
+      <form id="checkoutForm" class="checkoutWC">
+        <!-- LEFT -->
+        <section class="checkoutWC__left">
+          <div class="checkoutWC__head">THÔNG TIN THANH TOÁN</div>
+
+          <div class="checkoutWC__grid">
+            <div class="checkoutWC__field">
+              <label for="name">Họ tên *</label>
+              <input id="name" name="name" required placeholder="Nguyễn Văn A">
+            </div>
+
+            <div class="checkoutWC__field">
+              <label for="phone">Số điện thoại *</label>
+              <input id="phone" name="phone" required placeholder="09xxxxxxxx" inputmode="tel">
+            </div>
+
+            <div class="checkoutWC__field checkoutWC__field--full">
+              <label for="address">Địa chỉ *</label>
+              <input id="address" name="address" required placeholder="Số nhà, đường, phường/xã...">
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <aside class="checkoutWC__right">
+          <div class="checkoutWC__head">ĐƠN HÀNG CỦA BẠN</div>
+
+          <div class="checkoutWC__tableHead">
+            <span>Sản phẩm</span>
+            <span>Tạm tính</span>
+          </div>
+
+          <div id="orderItems" class="checkoutWC__items"></div>
+
+          <div class="checkoutWC__row">
+            <span class="muted">Tạm tính</span>
+            <strong id="subtotal">0₫</strong>
+          </div>
+
+          <div class="checkoutWC__row checkoutWC__row--total">
+            <span>Tổng</span>
+            <strong id="total">0₫</strong>
+          </div>
+
+          <div class="checkoutWC__payTitle">Phương thức thanh toán</div>
+
+          <label class="checkoutWC__payItem">
+            <input type="radio" name="payment" value="BANK">
+            <div>
+              <div class="checkoutWC__payName">Chuyển khoản ngân hàng</div>
+              <div class="muted">Thanh toán vào tài khoản ngân hàng (demo).</div>
+            </div>
+          </label>
+
+          <div id="bankInfo" class="checkoutWC__bank" style="display:none;">
+            Demo: STK 123 456 789 • Ngân hàng Aurora<br>
+            Nội dung: SĐT + mã đơn
+          </div>
+
+          <label class="checkoutWC__payItem">
+            <input type="radio" name="payment" value="COD" checked>
+            <div>
+              <div class="checkoutWC__payName">Trả tiền mặt khi nhận hàng (COD)</div>
+              <div class="muted">Thanh toán khi giao hàng.</div>
+            </div>
+          </label>
+
+          <button class="btn btn--dark btn--full checkoutWC__btn" type="submit">ĐẶT HÀNG</button>
+        </aside>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/cart.js"></script>
+  <script src="js/checkout.js"></script>
+</body>
+</html>

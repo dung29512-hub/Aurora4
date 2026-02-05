@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Shop – Aurora Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Header giống index (rút gọn) -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="index.html" aria-label="Aurora Store">
+        <span class="logo__mark">✦</span>
+        <span class="logo__text">Aurora Store</span>
+      </a>
+
+      <div class="actions">
+        <a class="btn btn--ghost" href="index.html">← Trang chủ</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="shopBar">
+        <div>
+          <h1 data-i18n="shop.title">Shop sản phẩm</h1>
+          <p class="muted" data-i18n="shop.desc">Gấu bông & văn phòng phẩm xinh xắn</p>
+        </div>
+
+        <div class="shopBar__tools">
+          <input id="q" class="shopInput" type="search" placeholder="Tìm sản phẩm...">
+          <select id="sort" class="shopInput">
+            <option value="new">Mới nhất</option>
+            <option value="priceAsc">Giá tăng dần</option>
+            <option value="priceDesc">Giá giảm dần</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Category chips -->
+      <div class="shopChips" id="catChips"></div>
+
+      <div id="count" class="muted" style="margin:10px 0;"></div>
+
+      <!-- Danh sách sản phẩm -->
+      <div id="productList" class="grid grid--4"></div>
+
+      <div id="empty" class="empty" style="display:none;">
+        Không tìm thấy sản phẩm phù hợp.
+      </div>
+    </div>
+  </main>
+
+  <script src="js/products.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/shop.js"></script>
+</body>
+</html>
