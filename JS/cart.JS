@@ -1,70 +1,58 @@
-// js/cart.js
-const CART_KEY = "cart";
+const STORAGE_KEY = "aurora_store_cart";
 
-/* ===== CART CORE ===== */
 function getCart() {
-  return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
 
 function saveCart(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  updateCartBadge();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+    updateCartBadge();
 }
 
+// Hàm này sẽ được gọi từ shop.html hoặc index.html
 function addToCart(product) {
-  const cart = getCart();
-  const found = cart.find(i => i.id === product.id);
+    const cart = getCart();
+    const found = cart.find(item => item.id === product.id);
 
-  if (found) {
-    found.qty += 1;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      qty: 1
-    });
-  }
-  saveCart(cart);
+    if (found) {
+        found.qty += 1;
+    } else {
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            img: product.img || 'assets/img/default.jpg', // Đường dẫn ảnh rất quan trọng
+            qty: 1
+        });
+    }
+    saveCart(cart);
+    alert(`Đã thêm ${product.name} vào giỏ hàng!`);
+}
+
+function updateQty(id, newQty) {
+    let cart = getCart();
+    const item = cart.find(item => item.id === id);
+    if (item) {
+        item.qty = newQty;
+        if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+    }
+    saveCart(cart);
 }
 
 function removeFromCart(id) {
-  const cart = getCart().filter(i => i.id !== id);
-  saveCart(cart);
+    const cart = getCart().filter(item => item.id !== id);
+    saveCart(cart);
+} 
+  function updateCartBadge() {
+    const cart = getCart();
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    // Tìm tất cả các element có class 'badge' (vì bạn dùng class trong HTML)
+    const badges = document.querySelectorAll(".badge");
+    badges.forEach(badge => {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? "flex" : "none";
+    });
 }
 
-function updateQty(id, qty) {
-  const cart = getCart();
-  const item = cart.find(i => i.id === id);
-  if (!item) return;
-
-  item.qty = qty;
-  if (item.qty <= 0) {
-    removeFromCart(id);
-    return;
-  }
-  saveCart(cart);
-}
-
-function getTotal() {
-  return getCart().reduce((sum, i) => sum + i.price * i.qty, 0);
-}
-
-/* ===== BADGE ===== */
-function updateCartBadge() {
-  const badge = document.querySelector(".iconBtn .badge");
-  if (!badge) return;
-
-  const count = getCart().reduce((sum, i) => sum + i.qty, 0);
-  badge.textContent = count;
-}
-
-/* ===== FORMAT ===== */
-function formatVND(x) {
-  return x.toLocaleString("vi-VN") + "₫";
-}
-
-function clearCart() {
-  localStorage.removeItem(CART_KEY);
-  updateCartBadge();
-}
+// Tự động cập nhật badge khi tải trang
+document.addEventListener("DOMContentLoaded", updateCartBadge);

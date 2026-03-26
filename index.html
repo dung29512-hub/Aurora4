@@ -10,11 +10,21 @@
 <body>
   <!-- Topbar -->
   <div class="topbar">
-    <div class="container topbar__inner">
-      <span data-i18n="topbar.ship">🎁 Freeship nội thành cho đơn từ 199K</span>
-      <span data-i18n="topbar.phone">☎ 09xx xxx xxx</span>
+  <div class="container topbar__inner">
+    <div class="topbar__left">
+  <div class="topbar__info">
+    <span data-i18n="topbar.ship">🎁 Freeship nội thành cho đơn từ 199K</span>
+    <span data-i18n="topbar.phone">☎ 0982246536</span>
+  </div>
+</div>
+    
+    <div class="topbar__right">
+      <a href="login.html" class="topbar__link">
+        👤 <span data-i18n="nav.auth">Đăng nhập/ Đăng ký </span>
+      </a>
     </div>
   </div>
+</div>
 
   <!-- Header -->
   <header class="header">
@@ -60,6 +70,7 @@
       </nav>
 
       <div class="actions">
+
         <!-- Language dropdown -->
         <div class="lang">
           <button class="lang__btn" type="button" id="langBtn">VI ▾</button>
@@ -255,38 +266,45 @@
               <a class="social__chip" href="#" aria-label="TikTok" data-i18n="social.tiktok">🎵 TikTok</a>
             </div>
           </div>
-          <div class="mapFake" data-i18n="map.hint">
-            (Ngày 6 sẽ nhúng Google Map iframe)
-          </div>
+         <div class="mapFake">
+  <iframe src="https://www.google.com/maps/embed?pb=..." 
+          width="100%" height="300" style="border:0;" 
+          allowfullscreen="" loading="lazy"></iframe>
+</div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div>
-        <div class="footer__brand">✦ Aurora Store</div>
-        <p class="muted" data-i18n="footer.desc">Website bán gấu bông và văn phòng phẩm.</p>
-      </div>
-        <div class="footer__title" data-i18n="footer.policy">Chính sách</div>
-        <ul class="footer__list">
-          <li data-i18n="footer.return">Đổi trả</li>
-          <li data-i18n="footer.shipping">Vận chuyển</li>
-          <li data-i18n="footer.privacy">Bảo mật</li>
-        </ul>
-      </div>
-      <div>
-        <div class="footer__title" data-i18n="footer.support">Hỗ trợ</div>
-        <ul class="footer__list">
-          <li data-i18n="footer.howto">Hướng dẫn mua hàng</li>
-          <li data-i18n="footer.contact">Liên hệ</li>
-          <li data-i18n="footer.faq">FAQ</li>
-        </ul>
-      </div>
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__col">
+      <div class="footer__brand">✦ Aurora Store</div>
+      <p class="footer__desc" data-i18n="footer.desc">Website bán gấu bông và văn phòng phẩm.</p>
     </div>
-    <div class="footer__bottom">© 2026 Aurora Store</div>
-  </footer>
+
+    <div class="footer__col">
+      <div class="footer__title" data-i18n="footer.policy">Chính sách</div>
+      <ul class="footer__list">
+        <li data-i18n="footer.return">Đổi trả</li>
+        <li data-i18n="footer.shipping">Vận chuyển</li>
+        <li data-i18n="footer.privacy">Bảo mật</li>
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <div class="footer__title" data-i18n="footer.support">Hỗ trợ</div>
+      <ul class="footer__list">
+        <li data-i18n="footer.howto">Hướng dẫn mua hàng</li>
+        <li data-i18n="footer.contact">Liên hệ</li>
+        <li data-i18n="footer.faq">FAQ</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <div class="container">© 2026 Aurora Store</div>
+  </div>
+</footer>
 
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>

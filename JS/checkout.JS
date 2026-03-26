@@ -1,27 +1,26 @@
-function getSelectedPayment() {
-  const el = document.querySelector('input[name="payment"]:checked');
-  return el ? el.value : "COD";
+function renderCheckoutSummary() {
+    const cart = getCart();
+    const subtotalEl = document.getElementById("subtotal");
+    const totalEl = document.getElementById("total");
+    
+    const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    
+    if (subtotalEl) subtotalEl.textContent = total.toLocaleString() + "₫";
+    if (totalEl) totalEl.textContent = total.toLocaleString() + "₫";
 }
 
-function toggleBankInfo() {
-  const bankInfo = document.getElementById("bankInfo");
-  if (!bankInfo) return;
-  bankInfo.style.display = getSelectedPayment() === "BANK" ? "block" : "none";
-}
-
-document.addEventListener("change", (e) => {
-  if (e.target && e.target.name === "payment") toggleBankInfo();
+// Gọi hàm khi trang load
+document.addEventListener("DOMContentLoaded", () => {
+    renderCheckoutSummary();
+    toggleBankInfo();
 });
 
-function submitOrder(e) {
-  e.preventDefault();
-
-  const cart = getCart();
-  if (!cart.length) {
-    alert("Giỏ hàng trống!");
-    return;
-  }
-
+// Sửa lại hàm submitOrder để thêm logic hoàn tất
+const originalSubmitOrder = submitOrder;
+document.querySelector(".checkoutWC__btn").onclick = (e) => {
+    e.preventDefault();
+    submitOrder(e);
+};
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
@@ -57,7 +56,6 @@ function submitOrder(e) {
   clearCart();
   alert("Đặt hàng thành công!");
   location.href = "index.html";
-}
-
+  
 document.getElementById("checkoutTotal").textContent = formatVND(getTotal());
 toggleBankInfo();

@@ -2,13 +2,28 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Giỏ hàng | Aurora Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giỏ hàng & Thanh toán | Aurora Store</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .checkout-layout { display: flex; gap: 30px; margin-top: 20px; align-items: start; }
+    .cart-section { flex: 7; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .checkout-card { flex: 3; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 20px; }
+    .cart-item { display: flex; align-items: center; gap: 15px; padding: 15px 0; border-bottom: 1px solid #eee; }
+    .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+    .qty-box { display: flex; align-items: center; background: #f5f5f5; border-radius: 6px; padding: 2px; }
+    .qty-box button { border: none; background: none; padding: 5px 12px; cursor: pointer; font-weight: bold; }
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+    .input-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .summary-line.total { border-top: 1px solid #eee; padding-top: 15px; font-size: 18px; font-weight: bold; color: #ff4d4d; }
+    .btn-checkout { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    @media (max-width: 992px) { .checkout-layout { flex-direction: column; } }
+  </style>
 </head>
-
 <body>
-
-<!-- HEADER giống index.html (copy nguyên phần header) -->
 
 <header class="header">
   <div class="container header__inner">
@@ -16,31 +31,48 @@
       <span class="logo__mark">✦</span>
       <span class="logo__text">Aurora Store</span>
     </a>
-
     <div class="actions">
-      <a class="iconBtn" href="cart.html">🛒 <span class="badge">0</span></a>
+      <a class="iconBtn" href="cart.html">🛒 <span class="badge" id="cartBadge">0</span></a>
     </div>
   </div>
 </header>
 
 <main class="section">
   <div class="container">
-    <h1>🛒 Giỏ hàng</h1>
+    <div class="checkout-layout">
+      <div class="cart-section">
+        <h2 style="margin-bottom: 20px;"><i class="fas fa-shopping-cart"></i> Giỏ hàng của bạn</h2>
+        <div id="cartEmpty" class="muted" style="display:none; text-align: center; padding: 40px;">
+          Giỏ hàng trống. <a href="shop.html" style="color: #ffb6c1; font-weight: bold;">Quay lại mua sắm ngay!</a>
+        </div>
+        <div id="cartList"></div>
+        <button class="btn btn--ghost" onclick="handleClearCart()" style="margin-top: 20px; color: #999;">✕ Xóa hết giỏ hàng</button>
+      </div>
 
-    <div id="cartEmpty" class="muted" style="display:none;">
-      Giỏ hàng trống. <a href="shop.html">Quay lại mua sắm</a>
-    </div>
-
-    <div id="cartList"></div>
-
-    <div class="card" style="padding:16px; margin-top:20px;">
-      <strong>Tổng tiền:</strong>
-      <span id="cartTotal">0₫</span>
-    </div>
-
-    <div style="margin-top:16px; display:flex; gap:12px;">
-      <a href="checkout.html" class="btn btn--dark">Thanh toán</a>
-      <button class="btn btn--ghost" onclick="clearCart()">Xóa giỏ</button>
+      <div class="checkout-card">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Thanh toán</h3>
+        <div class="input-group" style="margin-top: 20px;">
+          <label>Tên khách hàng</label>
+          <input type="text" id="customer-name" placeholder="Nhập tên người nhận...">
+        </div>
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <div class="order-summary">
+          <div class="summary-line">
+            <span>Tạm tính:</span>
+            <span id="subtotal">0₫</span>
+          </div>
+          <div class="summary-line">
+            <span>Giảm giá:</span>
+            <span style="color: #ff4757;">-0₫</span>
+          </div>
+          <div class="summary-line total">
+            <span>Tổng cộng:</span>
+            <span id="cartTotal">0₫</span>
+          </div>
+        </div>
+        <button class="btn-checkout" onclick="processCheckout()">XÁC NHẬN ĐẶT HÀNG</button>
+        <a href="shop.html" style="display: block; text-align: center; margin-top: 15px; color: #666; font-size: 14px; text-decoration: none;">← Tiếp tục mua sắm</a>
+      </div>
     </div>
   </div>
 </main>

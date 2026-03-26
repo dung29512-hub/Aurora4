@@ -398,25 +398,79 @@ img{ max-width:100%; display:block; }
 }
 
 /* Footer */
-.footer{
-  margin-top: 10px;
+/* Footer Tổng thể */
+.footer {
+  margin-top: 50px; /* Tăng khoảng cách với nội dung trên */
   background: #0b0b12;
-  color: rgba(255,255,255,0.80);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
 }
-.footer__inner{
-  padding: 26px 0;
-  display:grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 14px;
+
+.footer__inner {
+  padding: 60px 0; /* Tăng padding để footer "thở" được */
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr; /* Cột brand rộng hơn */
+  gap: 40px;
 }
-.footer__brand{ font-weight: 1000; font-size: 16px; color: white; }
-.footer__title{ font-weight: 1000; color: white; margin-bottom: 10px; }
-.footer__list{ margin:0; padding-left: 18px; }
-.footer__bottom{
-  border-top: 1px solid rgba(255,255,255,0.12);
-  text-align:center;
-  padding: 12px 0;
-  font-size: 12px;
+
+/* Cột Thương hiệu */
+.footer__brand {
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 15px;
+  letter-spacing: 0.5px;
+}
+
+.footer__desc {
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+/* Tiêu đề các cột */
+.footer__title {
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+/* Danh sách các link */
+.footer__list {
+  list-style: none; /* Bỏ dấu chấm tròn cho hiện đại */
+  padding: 0;
+  margin: 0;
+}
+
+.footer__list li {
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.footer__list li:hover {
+  color: #a855f7; /* Màu tím highlight theo theme Aurora */
+  transform: translateX(5px); /* Hiệu ứng dịch chuyển nhẹ */
+}
+
+/* Phần bản quyền dưới cùng */
+.footer__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  padding: 20px 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+  .footer__inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px 20px;
+  }
 }
 
 /* ====== Responsive ====== */
@@ -893,3 +947,33 @@ img{ max-width:100%; display:block; }
   .checkoutWC__grid{ grid-template-columns:1fr; }
 }
 
+/* Bố cục tổng của Topbar */
+.topbar__inner {
+  display: flex;
+  justify-content: space-between; /* Đẩy text sang trái, nút sang phải */
+  align-items: center;
+  padding: 5px 0;
+}
+
+/* Ép 2 dòng text chồng lên nhau */
+.topbar__info {
+  display: flex;
+  flex-direction: column; /* Đây là lệnh quan trọng để xuống dòng */
+  gap: 2px;               /* Khoảng cách giữa 2 dòng */
+}
+
+.topbar__info span {
+  display: block;         /* Đảm bảo mỗi thẻ span chiếm 1 hàng riêng */
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* Nút tài khoản bên phải */
+.topbar__link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
