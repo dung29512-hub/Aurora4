@@ -407,7 +407,7 @@ img{ max-width:100%; display:block; }
 }
 
 .footer__inner {
-  padding: 60px 0; /* Tăng padding để footer "thở" được */
+  padding: 60px 0; 
   display: grid;
   grid-template-columns: 2fr 1fr 1fr; /* Cột brand rộng hơn */
   gap: 40px;
