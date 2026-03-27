@@ -70,6 +70,11 @@ function renderShop() {
   const empty = document.getElementById("empty");
   const count = document.getElementById("count");
 
+  if (typeof PRODUCTS === 'undefined') {
+    console.error("Dữ liệu PRODUCTS không tồn tại. Kiểm tra lại file products.js");
+    return;
+  }
+
   const filtered = sortList(PRODUCTS.filter(matches));
 
   count.textContent = `Hiển thị ${filtered.length} sản phẩm`;
