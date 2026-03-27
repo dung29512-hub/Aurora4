@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 1. Hàm cập nhật số lượng hiển thị trên icon giỏ hàng
 function updateCartBadge() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // Đồng bộ key với storage_key trong cart.js
+    const cart = JSON.parse(localStorage.getItem('aurora_store_cart')) || [];
     // Tính tổng số lượng tất cả mặt hàng trong giỏ
     const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
     const badge = document.querySelector('.badge');
@@ -90,7 +91,7 @@ function addToCart() {
         cart.push(product);
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
+    localStorage.setItem('aurora_store_cart', JSON.stringify(cart));
     
     // Cập nhật badge ngay lập tức
     updateCartBadge();

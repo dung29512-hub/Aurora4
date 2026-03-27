@@ -12,15 +12,11 @@ function renderCheckoutSummary() {
 // Gọi hàm khi trang load
 document.addEventListener("DOMContentLoaded", () => {
     renderCheckoutSummary();
-    toggleBankInfo();
 });
 
-// Sửa lại hàm submitOrder để thêm logic hoàn tất
-const originalSubmitOrder = submitOrder;
-document.querySelector(".checkoutWC__btn").onclick = (e) => {
-    e.preventDefault();
-    submitOrder(e);
-};
+function submitOrder(event) {
+  event.preventDefault();
+  const cart = getCart();
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const address = document.getElementById("address").value.trim();
@@ -43,7 +39,7 @@ document.querySelector(".checkoutWC__btn").onclick = (e) => {
     name,
     phone,
     address,
-    paymentMethod,         // ✅ thêm
+    paymentMethod,
     items: cart,
     total: getTotal(),
     date: new Date().toLocaleString()
@@ -53,9 +49,7 @@ document.querySelector(".checkoutWC__btn").onclick = (e) => {
   orders.push(order);
   localStorage.setItem("orders", JSON.stringify(orders));
 
-  clearCart();
+  localStorage.removeItem("aurora_store_cart");
   alert("Đặt hàng thành công!");
   location.href = "index.html";
-  
-document.getElementById("checkoutTotal").textContent = formatVND(getTotal());
-toggleBankInfo();
+}
