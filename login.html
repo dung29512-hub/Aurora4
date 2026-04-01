@@ -1,175 +1,462 @@
 <!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tài khoản | Aurora Store</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Đăng nhập | Aurora Store</title>
+
+  <!-- Firebase v9 compat CDN -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
   <style>
-    /* CSS bổ sung riêng cho trang Login */
-    .auth-container {
+    /* ===== Reset & Font ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 600px at 20% 0%,  rgba(124,58,237,.13), transparent 60%),
+        radial-gradient(900px 600px at 80% 80%,  rgba(34,197,94,.10), transparent 60%),
+        #f7f7fb;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* ===== Header mini ===== */
+    .mini-header {
+      padding: 16px 24px;
+      display: flex;
       align-items: center;
-      min-height: 70vh;
-      padding: 40px 20px;
-      background-color: #f9f9f9;
+      gap: 10px;
+    }
+    .logo-mark {
+      width: 34px; height: 34px;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #7c3aed, #22c55e);
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+    }
+    .logo-text { font-weight: 900; font-size: 18px; color: #111; text-decoration: none; }
+    .logo-text:hover { opacity: .8; }
+
+    /* ===== Card ===== */
+    .auth-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 48px;
     }
     .auth-card {
-      background: #fff;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(18,19,26,.10);
+      border-radius: 22px;
+      padding: 36px 32px;
       width: 100%;
-      max-width: 400px;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      max-width: 420px;
+      box-shadow: 0 20px 50px rgba(17,24,39,.10);
     }
+
+    .auth-title {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: #111;
+    }
+    .auth-subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+    /* Tabs */
     .auth-tabs {
       display: flex;
-      margin-bottom: 30px;
-      border-bottom: 2px solid #eee;
+      gap: 8px;
+      margin-bottom: 24px;
+      background: rgba(17,24,39,.06);
+      padding: 4px;
+      border-radius: 14px;
     }
-    .auth-tab {
+    .tab-btn {
       flex: 1;
-      text-align: center;
-      padding: 12px;
+      padding: 10px;
+      border: none;
+      background: transparent;
+      border-radius: 11px;
+      font-weight: 800;
       cursor: pointer;
-      font-weight: 600;
-      color: #999;
-      transition: 0.3s;
+      font-size: 14px;
+      transition: all .2s;
     }
-    .auth-tab.active {
-      color: #000;
-      border-bottom: 2px solid #000; /* Hoặc màu chủ đạo của shop bạn */
+    .tab-btn.active {
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,.10);
+      color: #7c3aed;
     }
-    .auth-form {
-      display: none;
-    }
-    .auth-form.active {
+
+    /* Form */
+    .field { margin-bottom: 16px; }
+    .field label {
       display: block;
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 7px;
+      color: #333;
     }
-    .form-group {
+    .field input {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border: 1.5px solid rgba(18,19,26,.14);
+      border-radius: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color .18s, box-shadow .18s;
+      background: #fff;
+    }
+    .field input:focus {
+      border-color: rgba(124,58,237,.5);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.10);
+    }
+    .field input::placeholder { color: #bbb; font-weight: 500; }
+
+    /* Forgot */
+    .forgot {
+      text-align: right;
+      margin-top: -10px;
       margin-bottom: 20px;
     }
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    .form-group input {
+    .forgot a { font-size: 13px; color: #7c3aed; font-weight: 700; text-decoration: none; }
+    .forgot a:hover { text-decoration: underline; }
+
+    /* Primary btn */
+    .btn-primary {
       width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color 0.3s;
+      height: 48px;
+      background: linear-gradient(135deg, #7c3aed, #22c55e);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 15px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(124,58,237,.22);
+      transition: filter .15s;
     }
-    .form-group input:focus {
-      border-color: #000;
+    .btn-primary:hover  { filter: brightness(.96); }
+    .btn-primary:active { filter: brightness(.92); }
+    .btn-primary:disabled { opacity: .6; cursor: default; }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: #aaa;
+      font-size: 13px;
     }
-    .auth-btn {
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(18,19,26,.12);
+    }
+
+    /* Google btn */
+    .btn-google {
       width: 100%;
-      padding: 14px;
-      font-weight: 600;
-      margin-top: 10px;
-    }
-    .auth-footer {
-      text-align: center;
-      margin-top: 20px;
+      height: 48px;
+      background: #fff;
+      border: 1.5px solid rgba(18,19,26,.16);
+      border-radius: 14px;
+      font-weight: 800;
       font-size: 14px;
-      color: #666;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background .15s, box-shadow .15s;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
-    .auth-footer a {
-      color: #000;
-      text-decoration: none;
-      font-weight: 600;
+    .btn-google:hover { background: #f5f5f5; box-shadow: 0 4px 14px rgba(0,0,0,.10); }
+    .google-icon {
+      width: 20px; height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.6 2.5 30.2 0 24 0 14.8 0 7 5.5 3.4 13.6l7.8 6C13 13.4 18.1 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.5 37.5 46.5 31.5 46.5 24.5z'/%3E%3Cpath fill='%23FBBC05' d='M11.2 28.4A14.5 14.5 0 0 1 9.5 24c0-1.5.3-3 .7-4.4l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.7-6.2z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-5.9 0-11-4-12.8-9.4l-8.7 6.2C7 43 15 48 24 48z'/%3E%3C/svg%3E") center/contain no-repeat;
     }
+
+    /* Alert */
+    .alert {
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert.show { display: block; }
+    .alert-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .alert-success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+
+    /* Hidden panels */
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    /* Footer link */
+    .auth-footer { text-align: center; margin-top: 22px; font-size: 14px; color: #666; }
+    .auth-footer a { color: #7c3aed; font-weight: 800; text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <header class="header">
-    <div class="container header__inner" style="justify-content: center;">
-      <a class="logo" href="index.html">
-        <span class="logo__mark">✦</span>
-        <span class="logo__text">Aurora Store</span>
-      </a>
-    </div>
-  </header>
+  <!-- Mini header -->
+  <div class="mini-header">
+    <div class="logo-mark">✦</div>
+    <a class="logo-text" href="index.html">Aurora Store</a>
+  </div>
 
-  <main class="auth-container">
+  <!-- Auth card -->
+  <div class="auth-wrap">
     <div class="auth-card">
+      <h1 class="auth-title">Chào mừng! 👋</h1>
+      <p class="auth-subtitle">Đăng nhập để mua sắm và theo dõi đơn hàng.</p>
+
+      <!-- Tabs: Đăng nhập / Đăng ký -->
       <div class="auth-tabs">
-        <div id="tab-login" class="auth-tab active" onclick="switchTab('login')">Đăng nhập</div>
-        <div id="tab-register" class="auth-tab" onclick="switchTab('register')">Đăng ký</div>
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Đăng nhập</button>
+        <button class="tab-btn"        id="tabRegister" onclick="switchTab('register')">Đăng ký</button>
       </div>
 
-      <form id="form-login" class="auth-form active">
-        <div class="form-group">
-          <label for="login-email">Email / Số điện thoại</label>
-          <input type="text" id="login-email" placeholder="Nhập email của bạn" required>
-        </div>
-        <div class="form-group">
-          <label for="login-password">Mật khẩu</label>
-          <input type="password" id="login-password" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="btn btn--dark auth-btn">ĐĂNG NHẬP</button>
-        <div class="auth-footer">
-          <a href="#">Quên mật khẩu?</a>
-        </div>
-      </form>
+      <!-- Alert message -->
+      <div class="alert" id="alertBox"></div>
 
-      <form id="form-register" class="auth-form">
-        <div class="form-group">
-          <label for="reg-name">Họ và tên</label>
-          <input type="text" id="reg-name" placeholder="Ví dụ: Nguyễn Văn A" required>
+      <!-- ===== PANEL: Đăng nhập ===== -->
+      <div class="auth-panel active" id="panelLogin">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
         </div>
-        <div class="form-group">
-          <label for="reg-email">Email</label>
-          <input type="email" id="reg-email" placeholder="example@gmail.com" required>
+        <div class="field">
+          <label>Mật khẩu</label>
+          <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
         </div>
-        <div class="form-group">
-          <label for="reg-password">Mật khẩu</label>
-          <input type="password" id="reg-password" placeholder="Tối thiểu 6 ký tự" required>
+        <div class="forgot"><a href="#" onclick="handleForgot(event)">Quên mật khẩu?</a></div>
+        <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Đăng nhập</button>
+      </div>
+
+      <!-- ===== PANEL: Đăng ký ===== -->
+      <div class="auth-panel" id="panelRegister">
+        <div class="field">
+          <label>Họ và tên</label>
+          <input type="text"     id="regName"  placeholder="Nguyễn Văn A">
         </div>
-        <button type="submit" class="btn btn--primary auth-btn" style="background: #ffb6c1; border:none;">ĐĂNG KÝ TÀI KHOẢN</button>
-      </form>
+        <div class="field">
+          <label>Email</label>
+          <input type="email"    id="regEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="field">
+          <label>Mật khẩu (tối thiểu 6 ký tự)</label>
+          <input type="password" id="regPass"  placeholder="••••••••" autocomplete="new-password">
+        </div>
+        <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Tạo tài khoản</button>
+      </div>
+
+      <!-- Divider -->
+      <div class="divider">hoặc</div>
+
+      <!-- Google -->
+      <button class="btn-google" onclick="handleGoogle()">
+        <span class="google-icon"></span>
+        Tiếp tục với Google
+      </button>
+
+      <!-- Footer -->
+      <p class="auth-footer">
+        Quay lại <a href="index.html">trang chủ →</a>
+      </p>
     </div>
-  </main>
+  </div>
 
-  <script>
-    function switchTab(type) {
-      const loginForm = document.getElementById('form-login');
-      const registerForm = document.getElementById('form-register');
-      const loginTab = document.getElementById('tab-login');
-      const registerTab = document.getElementById('tab-register');
+<!-- ========== Firebase Config & Logic ========== -->
+<script>
+  /* ============================================================
+   ⚠️  THAY THẾ object firebaseConfig bên dưới bằng config
+       của project Firebase của bạn (lấy từ Firebase Console
+       → Project settings → Your apps → Web app → Config)
+   ============================================================ */
+  const firebaseConfig = {
+    apiKey:            "AIzaSy_REPLACE_YOUR_API_KEY",
+    authDomain:        "your-project-id.firebaseapp.com",
+    projectId:         "your-project-id",
+    storageBucket:     "your-project-id.appspot.com",
+    messagingSenderId: "000000000000",
+    appId:             "1:000000000000:web:abc123def456"
+  };
 
-      if (type === 'login') {
-        loginForm.classList.add('active');
-        registerForm.classList.remove('active');
-        loginTab.classList.add('active');
-        registerTab.classList.remove('active');
-      } else {
-        loginForm.classList.remove('active');
-        registerForm.classList.add('active');
-        loginTab.classList.remove('active');
-        registerTab.classList.add('active');
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  /* ---- Redirect nếu đã login ---- */
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      // Lưu info vào localStorage để main.js đọc
+      localStorage.setItem('aurora_user', JSON.stringify({
+        uid:         user.uid,
+        displayName: user.displayName || '',
+        email:       user.email,
+        photoURL:    user.photoURL || ''
+      }));
+      window.location.href = 'index.html';
+    }
+  });
+
+  /* ============================================================
+     UI HELPERS
+   ============================================================ */
+  function switchTab(tab) {
+    document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('panelRegister').classList.toggle('active', tab === 'register');
+    document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+    document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+    hideAlert();
+  }
+
+  function showAlert(msg, type = 'error') {
+    const el = document.getElementById('alertBox');
+    el.textContent = msg;
+    el.className   = `alert alert-${type} show`;
+  }
+
+  function hideAlert() {
+    document.getElementById('alertBox').classList.remove('show');
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? '<span class="spinner"></span> Đang xử lý...'
+      : (btnId === 'btnLogin' ? 'Đăng nhập' : 'Tạo tài khoản');
+  }
+
+  /* ============================================================
+     ĐĂNG NHẬP EMAIL / PASSWORD
+   ============================================================ */
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
+
+    if (!email || !pass) { showAlert('Vui lòng nhập email và mật khẩu.'); return; }
+
+    setLoading('btnLogin', true);
+    hideAlert();
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+      // onAuthStateChanged sẽ redirect
+    } catch (err) {
+      setLoading('btnLogin', false);
+      showAlert(_firebaseErrMsg(err.code));
+    }
+  }
+
+  /* ============================================================
+     ĐĂNG KÝ EMAIL / PASSWORD
+   ============================================================ */
+  async function handleRegister() {
+    const name  = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pass  = document.getElementById('regPass').value;
+
+    if (!name)  { showAlert('Vui lòng nhập họ tên.'); return; }
+    if (!email) { showAlert('Vui lòng nhập email.'); return; }
+    if (pass.length < 6) { showAlert('Mật khẩu tối thiểu 6 ký tự.'); return; }
+
+    setLoading('btnRegister', true);
+    hideAlert();
+    try {
+      const cred = await auth.createUserWithEmailAndPassword(email, pass);
+      await cred.user.updateProfile({ displayName: name });
+      showAlert('🎉 Đăng ký thành công! Đang chuyển hướng...', 'success');
+      // onAuthStateChanged sẽ redirect
+    } catch (err) {
+      setLoading('btnRegister', false);
+      showAlert(_firebaseErrMsg(err.code));
+    }
+  }
+
+  /* ============================================================
+     ĐĂNG NHẬP GOOGLE
+   ============================================================ */
+  async function handleGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      await auth.signInWithPopup(provider);
+      // onAuthStateChanged sẽ redirect
+    } catch (err) {
+      if (err.code !== 'auth/popup-closed-by-user') {
+        showAlert(_firebaseErrMsg(err.code));
       }
     }
+  }
 
-    // Xử lý submit (Demo)
-    document.getElementById('form-login').onsubmit = (e) => {
-      e.preventDefault();
-      alert('Đăng nhập thành công!');
-      window.location.href = 'index.html';
-    };
+  /* ============================================================
+     QUÊN MẬT KHẨU
+   ============================================================ */
+  async function handleForgot(e) {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) { showAlert('Nhập email vào ô trên, rồi nhấn "Quên mật khẩu?".'); return; }
+    try {
+      await auth.sendPasswordResetEmail(email);
+      showAlert(`📧 Email đặt lại mật khẩu đã gửi đến ${email}`, 'success');
+    } catch (err) {
+      showAlert(_firebaseErrMsg(err.code));
+    }
+  }
 
-    document.getElementById('form-register').onsubmit = (e) => {
-      e.preventDefault();
-      alert('Đăng ký thành công! Vui lòng đăng nhập.');
-      switchTab('login');
+  /* ============================================================
+     ERROR MESSAGE MAP (tiếng Việt)
+   ============================================================ */
+  function _firebaseErrMsg(code) {
+    const map = {
+      'auth/user-not-found':         'Không tìm thấy tài khoản với email này.',
+      'auth/wrong-password':         'Mật khẩu không đúng.',
+      'auth/invalid-email':          'Email không hợp lệ.',
+      'auth/email-already-in-use':   'Email này đã được sử dụng.',
+      'auth/weak-password':          'Mật khẩu quá yếu (tối thiểu 6 ký tự).',
+      'auth/invalid-credential':     'Email hoặc mật khẩu không đúng.',
+      'auth/too-many-requests':      'Quá nhiều lần thử. Vui lòng thử lại sau.',
+      'auth/network-request-failed': 'Lỗi kết nối mạng. Kiểm tra internet.',
+      'auth/popup-blocked':          'Popup bị chặn. Vui lòng cho phép popup.',
     };
-  </script>
+    return map[code] || `Đã xảy ra lỗi (${code}).`;
+  }
+
+  /* Enter key support */
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const loginPanel = document.getElementById('panelLogin');
+    if (loginPanel.classList.contains('active')) handleLogin();
+    else handleRegister();
+  });
+</script>
 
 </body>
 </html>
