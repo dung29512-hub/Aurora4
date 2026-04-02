@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="vi">
 <head>
@@ -5,6 +6,318 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Thanh toán | Aurora Store</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* ── Layout ── */
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 28px;
+      margin-top: 28px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+    }
+
+    /* ── Steps indicator ── */
+    .checkout-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #ccc;
+    }
+    .step.done { color: #22c55e; }
+    .step.active { color: #111; font-weight: 700; }
+    .step__num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 0.78rem;
+      background: #eee;
+      color: #999;
+      flex-shrink: 0;
+    }
+    .step.done .step__num { background: #22c55e; color: #fff; }
+    .step.active .step__num { background: #111; color: #fff; }
+    .step-line { flex: 1; height: 2px; background: #eee; margin: 0 10px; }
+    .step-line.done { background: #22c55e; }
+
+    /* ── Form card ── */
+    .form-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.06);
+      overflow: hidden;
+    }
+    .form-card__section {
+      padding: 24px 28px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .form-card__section:last-child { border-bottom: none; }
+    .form-card__title {
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-card__title i { color: #ffb6c1; }
+
+    /* ── Form fields ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-grid .field--full { grid-column: 1 / -1; }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .field { position: relative; }
+    .field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #444;
+    }
+    .field label .required { color: #ff4757; margin-left: 2px; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #eee;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fff;
+      font-family: inherit;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: #ffb6c1;
+      box-shadow: 0 0 0 3px rgba(255, 182, 193, .15);
+    }
+    .field input.error { border-color: #ff4757; }
+    .field__hint {
+      font-size: 0.75rem;
+      color: #ff4757;
+      margin-top: 5px;
+      display: none;
+    }
+    .field.has-error .field__hint { display: block; }
+    .field.has-error input { border-color: #ff4757; }
+
+    /* ── Payment options ── */
+    .payment-options { display: flex; flex-direction: column; gap: 12px; }
+    .pay-option {
+      border: 2px solid #eee;
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .pay-option:has(input:checked) {
+      border-color: #111;
+      background: #fafafa;
+    }
+    .pay-option input[type="radio"] {
+      width: 18px; height: 18px;
+      accent-color: #111;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .pay-option__body {}
+    .pay-option__label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 3px;
+    }
+    .pay-option__desc { font-size: 0.8rem; color: #999; }
+
+    /* Bank info panel */
+    .bank-info {
+      display: none;
+      margin-top: 14px;
+      background: #fff9fb;
+      border: 1.5px solid #ffb6c1;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+    .bank-info.show { display: block; }
+    .bank-info strong { color: #111; }
+
+    /* ── Order summary card ── */
+    .order-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      overflow: hidden;
+      position: sticky;
+      top: 20px;
+    }
+    .order-card__head {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #999;
+    }
+    .order-items { padding: 0 24px; max-height: 320px; overflow-y: auto; }
+    .order-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f5f5f5;
+      align-items: center;
+    }
+    .order-item:last-child { border-bottom: none; }
+    .order-item__img {
+      width: 52px; height: 52px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #f5f5f5;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .order-item__qty {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 20px; height: 20px;
+      background: #111;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+    }
+    .order-item__name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .order-item__price {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #111;
+      white-space: nowrap;
+    }
+
+    /* Totals */
+    .order-totals { padding: 16px 24px; border-top: 1px solid #f5f5f5; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.88rem;
+      color: #666;
+    }
+    .total-row span:last-child { font-weight: 600; color: #111; }
+    .total-row.discount span:last-child { color: #ff4757; }
+    .total-divider { border: none; border-top: 1px solid #f0f0f0; margin: 12px 0; }
+    .total-final {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-top: 14px;
+    }
+    .total-final span:last-child { color: #ff4757; }
+
+    /* Empty cart warning */
+    .cart-warning {
+      display: none;
+      background: #fff9f0;
+      border: 1.5px solid #ffd591;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.88rem;
+      color: #b45309;
+      margin-bottom: 20px;
+    }
+    .cart-warning.show { display: block; }
+
+    /* Submit button */
+    .btn-submit {
+      display: block;
+      width: calc(100% - 48px);
+      margin: 0 24px 24px;
+      padding: 16px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      letter-spacing: .04em;
+      transition: background .2s, transform .1s;
+    }
+    .btn-submit:hover { background: #333; }
+    .btn-submit:active { transform: scale(.98); }
+    .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 48px 36px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      animation: popIn .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
+    @keyframes popIn {
+      from { transform: scale(.8); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-box__icon { font-size: 3rem; margin-bottom: 16px; }
+    .success-box h2 { font-size: 1.3rem; font-weight: 900; margin-bottom: 10px; }
+    .success-box p { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+    .success-box a {
+      display: inline-block;
+      background: #111;
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
 </head>
 
 <body>
@@ -22,99 +335,356 @@
         <span class="logo__text">Aurora Store</span>
       </a>
 
+      
       <nav class="nav">
         <a class="nav__link" href="index.html">Trang chủ</a>
         <a class="nav__link" href="shop.html">Shop</a>
         <a class="nav__link" href="cart.html">Giỏ hàng</a>
       </nav>
-
       <div class="actions">
+        <!-- ✅ ID duy nhất cho badge -->
         <a class="iconBtn" href="cart.html" aria-label="Giỏ hàng">
-          🛒 <span class="badge">0</span>
+          🛒 <span class="badge" id="checkoutCartBadge">0</span>
         </a>
-        <a class="btn btn--primary" href="shop.html">Mua ngay</a>
       </div>
     </div>
   </header>
 
   <main class="section">
     <div class="container">
-      <h1 style="margin-bottom: 20px;">Thanh toán</h1>
 
-      <form id="checkoutForm" class="checkoutWC" onsubmit="submitOrder(event)">
-        <section class="checkoutWC__left">
-          <div class="checkoutWC__head">THÔNG TIN THANH TOÁN</div>
+      <!-- Breadcrumb -->
+      <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 16px;">
+        <a href="index.html" style="color: #aaa; text-decoration: none;">Trang chủ</a>
+        <span style="margin: 0 6px;">›</span>
+        <a href="cart.html" style="color: #aaa; text-decoration: none;">Giỏ hàng</a>
+        <span style="margin: 0 6px;">›</span>
+        <span style="color: #333; font-weight: 600;">Thanh toán</span>
+      </div>
 
-          <div class="checkoutWC__grid">
-            <div class="checkoutWC__field">
-              <label for="name">Họ tên *</label>
-              <input type="text" id="name" name="name" required placeholder="Nguyễn Văn A" class="shopInput">
+      <!-- Steps -->
+      <div class="checkout-steps">
+        <div class="step done">
+          <div class="step__num"><i class="fas fa-check" style="font-size:.6rem;"></i></div>
+          <span>Giỏ hàng</span>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+          <div class="step__num">2</div>
+          <span>Thanh toán</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step__num">3</div>
+          <span>Xác nhận</span>
+        </div>
+      </div>
+
+      <!-- Empty cart warning -->
+      <div class="cart-warning" id="cartWarning">
+        ⚠️ Giỏ hàng của bạn đang trống.
+        <a href="shop.html" style="font-weight:700; color:#b45309;">Quay lại mua sắm →</a>
+      </div>
+
+      <form id="checkoutForm" class="checkout-layout" onsubmit="submitOrder(event)" novalidate>
+
+        <!-- ── LEFT: Customer info ── -->
+        <div>
+
+          <!-- Contact info -->
+          <div class="form-card" style="margin-bottom: 20px;">
+            <div class="form-card__section">
+              <div class="form-card__title">
+                <i class="fas fa-user"></i> Thông tin liên hệ
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="co_name">Họ tên <span class="required">*</span></label>
+                  <input type="text" id="co_name" name="name" placeholder="Nguyễn Văn A" autocomplete="name">
+                  <div class="field__hint">Vui lòng nhập họ tên.</div>
+                </div>
+                <div class="field">
+                  <label for="co_phone">Số điện thoại <span class="required">*</span></label>
+                  <input type="tel" id="co_phone" name="phone" placeholder="09xxxxxxxx" inputmode="tel" autocomplete="tel">
+                  <div class="field__hint">Vui lòng nhập số điện thoại hợp lệ.</div>
+                </div>
+                <div class="field field--full">
+                  <label for="co_email">Email (tùy chọn)</label>
+                  <input type="email" id="co_email" name="email" placeholder="you@example.com" autocomplete="email">
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div class="checkoutWC__field">
-              <label for="phone">Số điện thoại *</label>
-              <input type="tel" id="phone" name="phone" required placeholder="09xxxxxxxx" inputmode="tel" class="shopInput">
+          <!-- Shipping info -->
+          <div class="form-card" style="margin-bottom: 20px;">
+            <div class="form-card__section">
+              <div class="form-card__title">
+                <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng
+              </div>
+              <div class="form-grid">
+                <div class="field field--full">
+                  <label for="co_address">Địa chỉ <span class="required">*</span></label>
+                  <input type="text" id="co_address" name="address" placeholder="Số nhà, tên đường, phường/xã..." autocomplete="street-address">
+                  <div class="field__hint">Vui lòng nhập địa chỉ nhận hàng.</div>
+                </div>
+                <div class="field">
+                  <label for="co_district">Quận / Huyện</label>
+                  <input type="text" id="co_district" name="district" placeholder="Ví dụ: Quận 1">
+                </div>
+                <div class="field">
+                  <label for="co_city">Tỉnh / Thành phố</label>
+                  <input type="text" id="co_city" name="city" placeholder="Ví dụ: TP. Hồ Chí Minh">
+                </div>
+                <div class="field field--full">
+                  <label for="co_note">Ghi chú cho shipper (tùy chọn)</label>
+                  <input type="text" id="co_note" name="note" placeholder="Ví dụ: Gọi trước khi giao...">
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div class="checkoutWC__field checkoutWC__field--full">
-              <label for="address">Địa chỉ nhận hàng *</label>
-              <input type="text" id="address" name="address" required placeholder="Số nhà, đường, phường/xã..." class="shopInput">
+          <!-- Payment method -->
+          <div class="form-card">
+            <div class="form-card__section">
+              <div class="form-card__title">
+                <i class="fas fa-credit-card"></i> Phương thức thanh toán
+              </div>
+              <div class="payment-options">
+                <label class="pay-option">
+                  <input type="radio" name="co_payment" value="COD" checked onchange="toggleBankInfo(false)">
+                  <div class="pay-option__body">
+                    <div class="pay-option__label">💵 Tiền mặt khi nhận hàng (COD)</div>
+                    <div class="pay-option__desc">Thanh toán trực tiếp cho shipper khi nhận được hàng.</div>
+                  </div>
+                </label>
+
+                <label class="pay-option">
+                  <input type="radio" name="co_payment" value="BANK" onchange="toggleBankInfo(true)">
+                  <div class="pay-option__body">
+                    <div class="pay-option__label">🏦 Chuyển khoản ngân hàng</div>
+                    <div class="pay-option__desc">Chuyển khoản qua app ngân hàng. Đơn hàng xử lý sau khi xác nhận.</div>
+                    <div class="bank-info" id="bankInfo">
+                      <strong>Ngân hàng:</strong> Aurora Bank<br>
+                      <strong>Số tài khoản:</strong> 123 456 789<br>
+                      <strong>Chủ tài khoản:</strong> AURORA STORE<br>
+                      <strong>Nội dung CK:</strong> <span id="bankContent">[Số điện thoại của bạn]</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
             </div>
           </div>
-        </section>
 
-        <aside class="checkoutWC__right">
-          <div class="checkoutWC__head">ĐƠN HÀNG CỦA BẠN</div>
+        </div>
 
-          <div class="checkoutWC__tableHead">
-            <span>Sản phẩm</span>
-            <span style="text-align: right;">Tạm tính</span>
+        <!-- ── RIGHT: Order summary ── -->
+        <aside class="order-card">
+          <div class="order-card__head">
+            <i class="fas fa-receipt"></i> Đơn hàng của bạn
           </div>
 
-          <div id="orderItems" class="checkoutWC__items" style="margin-bottom: 20px;"></div>
-
-          <div class="checkoutWC__row">
-            <span class="muted">Tạm tính</span>
-            <strong id="subtotal">0₫</strong>
-          </div>
-
-          <div class="checkoutWC__row checkoutWC__row--total">
-            <span>Tổng cộng</span>
-            <strong id="total" style="color: #ff4757; font-size: 1.2rem;">0₫</strong>
-          </div>
-
-          <div class="checkoutWC__payTitle" style="margin-top: 20px; font-weight: bold;">Phương thức thanh toán</div>
-
-          <div class="checkoutWC__payments" style="margin: 15px 0;">
-            <label class="checkoutWC__payItem" style="display: block; margin-bottom: 10px; cursor: pointer;">
-              <input type="radio" name="payment" value="BANK">
-              <span style="margin-left: 8px; font-weight: 500;">Chuyển khoản ngân hàng</span>
-              <div class="muted" style="font-size: 0.85rem; margin-left: 25px;">Chuyển khoản qua ứng dụng ngân hàng.</div>
-            </label>
-
-            <div id="bankInfo" class="checkoutWC__bank" style="display:none; background: #f8f9fa; padding: 15px; border-radius: 8px; font-size: 0.9rem; margin: 10px 0 10px 25px; border-left: 4px solid #ffb6c1;">
-              <strong>Ngân hàng:</strong> Aurora Bank<br>
-              <strong>STK:</strong> 123 456 789<br>
-              <strong>Chủ TK:</strong> AURORA STORE<br>
-              <strong>Nội dung:</strong> [Số điện thoại của bạn]
+          <!-- Items list — populated by JS -->
+          <div class="order-items" id="co_orderItems">
+            <div style="padding: 24px; text-align: center; color: #ccc; font-size: 0.88rem;">
+              Đang tải...
             </div>
-
-            <label class="checkoutWC__payItem" style="display: block; cursor: pointer;">
-              <input type="radio" name="payment" value="COD" checked>
-              <span style="margin-left: 8px; font-weight: 500;">Trả tiền mặt khi nhận hàng (COD)</span>
-              <div class="muted" style="font-size: 0.85rem; margin-left: 25px;">Thanh toán trực tiếp cho shipper.</div>
-            </label>
           </div>
 
-          <button class="btn btn--dark btn--full checkoutWC__btn" type="submit" style="width: 100%; padding: 15px; font-weight: bold;">
-            XÁC NHẬN ĐẶT HÀNG
+          <div class="order-totals">
+            <div class="total-row">
+              <span>Tạm tính</span>
+              <span id="co_subtotal">0₫</span>
+            </div>
+            <div class="total-row discount">
+              <span>Giảm giá</span>
+              <span id="co_discount">-0₫</span>
+            </div>
+            <div class="total-row">
+              <span>Phí vận chuyển</span>
+              <span id="co_shipping">Miễn phí</span>
+            </div>
+            <hr class="total-divider">
+            <div class="total-final">
+              <span>Tổng cộng</span>
+              <span id="co_total">0₫</span>
+            </div>
+          </div>
+
+          <button class="btn-submit" type="submit" id="co_submitBtn">
+            <i class="fas fa-check-circle"></i> XÁC NHẬN ĐẶT HÀNG
           </button>
         </aside>
+
       </form>
     </div>
   </main>
 
+  <!-- Success overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-box">
+      <div class="success-box__icon">🎉</div>
+      <h2>Đặt hàng thành công!</h2>
+      <p id="successMsg">Cảm ơn bạn đã mua sắm tại Aurora Store. Chúng tôi sẽ liên hệ xác nhận sớm nhất.</p>
+      <a href="index.html">Về trang chủ</a>
+    </div>
+  </div>
+
   <script src="js/cart.js"></script>
-  <script src="js/checkout.js"></script>
+  <script>
+    /* ──────────────────────────────
+       Helpers
+    ────────────────────────────── */
+    function formatPrice(n) {
+      return n.toLocaleString('vi-VN') + '₫';
+    }
+
+    /* ──────────────────────────────
+       Render order summary từ cart
+    ────────────────────────────── */
+    function renderOrderSummary() {
+      const cart = getCart(); // từ cart.js
+      const itemsEl = document.getElementById('co_orderItems');
+      const warningEl = document.getElementById('cartWarning');
+      const submitBtn = document.getElementById('co_submitBtn');
+
+      if (cart.length === 0) {
+        itemsEl.innerHTML = '<div style="padding:24px; text-align:center; color:#ccc; font-size:.88rem;">Giỏ hàng trống</div>';
+        warningEl.classList.add('show');
+        submitBtn.disabled = true;
+        return;
+      }
+
+      warningEl.classList.remove('show');
+      submitBtn.disabled = false;
+
+      itemsEl.innerHTML = cart.map(item => `
+        <div class="order-item">
+          <div class="order-item__img">
+            <img src="${item.img || 'img/placeholder.jpg'}" alt="${item.name}"
+                 style="width:52px;height:52px;object-fit:cover;border-radius:8px;display:block;">
+            <span class="order-item__qty">${item.qty}</span>
+          </div>
+          <div class="order-item__name">${item.name}</div>
+          <div class="order-item__price">${formatPrice(item.price * item.qty)}</div>
+        </div>
+      `).join('');
+
+      const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const discount = 0;
+      const shipping = subtotal >= 199000 ? 0 : 30000;
+      const total    = subtotal - discount + shipping;
+
+      document.getElementById('co_subtotal').textContent = formatPrice(subtotal);
+      document.getElementById('co_discount').textContent = `-${formatPrice(discount)}`;
+      document.getElementById('co_shipping').textContent = shipping === 0 ? 'Miễn phí' : formatPrice(shipping);
+      document.getElementById('co_total').textContent    = formatPrice(total);
+
+      // Update badge
+      const totalItems = cart.reduce((s, i) => s + i.qty, 0);
+      const badge = document.getElementById('checkoutCartBadge');
+      if (badge) badge.textContent = totalItems;
+    }
+
+    /* ──────────────────────────────
+       Bank info toggle
+    ────────────────────────────── */
+    function toggleBankInfo(show) {
+      document.getElementById('bankInfo').classList.toggle('show', show);
+      // Auto-fill nội dung CK từ SĐT
+      if (show) {
+        const phone = document.getElementById('co_phone').value.trim();
+        document.getElementById('bankContent').textContent = phone || '[Số điện thoại của bạn]';
+      }
+    }
+
+    // Cập nhật nội dung CK khi gõ SĐT
+    document.getElementById('co_phone').addEventListener('input', function () {
+      const bankContentEl = document.getElementById('bankContent');
+      if (bankContentEl) {
+        bankContentEl.textContent = this.value.trim() || '[Số điện thoại của bạn]';
+      }
+    });
+
+    /* ──────────────────────────────
+       Form validation
+    ────────────────────────────── */
+    function validateField(id, condition) {
+      const field = document.getElementById(id).closest('.field');
+      if (!condition) {
+        field.classList.add('has-error');
+        return false;
+      }
+      field.classList.remove('has-error');
+      return true;
+    }
+
+    function validateForm() {
+      const name    = document.getElementById('co_name').value.trim();
+      const phone   = document.getElementById('co_phone').value.trim();
+      const address = document.getElementById('co_address').value.trim();
+
+      const validPhone = /^(0[3|5|7|8|9])+([0-9]{8})$/.test(phone);
+
+      let ok = true;
+      ok = validateField('co_name',    name.length >= 2)    && ok;
+      ok = validateField('co_phone',   validPhone)          && ok;
+      ok = validateField('co_address', address.length >= 5) && ok;
+      return ok;
+    }
+
+    /* ──────────────────────────────
+       Submit order
+    ────────────────────────────── */
+    function submitOrder(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      const cart    = getCart();
+      if (cart.length === 0) {
+        alert('Giỏ hàng của bạn đang trống!');
+        return;
+      }
+
+      const name    = document.getElementById('co_name').value.trim();
+      const phone   = document.getElementById('co_phone').value.trim();
+      const email   = document.getElementById('co_email').value.trim();
+      const address = document.getElementById('co_address').value.trim();
+      const district= document.getElementById('co_district').value.trim();
+      const city    = document.getElementById('co_city').value.trim();
+      const note    = document.getElementById('co_note').value.trim();
+      const payment = document.querySelector('input[name="co_payment"]:checked').value;
+
+      const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const shipping = subtotal >= 199000 ? 0 : 30000;
+      const total    = subtotal + shipping;
+
+      const order = {
+        id: 'AUR' + Date.now(),
+        createdAt: new Date().toISOString(),
+        customer: { name, phone, email, address, district, city, note },
+        items: cart,
+        payment,
+        subtotal,
+        shipping,
+        total,
+        status: 'pending'
+      };
+
+      // TODO: gửi lên API/Firebase
+      console.log('Order:', order);
+
+      // Hiển thị success
+      document.getElementById('successMsg').textContent =
+        `Cảm ơn ${name}! Đơn hàng #${order.id} đã được ghi nhận. Chúng tôi sẽ liên hệ qua ${phone} để xác nhận.`;
+      document.getElementById('successOverlay').classList.add('show');
+
+      // Xóa giỏ hàng
+      clearCart(); // từ cart.js
+    }
+
+    /* ── Init ── */
+    renderOrderSummary();
+  </script>
 </body>
 </html>

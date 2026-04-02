@@ -1,16 +1,14 @@
+
 <!doctype html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Đăng nhập | Aurora Store</title>
-
-  <!-- Firebase v9 compat CDN -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
-    /* ===== Reset & Font ===== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -22,231 +20,107 @@
       display: flex;
       flex-direction: column;
     }
-
-    /* ===== Header mini ===== */
-    .mini-header {
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .mini-header { padding: 16px 24px; display: flex; align-items: center; gap: 10px; }
     .logo-mark {
-      width: 34px; height: 34px;
-      display: grid; place-items: center;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #7c3aed, #22c55e);
-      color: #fff;
-      font-weight: 900;
-      font-size: 18px;
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border-radius: 12px; background: linear-gradient(135deg, #7c3aed, #22c55e);
+      color: #fff; font-weight: 900; font-size: 18px;
     }
     .logo-text { font-weight: 900; font-size: 18px; color: #111; text-decoration: none; }
     .logo-text:hover { opacity: .8; }
-
-    /* ===== Card ===== */
-    .auth-wrap {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px 48px;
-    }
+    .auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 16px 48px; }
     .auth-card {
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(18,19,26,.10);
-      border-radius: 22px;
-      padding: 36px 32px;
-      width: 100%;
-      max-width: 420px;
+      background: rgba(255,255,255,.92); border: 1px solid rgba(18,19,26,.10);
+      border-radius: 22px; padding: 36px 32px; width: 100%; max-width: 420px;
       box-shadow: 0 20px 50px rgba(17,24,39,.10);
     }
-
-    .auth-title {
-      font-size: 24px;
-      font-weight: 900;
-      margin-bottom: 6px;
-      color: #111;
-    }
+    .auth-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; color: #111; }
     .auth-subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
-
-    /* Tabs */
     .auth-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      background: rgba(17,24,39,.06);
-      padding: 4px;
-      border-radius: 14px;
+      display: flex; gap: 8px; margin-bottom: 24px;
+      background: rgba(17,24,39,.06); padding: 4px; border-radius: 14px;
     }
     .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      border-radius: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all .2s;
+      flex: 1; padding: 10px; border: none; background: transparent;
+      border-radius: 11px; font-weight: 800; cursor: pointer; font-size: 14px; transition: all .2s;
     }
-    .tab-btn.active {
-      background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,.10);
-      color: #7c3aed;
-    }
-
-    /* Form */
+    .tab-btn.active { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.10); color: #7c3aed; }
     .field { margin-bottom: 16px; }
-    .field label {
-      display: block;
-      font-weight: 800;
-      font-size: 13px;
-      margin-bottom: 7px;
-      color: #333;
-    }
+    .field label { display: block; font-weight: 800; font-size: 13px; margin-bottom: 7px; color: #333; }
     .field input {
-      width: 100%;
-      height: 46px;
-      padding: 0 14px;
-      border: 1.5px solid rgba(18,19,26,.14);
-      border-radius: 13px;
-      font-size: 15px;
-      font-weight: 600;
-      outline: none;
-      transition: border-color .18s, box-shadow .18s;
-      background: #fff;
+      width: 100%; height: 46px; padding: 0 14px;
+      border: 1.5px solid rgba(18,19,26,.14); border-radius: 13px;
+      font-size: 15px; font-weight: 600; outline: none;
+      transition: border-color .18s, box-shadow .18s; background: #fff;
     }
-    .field input:focus {
-      border-color: rgba(124,58,237,.5);
-      box-shadow: 0 0 0 3px rgba(124,58,237,.10);
-    }
+    .field input:focus { border-color: rgba(124,58,237,.5); box-shadow: 0 0 0 3px rgba(124,58,237,.10); }
     .field input::placeholder { color: #bbb; font-weight: 500; }
-
-    /* Forgot */
-    .forgot {
-      text-align: right;
-      margin-top: -10px;
-      margin-bottom: 20px;
-    }
+    .forgot { text-align: right; margin-top: -10px; margin-bottom: 20px; }
     .forgot a { font-size: 13px; color: #7c3aed; font-weight: 700; text-decoration: none; }
     .forgot a:hover { text-decoration: underline; }
-
-    /* Primary btn */
     .btn-primary {
-      width: 100%;
-      height: 48px;
+      width: 100%; height: 48px;
       background: linear-gradient(135deg, #7c3aed, #22c55e);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      font-weight: 900;
-      font-size: 15px;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(124,58,237,.22);
-      transition: filter .15s;
+      color: #fff; border: none; border-radius: 14px;
+      font-weight: 900; font-size: 15px; cursor: pointer;
+      box-shadow: 0 10px 24px rgba(124,58,237,.22); transition: filter .15s;
     }
     .btn-primary:hover  { filter: brightness(.96); }
     .btn-primary:active { filter: brightness(.92); }
     .btn-primary:disabled { opacity: .6; cursor: default; }
-
-    /* Divider */
     .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: #aaa;
-      font-size: 13px;
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0; color: #aaa; font-size: 13px;
     }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(18,19,26,.12);
-    }
-
-    /* Google btn */
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(18,19,26,.12); }
     .btn-google {
-      width: 100%;
-      height: 48px;
-      background: #fff;
-      border: 1.5px solid rgba(18,19,26,.16);
-      border-radius: 14px;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      transition: background .15s, box-shadow .15s;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      width: 100%; height: 48px; background: #fff;
+      border: 1.5px solid rgba(18,19,26,.16); border-radius: 14px;
+      font-weight: 800; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      transition: background .15s, box-shadow .15s; box-shadow: 0 2px 8px rgba(0,0,0,.06);
     }
     .btn-google:hover { background: #f5f5f5; box-shadow: 0 4px 14px rgba(0,0,0,.10); }
     .google-icon {
       width: 20px; height: 20px;
       background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.6 2.5 30.2 0 24 0 14.8 0 7 5.5 3.4 13.6l7.8 6C13 13.4 18.1 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8C43.5 37.5 46.5 31.5 46.5 24.5z'/%3E%3Cpath fill='%23FBBC05' d='M11.2 28.4A14.5 14.5 0 0 1 9.5 24c0-1.5.3-3 .7-4.4l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.7-6.2z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-5.9 0-11-4-12.8-9.4l-8.7 6.2C7 43 15 48 24 48z'/%3E%3C/svg%3E") center/contain no-repeat;
     }
-
-    /* Alert */
-    .alert {
-      padding: 12px 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      display: none;
-    }
+    .alert { padding: 12px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; margin-bottom: 16px; display: none; }
     .alert.show { display: block; }
     .alert-error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .alert-success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-
-    /* Hidden panels */
     .auth-panel { display: none; }
     .auth-panel.active { display: block; }
-
-    /* Footer link */
     .auth-footer { text-align: center; margin-top: 22px; font-size: 14px; color: #666; }
     .auth-footer a { color: #7c3aed; font-weight: 800; text-decoration: none; }
     .auth-footer a:hover { text-decoration: underline; }
-
-    /* Loading spinner */
     .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2.5px solid rgba(255,255,255,.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .6s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
+      display: inline-block; width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin .6s linear infinite;
+      vertical-align: middle; margin-right: 6px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-
-  <!-- Mini header -->
   <div class="mini-header">
     <div class="logo-mark">✦</div>
     <a class="logo-text" href="index.html">Aurora Store</a>
   </div>
 
-  <!-- Auth card -->
   <div class="auth-wrap">
     <div class="auth-card">
       <h1 class="auth-title">Chào mừng! 👋</h1>
       <p class="auth-subtitle">Đăng nhập để mua sắm và theo dõi đơn hàng.</p>
 
-      <!-- Tabs: Đăng nhập / Đăng ký -->
       <div class="auth-tabs">
         <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Đăng nhập</button>
-        <button class="tab-btn"        id="tabRegister" onclick="switchTab('register')">Đăng ký</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Đăng ký</button>
       </div>
 
-      <!-- Alert message -->
       <div class="alert" id="alertBox"></div>
 
-      <!-- ===== PANEL: Đăng nhập ===== -->
       <div class="auth-panel active" id="panelLogin">
         <div class="field">
           <label>Email</label>
@@ -260,75 +134,74 @@
         <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Đăng nhập</button>
       </div>
 
-      <!-- ===== PANEL: Đăng ký ===== -->
       <div class="auth-panel" id="panelRegister">
         <div class="field">
           <label>Họ và tên</label>
-          <input type="text"     id="regName"  placeholder="Nguyễn Văn A">
+          <input type="text" id="regName" placeholder="Nguyễn Văn A">
         </div>
         <div class="field">
           <label>Email</label>
-          <input type="email"    id="regEmail" placeholder="you@example.com" autocomplete="email">
+          <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="field">
           <label>Mật khẩu (tối thiểu 6 ký tự)</label>
-          <input type="password" id="regPass"  placeholder="••••••••" autocomplete="new-password">
+          <input type="password" id="regPass" placeholder="••••••••" autocomplete="new-password">
         </div>
         <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Tạo tài khoản</button>
       </div>
 
-      <!-- Divider -->
       <div class="divider">hoặc</div>
 
-      <!-- Google -->
       <button class="btn-google" onclick="handleGoogle()">
         <span class="google-icon"></span>
         Tiếp tục với Google
       </button>
 
-      <!-- Footer -->
-      <p class="auth-footer">
-        Quay lại <a href="index.html">trang chủ →</a>
-      </p>
+      <p class="auth-footer">Quay lại <a href="index.html">trang chủ →</a></p>
     </div>
   </div>
 
-<!-- ========== Firebase Config & Logic ========== -->
 <script>
-  /* ============================================================
-   ⚠️  THAY THẾ object firebaseConfig bên dưới bằng config
-       của project Firebase của bạn (lấy từ Firebase Console
-       → Project settings → Your apps → Web app → Config)
-   ============================================================ */
   const firebaseConfig = {
-    apiKey:            "AIzaSy_REPLACE_YOUR_API_KEY",
-    authDomain:        "your-project-id.firebaseapp.com",
-    projectId:         "your-project-id",
-    storageBucket:     "your-project-id.appspot.com",
-    messagingSenderId: "000000000000",
-    appId:             "1:000000000000:web:abc123def456"
+    apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+    authDomain: "aurorashop1-1246d.firebaseapp.com",
+    projectId: "aurorashop1-1246d",
+    storageBucket: "aurorashop1-1246d.firebasestorage.app",
+    messagingSenderId: "220058602608",
+    appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5",
+    measurementId: "G-6X9VXT657N"
   };
 
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
+  let _isRegistering = false;
 
-  /* ---- Redirect nếu đã login ---- */
-  auth.onAuthStateChanged(user => {
+  auth.onAuthStateChanged(async user => {
+    if (_isRegistering) return;
     if (user) {
-      // Lưu info vào localStorage để main.js đọc
-      localStorage.setItem('aurora_user', JSON.stringify({
-        uid:         user.uid,
-        displayName: user.displayName || '',
-        email:       user.email,
-        photoURL:    user.photoURL || ''
-      }));
+      const doc = await firebase.firestore().collection("users").doc(user.uid).get();
+      if (!doc.exists) {
+        await firebase.firestore().collection("users").doc(user.uid).set({
+          displayName: user.displayName || '',
+          email: user.email,
+          role: 'customer',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        const freshDoc = await firebase.firestore().collection("users").doc(user.uid).get();
+        localStorage.setItem('aurora_user', JSON.stringify({
+          uid: user.uid, displayName: user.displayName || '',
+          email: user.email, role: freshDoc.data()?.role || 'customer'
+        }));
+      } else {
+        localStorage.setItem('aurora_user', JSON.stringify({
+          uid: user.uid, displayName: user.displayName || '',
+          email: user.email, role: doc.data()?.role || 'customer'
+        }));
+      }
       window.location.href = 'index.html';
     }
   });
 
-  /* ============================================================
-     UI HELPERS
-   ============================================================ */
   function switchTab(tab) {
     document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
     document.getElementById('panelRegister').classList.toggle('active', tab === 'register');
@@ -340,12 +213,10 @@
   function showAlert(msg, type = 'error') {
     const el = document.getElementById('alertBox');
     el.textContent = msg;
-    el.className   = `alert alert-${type} show`;
+    el.className = `alert alert-${type} show`;
   }
 
-  function hideAlert() {
-    document.getElementById('alertBox').classList.remove('show');
-  }
+  function hideAlert() { document.getElementById('alertBox').classList.remove('show'); }
 
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
@@ -356,69 +227,57 @@
       : (btnId === 'btnLogin' ? 'Đăng nhập' : 'Tạo tài khoản');
   }
 
-  /* ============================================================
-     ĐĂNG NHẬP EMAIL / PASSWORD
-   ============================================================ */
   async function handleLogin() {
     const email = document.getElementById('loginEmail').value.trim();
     const pass  = document.getElementById('loginPass').value;
-
     if (!email || !pass) { showAlert('Vui lòng nhập email và mật khẩu.'); return; }
-
-    setLoading('btnLogin', true);
-    hideAlert();
+    setLoading('btnLogin', true); hideAlert();
     try {
       await auth.signInWithEmailAndPassword(email, pass);
-      // onAuthStateChanged sẽ redirect
     } catch (err) {
       setLoading('btnLogin', false);
       showAlert(_firebaseErrMsg(err.code));
     }
   }
 
-  /* ============================================================
-     ĐĂNG KÝ EMAIL / PASSWORD
-   ============================================================ */
   async function handleRegister() {
     const name  = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const pass  = document.getElementById('regPass').value;
-
     if (!name)  { showAlert('Vui lòng nhập họ tên.'); return; }
     if (!email) { showAlert('Vui lòng nhập email.'); return; }
     if (pass.length < 6) { showAlert('Mật khẩu tối thiểu 6 ký tự.'); return; }
-
-    setLoading('btnRegister', true);
-    hideAlert();
+    setLoading('btnRegister', true); hideAlert();
+    _isRegistering = true;
     try {
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await cred.user.updateProfile({ displayName: name });
+      await firebase.firestore().collection("users").doc(cred.user.uid).set({
+        displayName: name, email, role: "customer",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      localStorage.setItem('aurora_user', JSON.stringify({
+        uid: cred.user.uid, displayName: name, email, role: 'customer'
+      }));
+      _isRegistering = false;
       showAlert('🎉 Đăng ký thành công! Đang chuyển hướng...', 'success');
-      // onAuthStateChanged sẽ redirect
+      setTimeout(() => { window.location.href = 'index.html'; }, 1200);
     } catch (err) {
+      _isRegistering = false;
       setLoading('btnRegister', false);
       showAlert(_firebaseErrMsg(err.code));
     }
   }
 
-  /* ============================================================
-     ĐĂNG NHẬP GOOGLE
-   ============================================================ */
   async function handleGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       await auth.signInWithPopup(provider);
-      // onAuthStateChanged sẽ redirect
     } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') {
-        showAlert(_firebaseErrMsg(err.code));
-      }
+      if (err.code !== 'auth/popup-closed-by-user') showAlert(_firebaseErrMsg(err.code));
     }
   }
 
-  /* ============================================================
-     QUÊN MẬT KHẨU
-   ============================================================ */
   async function handleForgot(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
@@ -426,14 +285,9 @@
     try {
       await auth.sendPasswordResetEmail(email);
       showAlert(`📧 Email đặt lại mật khẩu đã gửi đến ${email}`, 'success');
-    } catch (err) {
-      showAlert(_firebaseErrMsg(err.code));
-    }
+    } catch (err) { showAlert(_firebaseErrMsg(err.code)); }
   }
 
-  /* ============================================================
-     ERROR MESSAGE MAP (tiếng Việt)
-   ============================================================ */
   function _firebaseErrMsg(code) {
     const map = {
       'auth/user-not-found':         'Không tìm thấy tài khoản với email này.',
@@ -449,14 +303,11 @@
     return map[code] || `Đã xảy ra lỗi (${code}).`;
   }
 
-  /* Enter key support */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
-    const loginPanel = document.getElementById('panelLogin');
-    if (loginPanel.classList.contains('active')) handleLogin();
+    if (document.getElementById('panelLogin').classList.contains('active')) handleLogin();
     else handleRegister();
   });
 </script>
-
 </body>
 </html>

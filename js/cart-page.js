@@ -34,7 +34,7 @@ function renderCartPage() {
                 <!-- Qty controls -->
                 <div style="display:flex;align-items:center;gap:6px;">
                     <div class="qty-box">
-                        <button onclick="uiChangeQty('${item.id}', ${item.qty - 1})">−</button>
+                        <button onclick="uiChangeQty(${item.id}, ${item.qty - 1})">−</button>
                         <span style="padding:0 10px;font-weight:800;min-width:24px;text-align:center;">${item.qty}</span>
                         <button onclick="uiChangeQty('${item.id}', ${item.qty + 1})">+</button>
                     </div>
@@ -47,7 +47,7 @@ function renderCartPage() {
 
                 <!-- Xóa -->
                 <button
-                    onclick="uiRemoveItem('${item.id}', '${item.name.replace(/'/g, "\\'")}')"
+                    onclick="uiRemoveItem(${item.id}, '${item.name.replace(/'/g, "\\'")}')"
                     title="Xóa sản phẩm"
                     style="background:none;border:none;cursor:pointer;color:#ccc;font-size:20px;
                            padding:4px 6px;border-radius:8px;transition:color .15s;flex-shrink:0;"
