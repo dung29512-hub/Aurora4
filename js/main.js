@@ -58,20 +58,13 @@ function updateAuthUI() {
         </div>
       `;
 
-      document.getElementById('btnLogout')?.addEventListener('click', (e) => {
-        e.preventDefault();
+      document.getElementById('btnLogout')?.addEventListener('click', 
         if (confirm('Bạn muốn đăng xuất?')) {
           localStorage.removeItem('aurora_user');
           if (typeof clearCart === 'function') clearCart();
 
-          // Nếu trang có load Firebase (như index.html) thì gọi signOut
-          if (window.firebase && firebase.auth) {
-            firebase.auth().signOut().finally(() => location.reload());
-          } else {
-            location.reload();
+
           }
-        }
-      });
     } catch (e) {
       console.error("Lỗi thông tin user", e);
     }

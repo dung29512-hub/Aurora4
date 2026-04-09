@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aurora Store</title>
   <link rel="stylesheet" href="css/style.css"/>
+  <!-- Load Firebase SDKs sớm hơn để main.js có thể sử dụng -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 
 <body>
@@ -231,12 +235,20 @@
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="js/cart.js"></script>
   <script src="js/main.js"></script>
 
-  <!-- ============================================================
-       FLOATING CONTACT WIDGET
-       ============================================================ -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    // Khởi tạo Firebase ngay tại trang chủ để các tính năng Auth hoạt động
+    const firebaseConfig = {
+      apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+      authDomain: "aurorashop1-1246d.firebaseapp.com",
+      projectId: "aurorashop1-1246d",
+      storageBucket: "aurorashop1-1246d.firebasestorage.app",
+      messagingSenderId: "220058602608",
+      appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+    };
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  </script>
 
   <style>
     :root {
