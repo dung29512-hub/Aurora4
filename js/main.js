@@ -32,12 +32,48 @@ async function loadLang(lang) {
   document.documentElement.lang = lang;
 }
 
+/* ── Cập nhật giao diện khi đã đăng nhập ── */
+function updateAuthUI() {
+  const container = document.getElementById('topbarAuth');
+  if (!container) return;
+
+  const userJson = localStorage.getItem('aurora_user');
+  if (userJson) {
+    try {
+      const user = JSON.parse(userJson);
+      // Thay thế link Đăng nhập bằng tên User và nút Thoát
+      container.innerHTML = `
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span style="font-size:13px; color:#fff;">Chào, <b>${user.displayName || user.email.split('@')[0]}</b></span>
+          <a href="#" id="btnLogout" class="topbar__link" style="color:#ffb6c1; font-weight:800;">[Thoát]</a>
+        </div>
+      `;
+
+      document.getElementById('btnLogout')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (confirm('Bạn muốn đăng xuất?')) {
+          localStorage.removeItem('aurora_user');
+          // Nếu trang có load Firebase (như index.html) thì gọi signOut
+          if (window.firebase && firebase.auth) {
+            firebase.auth().signOut().finally(() => location.reload());
+          } else {
+            location.reload();
+          }
+        }
+      });
+    } catch (e) { console.error("Lỗi thông tin user", e); }
+  }
+}
+
 /* ── Init duy nhất ── */
 document.addEventListener("DOMContentLoaded", () => {
   /* 1. Cập nhật badge giỏ hàng (hàm từ cart.js) */
   if (typeof updateCartBadge === "function") updateCartBadge();
 
-  /* 2. Language menu */
+  /* 2. Kiểm tra Auth */
+  updateAuthUI();
+
+  /* 3. Language menu */
   const saved    = localStorage.getItem("lang") || "vi";
   const langBtn  = document.getElementById("langBtn");
   const langMenu = document.getElementById("langMenu");
