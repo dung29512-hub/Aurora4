@@ -32,7 +32,6 @@
   </div>
   <div class="admin-nav">
     <a href="admin-dashboard.html">🏠 Dashboard</a>
-    <a href="admin-chat.html">Tin nhắn</a>
     <a href="admin-orders.html" class="active">Đơn hàng</a>
   </div>
 </div>
@@ -71,6 +70,9 @@
       }
       container.innerHTML = snap.docs.map(doc => {
         const o = doc.data();
+        // Xử lý Firestore Timestamp
+        const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('vi-VN') : 'Đang xử lý';
+
         return `
           <div class="order-card">
             <div class="order-head">
@@ -86,7 +88,7 @@
               <div>
                 <p><strong>Thanh toán:</strong> ${o.payment}</p>
                 <p><strong>Tổng tiền:</strong> ${o.total.toLocaleString()}₫</p>
-                <p><strong>Ngày đặt:</strong> ${new Date(o.createdAt).toLocaleString()}</p>
+                <p><strong>Ngày đặt:</strong> ${date}</p>
               </div>
             </div>
             <div class="items-list">

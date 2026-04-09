@@ -655,8 +655,8 @@
       e.preventDefault();
       if (!validateForm()) return;
 
-      const userJson = localStorage.getItem('aurora_user');
-      const user = userJson ? JSON.parse(userJson) : null;
+      // Lấy user trực tiếp từ Firebase Auth để đảm bảo chính xác
+      const user = firebase.auth().currentUser;
 
       const cart    = getCart();
       if (cart.length === 0) {

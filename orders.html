@@ -39,7 +39,8 @@
     });
 
     function loadMyOrders(uid) {
-      db.collection('orders').where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
+      db.collection('orders').where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot({
+        next: (snap) => {
         const container = document.getElementById('orderHistoryList');
         if (snap.empty) { container.innerHTML = '<p>Bạn chưa có đơn hàng nào.</p>'; return; }
         
@@ -60,6 +61,13 @@
             </div>
           `;
         }).join('');
+        },
+        error: (err) => {
+          console.error("Lỗi lấy đơn hàng:", err);
+          if (err.message.includes("index")) {
+            console.log("👉 Bạn cần tạo Index tại link này:", err.message.split('here: ')[1]);
+          }
+        }
       });
     }
   </script>
