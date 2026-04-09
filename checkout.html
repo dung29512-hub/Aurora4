@@ -532,6 +532,7 @@
 
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/cart.js"></script>
   <script>
@@ -652,15 +653,6 @@
     ────────────────────────────── */
     async function submitOrder(e) {
       e.preventDefault();
-
-      // Kiểm tra quyền Admin trước khi xử lý
-      const userJson = localStorage.getItem('aurora_user');
-      const user = userJson ? JSON.parse(userJson) : null;
-      if (user && user.role === 'admin') {
-        alert('Tài khoản Admin không được phép đặt hàng!');
-        return;
-      }
-
       if (!validateForm()) return;
 
       const cart    = getCart();
@@ -687,7 +679,7 @@
 
       const order = {
         id: 'AUR' + Date.now(),
-        createdAt: new Date().toISOString(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         customer: { name, phone, email, address, district, city, note },
         items: cart,
         payment,
@@ -709,7 +701,7 @@
         clearCart(); 
       } catch (err) {
         console.error(err);
-        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+        alert('Lỗi đặt hàng: ' + err.message);
         submitBtn.disabled = false;
         submitBtn.textContent = 'XÁC NHẬN ĐẶT HÀNG';
       }
