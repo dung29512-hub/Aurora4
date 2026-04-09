@@ -45,7 +45,7 @@ function updateAuthUI() {
       // Nếu là admin thì hiển thị thêm nút Quản lý đơn hàng
       let adminLink = '';
       if (user.role === 'admin') {
-        adminLink = `<a href="admin-orders.html" class="topbar__link" style="color:#ffeb3b; font-weight:800; margin-right:5px;">⚙ Quản lý</a>`;
+        adminLink = `<a href="admin-dashboard.html" class="topbar__link" style="color:#ffeb3b; font-weight:800; margin-right:5px;">⚙ Quản trị</a>`;
       } else {
         adminLink = `<a href="orders.html" class="topbar__link" style="margin-right:5px;">📦 Đơn hàng</a>`;
       }

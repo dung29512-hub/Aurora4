@@ -408,6 +408,16 @@
       display: inline-block;
       margin-right: 5px;
     }
+
+    .admin-nav {
+      display: flex; gap: 5px; padding: 10px 14px;
+      background: #fdfdfd; border-bottom: 1px solid #eee;
+    }
+    .admin-nav a {
+      text-decoration: none; font-size: 0.8rem; font-weight: 700;
+      padding: 6px 12px; border-radius: 6px; color: #666;
+    }
+    .admin-nav a.active { background: var(--pink); color: #fff; }
   </style>
 </head>
 <body>
@@ -438,6 +448,12 @@
       <button class="sidebar__logout" onclick="doLogout()">Đăng xuất</button>
     </div>
     <div class="sidebar__sub" id="adminEmailLabel"></div>
+  </div>
+
+  <div class="admin-nav">
+    <a href="admin-dashboard.html">🏠 Dashboard</a>
+    <a href="admin-chat.html" class="active">💬 Tin nhắn</a>
+    <a href="admin-orders.html">Đơn hàng</a>
   </div>
 
   <div class="sidebar__search">
