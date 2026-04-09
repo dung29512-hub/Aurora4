@@ -47,7 +47,7 @@ async function syncFirestoreProducts() {
       if (!exists) {
         // Chuẩn hóa dữ liệu Firestore (string) sang cấu trúc đa ngôn ngữ của App (object)
         const normalizedProduct = {
-          id: data.id || Date.now() + Math.random(), 
+          id: data.id || Number(doc.id.replace(/\D/g, '').slice(0, 8)), // Ưu tiên ID đã lưu
           firestoreId: doc.id,
           category: data.category,
           price: data.price,

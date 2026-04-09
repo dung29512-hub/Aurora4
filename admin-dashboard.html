@@ -197,6 +197,7 @@
       btn.disabled = true;
       
       const pData = {
+        id: Date.now(), // Tạo ID duy nhất dựa trên thời gian
         name: document.getElementById('pName').value,
         price: Number(document.getElementById('pPrice').value),
         category: document.getElementById('pCat').value,

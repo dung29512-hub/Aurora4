@@ -14,12 +14,50 @@ function stars(n){
   return full + empty;
 }
 
+/* ── Cấu hình Firebase ── */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+  authDomain: "aurorashop1-1246d.firebaseapp.com",
+  projectId: "aurorashop1-1246d",
+  storageBucket: "aurorashop1-1246d.firebasestorage.app",
+  messagingSenderId: "220058602608",
+  appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+}
+const db = firebase.firestore();
+
 let current = { variantSku: null, imgIndex: 0 };
 
-function renderProduct() {
+async function renderProduct() {
   const lang  = getLang();
   const id    = getProductId();
-  const p     = PRODUCTS.find(x => x.id === id);
+  
+  // Tìm trong file tĩnh trước
+  let p = PRODUCTS.find(x => x.id === id);
+
+  // Nếu không thấy, tìm trong Firestore
+  if (!p) {
+    try {
+      const snapshot = await db.collection('products_db').where('id', '==', id).get();
+      if (!snapshot.empty) {
+        const data = snapshot.docs[0].data();
+        p = {
+          id: data.id,
+          category: data.category,
+          price: data.price,
+          img: data.img,
+          name: { vi: data.name, ko: data.name, fr: data.name, ja: data.name },
+          desc: { vi: "Sản phẩm từ đối tác", vi: "Partner product" },
+          badge: "new"
+        };
+      }
+    } catch (err) {
+      console.error("Lỗi truy vấn sản phẩm Firestore:", err);
+    }
+  }
 
   if (!p) {
     document.getElementById("productDetail").innerHTML = `<p class="muted">Không tìm thấy sản phẩm.</p>`;

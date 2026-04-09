@@ -323,7 +323,7 @@ img{ max-width:100%; display:block; }
   background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(34,197,94,0.12));
 }
 .productCard__imgWrap.imgFallback::after{
-  content: "Thêm ảnh vào assets/img/";
+  content: "⚠️ Không tải được ảnh";
   position:absolute;
   inset:0;
   display:grid;
