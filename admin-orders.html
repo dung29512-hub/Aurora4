@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản lý đơn hàng | Aurora Admin</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f4f4f8; display: flex; height: 100vh; }
+    .sidebar { width: 300px; background: #1a1a2e; color: #fff; display: flex; flex-direction: column; }
+    .sidebar-head { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .admin-nav { display: flex; flex-direction: column; padding: 10px; gap: 5px; }
+    .admin-nav a { color: rgba(255,255,255,0.7); text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700; }
+    .admin-nav a.active { background: #ff6b9d; color: #fff; }
+    .main-content { flex: 1; overflow-y: auto; padding: 30px; }
+    .order-card { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    .order-head { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+    .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+    .status-pending { background: #fff7ed; color: #c2410c; }
+    .status-completed { background: #f0fdf4; color: #15803d; }
+    .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 0.9rem; }
+    .items-list { margin-top: 15px; background: #f9fafb; padding: 10px; border-radius: 8px; }
+    .update-btn { background: #111; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-head">
+    <div style="font-weight:900; font-size:1.2rem;">✦ Aurora Admin</div>
+  </div>
+  <div class="admin-nav">
+    <a href="admin-chat.html">Tin nhắn</a>
+    <a href="admin-orders.html" class="active">Đơn hàng</a>
+  </div>
+</div>
+
+<div class="main-content">
+  <h2>Quản lý đơn hàng</h2>
+  <div id="orderList">Đang tải đơn hàng...</div>
+</div>
+
+<script>
+  const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+    authDomain: "aurorashop1-1246d.firebaseapp.com",
+    projectId: "aurorashop1-1246d",
+    storageBucket: "aurorashop1-1246d.firebasestorage.app",
+    messagingSenderId: "220058602608",
+    appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+  };
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  auth.onAuthStateChanged(async user => {
+    if (!user) { window.location.href = 'login.html'; return; }
+    const doc = await db.collection('users').doc(user.uid).get();
+    if (doc.data()?.role !== 'admin') { window.location.href = 'index.html'; return; }
+    loadOrders();
+  });
+
+  function loadOrders() {
+    db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snap => {
+      const container = document.getElementById('orderList');
+      if (snap.empty) {
+        container.innerHTML = 'Chưa có đơn hàng nào.';
+        return;
+      }
+      container.innerHTML = snap.docs.map(doc => {
+        const o = doc.data();
+        return `
+          <div class="order-card">
+            <div class="order-head">
+              <strong>Mã đơn: #${o.id}</strong>
+              <span class="status-badge status-${o.status}">${o.status === 'pending' ? 'Chờ xử lý' : 'Hoàn thành'}</span>
+            </div>
+            <div class="order-info">
+              <div>
+                <p><strong>Khách hàng:</strong> ${o.customer.name}</p>
+                <p><strong>SĐT:</strong> ${o.customer.phone}</p>
+                <p><strong>Địa chỉ:</strong> ${o.customer.address}, ${o.customer.district}, ${o.customer.city}</p>
+              </div>
+              <div>
+                <p><strong>Thanh toán:</strong> ${o.payment}</p>
+                <p><strong>Tổng tiền:</strong> ${o.total.toLocaleString()}₫</p>
+                <p><strong>Ngày đặt:</strong> ${new Date(o.createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+            <div class="items-list">
+              ${o.items.map(i => `<div>• ${i.name} x${i.qty} - ${i.price.toLocaleString()}₫</div>`).join('')}
+            </div>
+            ${o.status === 'pending' ? `<button class="update-btn" onclick="completeOrder('${o.id}')">Hoàn thành đơn hàng</button>` : ''}
+          </div>
+        `;
+      }).join('');
+    });
+  }
+
+  async function completeOrder(id) {
+    if (confirm('Xác nhận đơn hàng này đã hoàn thành?')) {
+      await db.collection('orders').doc(id).update({ status: 'completed' });
+    }
+  }
+</script>
+</body>
+</html>

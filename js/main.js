@@ -41,9 +41,16 @@ function updateAuthUI() {
   if (userJson) {
     try {
       const user = JSON.parse(userJson);
-      // Thay thế link Đăng nhập bằng tên User và nút Thoát
+
+      // Nếu là admin thì hiển thị thêm nút Quản lý đơn hàng
+      let adminLink = '';
+      if (user.role === 'admin') {
+        adminLink = `<a href="admin-orders.html" class="topbar__link" style="color:#ffeb3b; font-weight:800; margin-right:5px;">⚙ Quản lý</a>`;
+      }
+
       container.innerHTML = `
         <div style="display:flex; align-items:center; gap:12px;">
+          ${adminLink}
           <span style="font-size:13px; color:#fff;">Chào, <b>${user.displayName || user.email.split('@')[0]}</b></span>
           <a href="#" id="btnLogout" class="topbar__link" style="color:#ffb6c1; font-weight:800;">[Thoát]</a>
         </div>

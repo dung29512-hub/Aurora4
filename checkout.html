@@ -530,6 +530,9 @@
     </div>
   </div>
 
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/cart.js"></script>
   <script>
     /* ──────────────────────────────
@@ -538,6 +541,17 @@
     function formatPrice(n) {
       return n.toLocaleString('vi-VN') + '₫';
     }
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+      authDomain: "aurorashop1-1246d.firebaseapp.com",
+      projectId: "aurorashop1-1246d",
+      storageBucket: "aurorashop1-1246d.firebasestorage.app",
+      messagingSenderId: "220058602608",
+      appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+    };
+    firebase.initializeApp(FIREBASE_CONFIG);
+    const db = firebase.firestore();
 
     /* ──────────────────────────────
        Render order summary từ cart
@@ -636,8 +650,17 @@
     /* ──────────────────────────────
        Submit order
     ────────────────────────────── */
-    function submitOrder(e) {
+    async function submitOrder(e) {
       e.preventDefault();
+
+      // Kiểm tra quyền Admin trước khi xử lý
+      const userJson = localStorage.getItem('aurora_user');
+      const user = userJson ? JSON.parse(userJson) : null;
+      if (user && user.role === 'admin') {
+        alert('Tài khoản Admin không được phép đặt hàng!');
+        return;
+      }
+
       if (!validateForm()) return;
 
       const cart    = getCart();
@@ -645,6 +668,9 @@
         alert('Giỏ hàng của bạn đang trống!');
         return;
       }
+      const submitBtn = document.getElementById('co_submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'ĐANG XỬ LÝ...';
 
       const name    = document.getElementById('co_name').value.trim();
       const phone   = document.getElementById('co_phone').value.trim();
@@ -671,16 +697,22 @@
         status: 'pending'
       };
 
-      // TODO: gửi lên API/Firebase
-      console.log('Order:', order);
+      try {
+        await db.collection('orders').doc(order.id).set(order);
+        
+        // Hiển thị success
+        document.getElementById('successMsg').textContent =
+          `Cảm ơn ${name}! Đơn hàng #${order.id} đã được ghi nhận. Chúng tôi sẽ liên hệ qua ${phone} để xác nhận.`;
+        document.getElementById('successOverlay').classList.add('show');
 
-      // Hiển thị success
-      document.getElementById('successMsg').textContent =
-        `Cảm ơn ${name}! Đơn hàng #${order.id} đã được ghi nhận. Chúng tôi sẽ liên hệ qua ${phone} để xác nhận.`;
-      document.getElementById('successOverlay').classList.add('show');
-
-      // Xóa giỏ hàng
-      clearCart(); // từ cart.js
+        // Xóa giỏ hàng
+        clearCart(); 
+      } catch (err) {
+        console.error(err);
+        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'XÁC NHẬN ĐẶT HÀNG';
+      }
     }
 
     /* ── Init ── */
