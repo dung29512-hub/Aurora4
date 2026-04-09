@@ -46,6 +46,8 @@ function updateAuthUI() {
       let adminLink = '';
       if (user.role === 'admin') {
         adminLink = `<a href="admin-orders.html" class="topbar__link" style="color:#ffeb3b; font-weight:800; margin-right:5px;">⚙ Quản lý</a>`;
+      } else {
+        adminLink = `<a href="orders.html" class="topbar__link" style="margin-right:5px;">📦 Đơn hàng</a>`;
       }
 
       container.innerHTML = `

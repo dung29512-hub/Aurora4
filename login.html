@@ -188,11 +188,19 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         const freshDoc = await firebase.firestore().collection("users").doc(user.uid).get();
+        
+        // Tải giỏ hàng từ Firestore
+        const cartDoc = await firebase.firestore().collection("carts").doc(user.uid).get();
+        if (cartDoc.exists) localStorage.setItem('aurora_store_cart', JSON.stringify(cartDoc.data().items || []));
+
         localStorage.setItem('aurora_user', JSON.stringify({
           uid: user.uid, displayName: user.displayName || '',
           email: user.email, role: freshDoc.data()?.role || 'customer'
         }));
       } else {
+        const cartDoc = await firebase.firestore().collection("carts").doc(user.uid).get();
+        if (cartDoc.exists) localStorage.setItem('aurora_store_cart', JSON.stringify(cartDoc.data().items || []));
+
         localStorage.setItem('aurora_user', JSON.stringify({
           uid: user.uid, displayName: user.displayName || '',
           email: user.email, role: doc.data()?.role || 'customer'

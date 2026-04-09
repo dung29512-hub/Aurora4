@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đơn hàng của tôi | Aurora Store</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <style>
+    .order-item-row { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; }
+    .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; }
+    .status-pending { background: #fff7ed; color: #c2410c; }
+    .status-completed { background: #f0fdf4; color: #15803d; }
+  </style>
+</head>
+<body>
+  <header class="header"><div class="container header__inner"><a class="btn btn--ghost" href="index.html">← Trang chủ</a></div></header>
+  <main class="section"><div class="container">
+    <h1>📦 Đơn hàng của tôi</h1>
+    <div id="orderHistoryList" style="margin-top:20px;">Đang tải lịch sử...</div>
+  </div></main>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+      authDomain: "aurorashop1-1246d.firebaseapp.com",
+      projectId: "aurorashop1-1246d",
+      storageBucket: "aurorashop1-1246d.firebasestorage.app",
+      messagingSenderId: "220058602608",
+      appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) { window.location.href = 'login.html'; return; }
+      loadMyOrders(user.uid);
+    });
+
+    function loadMyOrders(uid) {
+      db.collection('orders').where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
+        const container = document.getElementById('orderHistoryList');
+        if (snap.empty) { container.innerHTML = '<p>Bạn chưa có đơn hàng nào.</p>'; return; }
+        
+        container.innerHTML = snap.docs.map(doc => {
+          const o = doc.data();
+          const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('vi-VN') : 'Đang xử lý';
+          return `
+            <div class="order-item-row">
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <strong>Mã: #${o.id}</strong>
+                <span class="status-badge status-${o.status}">${o.status === 'pending' ? 'Đang xử lý' : 'Đã hoàn thành'}</span>
+              </div>
+              <div style="font-size:14px; color:#666;">Ngày đặt: ${date}</div>
+              <div style="margin:10px 0; padding:10px; background:#f9f9f9; border-radius:8px;">
+                ${o.items.map(i => `<div>• ${i.name} x${i.qty}</div>`).join('')}
+              </div>
+              <div style="text-align:right; font-weight:800; color:#ff4757;">Tổng: ${o.total.toLocaleString()}₫</div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -4,9 +4,21 @@ function getCart() {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
 
-function saveCart(cart) {
+async function saveCart(cart) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
     updateCartBadge();
+
+    // Đồng bộ lên Firestore nếu đã đăng nhập
+    const userJson = localStorage.getItem('aurora_user');
+    if (userJson && window.firebase && firebase.apps.length > 0) {
+        const user = JSON.parse(userJson);
+        try {
+            await firebase.firestore().collection('carts').doc(user.uid).set({
+                items: cart,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) { console.error("Lỗi đồng bộ giỏ hàng:", e); }
+    }
 }
 
 function addToCart(product) {

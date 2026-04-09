@@ -679,6 +679,7 @@
 
       const order = {
         id: 'AUR' + Date.now(),
+        uid: user ? user.uid : null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         customer: { name, phone, email, address, district, city, note },
         items: cart,
