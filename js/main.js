@@ -60,6 +60,8 @@ function updateAuthUI() {
         e.preventDefault();
         if (confirm('Bạn muốn đăng xuất?')) {
           localStorage.removeItem('aurora_user');
+          if (typeof clearCart === 'function') clearCart();
+
           // Nếu trang có load Firebase (như index.html) thì gọi signOut
           if (window.firebase && firebase.auth) {
             firebase.auth().signOut().finally(() => location.reload());
@@ -68,7 +70,12 @@ function updateAuthUI() {
           }
         }
       });
-    } catch (e) { console.error("Lỗi thông tin user", e); }
+    } catch (e) {
+      console.error("Lỗi thông tin user", e);
+    }
+  } else {
+    // Nếu chưa đăng nhập, xóa giỏ hàng (theo yêu cầu: giỏ hàng clear về 0 khi chưa đăng nhập)
+    if (typeof clearCart === 'function') clearCart();
   }
 }
 
