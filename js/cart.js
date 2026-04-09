@@ -11,7 +11,7 @@ function saveCart(cart) {
 
 function addToCart(product) {
     const cart = getCart();
-    const found = cart.find(item => item.id === product.id);
+    const found = cart.find(item => item.id == product.id);
 
     if (found) {
         found.qty += (product.qty || 1);
@@ -30,17 +30,34 @@ function addToCart(product) {
 
 function updateQty(id, newQty) {
     let cart = getCart();
-    const item = cart.find(item => item.id === id);
+    const item = cart.find(item => item.id == id);
     if (item) {
         item.qty = newQty;
-        if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+        if (item.qty <= 0) cart = cart.filter(i => i.id != id);
     }
     saveCart(cart);
 }
 
+/** Cập nhật số lượng dựa trên mức thay đổi (delta: +1 hoặc -1) */
+function updateCartQty(id, delta) {
+    let cart = getCart();
+    const item = cart.find(i => i.id == id);
+    if (item) {
+        item.qty += delta;
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id != id);
+        }
+        saveCart(cart);
+    }
+}
+
 function removeFromCart(id) {
-    const cart = getCart().filter(item => item.id !== id);
+    const cart = getCart().filter(item => item.id != id);
     saveCart(cart);
+}
+
+function clearCart() {
+    saveCart([]);
 }
 
 function updateCartBadge() {
