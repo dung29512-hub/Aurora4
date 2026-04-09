@@ -655,6 +655,9 @@
       e.preventDefault();
       if (!validateForm()) return;
 
+      const userJson = localStorage.getItem('aurora_user');
+      const user = userJson ? JSON.parse(userJson) : null;
+
       const cart    = getCart();
       if (cart.length === 0) {
         alert('Giỏ hàng của bạn đang trống!');

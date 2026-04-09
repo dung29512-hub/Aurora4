@@ -150,13 +150,6 @@
         <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Tạo tài khoản</button>
       </div>
 
-      <div class="divider">hoặc</div>
-
-      <button class="btn-google" onclick="handleGoogle()">
-        <span class="google-icon"></span>
-        Tiếp tục với Google
-      </button>
-
       <p class="auth-footer">Quay lại <a href="index.html">trang chủ →</a></p>
     </div>
   </div>
@@ -274,15 +267,6 @@
       _isRegistering = false;
       setLoading('btnRegister', false);
       showAlert(_firebaseErrMsg(err.code));
-    }
-  }
-
-  async function handleGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-      await auth.signInWithPopup(provider);
-    } catch (err) {
-      if (err.code !== 'auth/popup-closed-by-user') showAlert(_firebaseErrMsg(err.code));
     }
   }
 

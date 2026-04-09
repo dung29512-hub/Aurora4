@@ -18,6 +18,55 @@ const CATEGORIES = [
 
 let state = { cat: "all", q: "", sort: "new" };
 
+/* ── Cấu hình Firebase ── */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+  authDomain: "aurorashop1-1246d.firebaseapp.com",
+  projectId: "aurorashop1-1246d",
+  storageBucket: "aurorashop1-1246d.firebasestorage.app",
+  messagingSenderId: "220058602608",
+  appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(FIREBASE_CONFIG);
+}
+const db = firebase.firestore();
+
+/** 
+ * Lấy sản phẩm từ Firestore và gộp vào danh sách PRODUCTS hiện có
+ */
+async function syncFirestoreProducts() {
+  try {
+    const snapshot = await db.collection('products_db').get();
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      
+      // Kiểm tra xem sản phẩm đã tồn tại trong mảng PRODUCTS chưa (tránh trùng lặp)
+      const exists = PRODUCTS.find(p => p.firestoreId === doc.id);
+      if (!exists) {
+        // Chuẩn hóa dữ liệu Firestore (string) sang cấu trúc đa ngôn ngữ của App (object)
+        const normalizedProduct = {
+          id: data.id || Date.now() + Math.random(), 
+          firestoreId: doc.id,
+          category: data.category,
+          price: data.price,
+          img: data.img,
+          // Vì Admin chỉ nhập 1 tên, ta gán cho tất cả các ngôn ngữ
+          name: { vi: data.name, ko: data.name, fr: data.name, ja: data.name },
+          desc: { vi: "Sản phẩm mới nhập", ko: "New product", fr: "Nouveau", ja: "新製品" },
+          badge: "new"
+        };
+        PRODUCTS.push(normalizedProduct);
+      }
+    });
+    // Sau khi gộp xong thì render lại shop
+    renderShop();
+  } catch (err) {
+    console.error("Lỗi lấy dữ liệu từ Firestore:", err);
+  }
+}
+
 function renderChips() {
   const lang = getLang();
   const wrap = document.getElementById("catChips");
@@ -164,8 +213,9 @@ function bindEvents() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   renderChips();
   bindEvents();
   renderShop();
+  await syncFirestoreProducts(); // Gọi đồng bộ dữ liệu sau khi load trang
 });
