@@ -642,8 +642,16 @@ function startListeners(){
 
   // Categories
   db.collection('categories').orderBy('createdAt','asc').onSnapshot(s=>{
-    CATS=s.docs.map(d=>({_id:d.id,...d.data()}));
+    const fbCats = s.docs.map(d=>({_id:d.id,...d.data()}));
+    
+    // Gộp dữ liệu: Ưu tiên dữ liệu từ Firebase, nếu không có thì lấy từ DEFAULT_CATS
+    const mergedMap = new Map();
+    DEFAULT_CATS.forEach(c => mergedMap.set(c.name, { _id: c.name, ...c }));
+    fbCats.forEach(c => mergedMap.set(c.name, c));
+    
+    CATS = Array.from(mergedMap.values());
     syncCatSelects(); renderCatTable();
+    syncCatFilter(); renderProds();
   }, err=>console.warn('categories listener:',err));
 }
 
