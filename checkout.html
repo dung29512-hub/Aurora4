@@ -431,10 +431,12 @@
                 <div class="field">
                   <label for="co_district">Quận / Huyện<span class="required">*</span></label>
                   <input type="text" id="co_district" name="district" placeholder="Ví dụ: Quận 1">
+                  <div class="field__hint">Vui lòng nhập Quận / Huyện.</div>
                 </div>
                 <div class="field">
                   <label for="co_city">Tỉnh / Thành phố<span class="required">*</span></label>
                   <input type="text" id="co_city" name="city" placeholder="Ví dụ: TP. Hồ Chí Minh">
+                  <div class="field__hint">Vui lòng nhập Tỉnh / Thành phố.</div>
                 </div>
                 <div class="field field--full">
                   <label for="co_note">Ghi chú cho shipper (tùy chọn)</label>
@@ -639,6 +641,8 @@
       const name    = document.getElementById('co_name').value.trim();
       const phone   = document.getElementById('co_phone').value.trim();
       const address = document.getElementById('co_address').value.trim();
+      const district = document.getElementById('co_district').value.trim();
+      const city     = document.getElementById('co_city').value.trim();
 
       const validPhone = /^0[35789]\d{8}$/.test(phone);
 
@@ -646,6 +650,8 @@
       ok = validateField('co_name',    name.length >= 2)    && ok;
       ok = validateField('co_phone',   validPhone)          && ok;
       ok = validateField('co_address', address.length >= 5) && ok;
+      ok = validateField('co_district', district.length > 0) && ok;
+      ok = validateField('co_city',     city.length > 0)     && ok;
       return ok;
     }
 
