@@ -58,13 +58,13 @@ function updateAuthUI() {
         </div>
       `;
 
-      document.getElementById('btnLogout')?.addEventListener('click', 
+      document.getElementById('btnLogout')?.addEventListener('click', () => {
         if (confirm('Bạn muốn đăng xuất?')) {
           localStorage.removeItem('aurora_user');
           if (typeof clearCart === 'function') clearCart();
-
-
-          }
+          window.location.href = 'login.html';
+        }
+      });
     } catch (e) {
       console.error("Lỗi thông tin user", e);
     }
