@@ -20,25 +20,20 @@
       position: relative;
       overflow-x: hidden;
     }
-
-    /* Decorative blobs */
     body::before {
       content: '';
-      position: fixed;
-      top: -200px; left: -200px;
+      position: fixed; top: -200px; left: -200px;
       width: 600px; height: 600px;
       background: radial-gradient(circle, rgba(255,107,157,.18) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
     body::after {
       content: '';
-      position: fixed;
-      bottom: -150px; right: -150px;
+      position: fixed; bottom: -150px; right: -150px;
       width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(179,102,255,.14) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
-
     .mini-header {
       padding: 18px 28px;
       display: flex; align-items: center; gap: 10px;
@@ -53,37 +48,71 @@
     }
     .logo-text {
       font-weight: 900; font-size: 18px;
+      /* ✅ FIX: webkit prefix for compatibility */
       background: linear-gradient(135deg, #ff6b9d, #c850f5);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       text-decoration: none;
     }
 
     .auth-wrap {
       flex: 1; display: flex; align-items: center; justify-content: center;
-      padding: 20px 16px 60px;
+      padding: 12px 16px 60px;
       position: relative; z-index: 1;
     }
-
     .auth-card {
       background: rgba(255,255,255,.96);
       border: 1px solid rgba(255,107,157,.15);
-      border-radius: 28px;
-      padding: 40px 36px;
+      border-radius: 28px; padding: 36px 32px;
       width: 100%; max-width: 420px;
       box-shadow: 0 24px 64px rgba(255,107,157,.12), 0 2px 8px rgba(0,0,0,.06);
       animation: slideUp .4s cubic-bezier(.16,1,.3,1) both;
     }
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(24px); }
+      from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .auth-icon { font-size: 2.4rem; margin-bottom: 12px; }
-    .auth-title { font-size: 26px; font-weight: 900; margin-bottom: 6px; color: #111; }
-    .auth-subtitle { color: #888; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+    /* ── Already-logged-in banner ── */
+    .already-bar {
+      background: linear-gradient(135deg, rgba(255,107,157,.1), rgba(200,80,245,.08));
+      border: 1px solid rgba(255,107,157,.25);
+      border-radius: 14px; padding: 13px 16px; margin-bottom: 20px;
+      display: none; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .already-bar.show { display: flex; }
+    .already-av {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, #ff6b9d, #c850f5);
+      display: grid; place-items: center;
+      font-size: 15px; font-weight: 900; color: #fff; flex-shrink: 0;
+    }
+    .already-info { flex: 1; min-width: 0; }
+    .already-name { font-size: 13px; font-weight: 800; color: #333; }
+    .already-sub  { font-size: 11px; color: #999; }
+    .already-actions { display: flex; gap: 6px; }
+    .btn-continue {
+      padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, #ff6b9d, #c850f5);
+      color: #fff; font-size: 12px; font-weight: 800; font-family: inherit;
+      transition: filter .15s;
+    }
+    .btn-continue:hover { filter: brightness(1.08); }
+    .btn-switch {
+      padding: 6px 12px; border-radius: 8px;
+      border: 1px solid #eee; background: #fff;
+      color: #888; font-size: 12px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .btn-switch:hover { border-color: #ddd; color: #555; }
+
+    .auth-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .auth-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; color: #111; }
+    .auth-subtitle { color: #888; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
 
     .auth-tabs {
-      display: flex; gap: 6px; margin-bottom: 24px;
+      display: flex; gap: 6px; margin-bottom: 22px;
       background: #f4f4f8; padding: 4px; border-radius: 16px;
     }
     .tab-btn {
@@ -96,12 +125,8 @@
       box-shadow: 0 2px 12px rgba(0,0,0,.10);
       color: #ff6b9d;
     }
-
-    .field { margin-bottom: 16px; }
-    .field label {
-      display: block; font-weight: 700; font-size: 13px;
-      margin-bottom: 7px; color: #444;
-    }
+    .field { margin-bottom: 15px; }
+    .field label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 6px; color: #444; }
     .field input {
       width: 100%; height: 48px; padding: 0 16px;
       border: 1.5px solid #eee; border-radius: 14px;
@@ -115,11 +140,8 @@
       background: #fff;
     }
     .field input::placeholder { color: #ccc; font-weight: 400; }
-
-    .forgot { text-align: right; margin-top: -8px; margin-bottom: 20px; }
-    .forgot a {
-      font-size: 13px; color: #c850f5; font-weight: 700; text-decoration: none;
-    }
+    .forgot { text-align: right; margin-top: -8px; margin-bottom: 18px; }
+    .forgot a { font-size: 13px; color: #c850f5; font-weight: 700; text-decoration: none; }
     .forgot a:hover { text-decoration: underline; }
 
     .btn-primary {
@@ -127,7 +149,7 @@
       background: linear-gradient(135deg, #ff6b9d 0%, #c850f5 100%);
       color: #fff; border: none; border-radius: 14px;
       font-weight: 900; font-size: 15px; cursor: pointer; font-family: inherit;
-      box-shadow: 0 8px 24px rgba(255,107,157,.30);
+      box-shadow: 0 8px 24px rgba(255,107,157,.28);
       transition: filter .15s, transform .15s;
     }
     .btn-primary:hover  { filter: brightness(1.06); transform: translateY(-1px); }
@@ -136,21 +158,20 @@
 
     .alert {
       padding: 12px 16px; border-radius: 12px; font-size: 13px;
-      font-weight: 700; margin-bottom: 18px; display: none;
+      font-weight: 700; margin-bottom: 16px; display: none;
       animation: fadeIn .2s ease;
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .alert.show { display: block; }
     .alert-error   { background: #fff1f3; color: #e11d48; border: 1.5px solid #fecdd3; }
     .alert-success { background: #f0fdf4; color: #15803d; border: 1.5px solid #bbf7d0; }
+    .alert-info    { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; }
 
     .auth-panel { display: none; }
     .auth-panel.active { display: block; }
-
-    .auth-footer { text-align: center; margin-top: 24px; font-size: 14px; color: #888; }
+    .auth-footer { text-align: center; margin-top: 22px; font-size: 14px; color: #888; }
     .auth-footer a { color: #ff6b9d; font-weight: 800; text-decoration: none; }
     .auth-footer a:hover { text-decoration: underline; }
-
     .spinner {
       display: inline-block; width: 15px; height: 15px;
       border: 2px solid rgba(255,255,255,.35); border-top-color: #fff;
@@ -158,18 +179,9 @@
       vertical-align: middle; margin-right: 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 10px 0 20px; color: #ccc; font-size: 12px; font-weight: 600;
-    }
-    .divider::before, .divider::after {
-      content: ''; flex: 1; height: 1px; background: #eee;
-    }
   </style>
 </head>
 <body>
-
   <div class="mini-header">
     <div class="logo-mark">✦</div>
     <a class="logo-text" href="index.html">Aurora Store</a>
@@ -177,9 +189,23 @@
 
   <div class="auth-wrap">
     <div class="auth-card">
+
+      <!-- ── Already logged in banner ── -->
+      <div class="already-bar" id="alreadyBar">
+        <div class="already-av" id="alreadyAv">?</div>
+        <div class="already-info">
+          <div class="already-name" id="alreadyName">Đang tải...</div>
+          <div class="already-sub">Bạn đang đăng nhập với tài khoản này</div>
+        </div>
+        <div class="already-actions">
+          <button class="btn-continue" onclick="continueSession()">Tiếp tục →</button>
+          <button class="btn-switch" onclick="switchAccount()">Đổi TK</button>
+        </div>
+      </div>
+
       <div class="auth-icon">👋</div>
       <h1 class="auth-title">Chào mừng trở lại!</h1>
-      <p class="auth-subtitle">Đăng nhập để mua sắm và theo dõi đơn hàng của bạn.</p>
+      <p class="auth-subtitle">Đăng nhập để mua sắm và theo dõi đơn hàng.</p>
 
       <div class="auth-tabs">
         <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Đăng nhập</button>
@@ -198,9 +224,7 @@
           <label>Mật khẩu</label>
           <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
         </div>
-        <div class="forgot">
-          <a href="#" onclick="handleForgot(event)">Quên mật khẩu?</a>
-        </div>
+        <div class="forgot"><a href="#" onclick="handleForgot(event)">Quên mật khẩu?</a></div>
         <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Đăng nhập</button>
       </div>
 
@@ -215,15 +239,13 @@
           <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email">
         </div>
         <div class="field">
-          <label>Mật khẩu <span style="color:#ccc;font-weight:500">(tối thiểu 6 ký tự)</span></label>
+          <label>Mật khẩu <span style="color:#ccc;font-weight:400">(tối thiểu 6 ký tự)</span></label>
           <input type="password" id="regPass" placeholder="••••••••" autocomplete="new-password">
         </div>
         <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Tạo tài khoản</button>
       </div>
 
-      <p class="auth-footer">
-        Quay lại <a href="index.html">trang chủ →</a>
-      </p>
+      <p class="auth-footer">Quay lại <a href="index.html">trang chủ →</a></p>
     </div>
   </div>
 
@@ -236,56 +258,97 @@
     messagingSenderId: "220058602608",
     appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
   };
-
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db   = firebase.firestore();
 
-  // Cờ để tránh redirect khi đang đăng ký
+  // ✅ KEY FLAGS
+  // _manualLogin = true  → user bấm nút login/register → cho phép redirect
+  // _manualLogin = false → page load với session cũ → CHỈ hiện banner, không redirect
+  let _manualLogin   = false;
   let _isRegistering = false;
-  // Cờ để listener chỉ chạy 1 lần khi load trang
-  let _initialCheckDone = false;
+  let _currentUser   = null; // lưu user hiện tại từ saved session
 
+  const returnUrl = new URLSearchParams(location.search).get('returnUrl') || null;
+
+  /* ── onAuthStateChanged ──────────────────────────────────
+     CHỈ redirect khi _manualLogin = true (user bấm nút).
+     Nếu có session cũ → hiện banner "đang đăng nhập với X".
+  ─────────────────────────────────────────────────────── */
   auth.onAuthStateChanged(async user => {
-    // Bỏ qua khi đang đăng ký (tránh redirect giữa chừng)
     if (_isRegistering) return;
 
     if (user) {
-      // Lần đầu load trang: nếu đã đăng nhập → redirect luôn
-      // Các lần sau (sau khi bấm login): redirect sau khi lưu localStorage
-      try {
-        const snap = await db.collection('users').doc(user.uid).get();
-        let role = snap.data()?.role || 'customer';
+      _currentUser = user;
 
-        // Đồng bộ giỏ hàng
-        const cartSnap = await db.collection('carts').doc(user.uid).get();
-        if (cartSnap.exists) {
-          localStorage.setItem('aurora_store_cart', JSON.stringify(cartSnap.data().items || []));
-        }
-
-        // Lưu thông tin user
-        localStorage.setItem('aurora_user', JSON.stringify({
-          uid: user.uid,
-          displayName: user.displayName || snap.data()?.displayName || '',
-          email: user.email,
-          role
-        }));
-
-        // ✅ Redirect theo role
-        const returnUrl = new URLSearchParams(location.search).get('returnUrl');
-        if (role === 'admin') {
-          window.location.href = returnUrl || 'admin-dashboard.html';
-        } else {
-          window.location.href = returnUrl || 'index.html';
-        }
-      } catch(err) {
-        console.error('Auth check error:', err);
-        // Nếu lỗi Firestore, vẫn redirect về trang chủ
-        window.location.href = 'index.html';
+      if (!_manualLogin) {
+        // ── Session cũ → chỉ hiện banner, KHÔNG redirect ──
+        showAlreadyBar(user);
+        return;
       }
+
+      // ── Manual login/register → redirect ──
+      await doRedirect(user);
     }
-    // Nếu user == null: người dùng chưa đăng nhập, giữ nguyên trang login
+    // user === null → form hiển thị bình thường (không làm gì)
   });
+
+  /* Hiện banner tài khoản đã lưu */
+  function showAlreadyBar(user) {
+    const bar   = document.getElementById('alreadyBar');
+    const av    = document.getElementById('alreadyAv');
+    const name  = document.getElementById('alreadyName');
+    const label = user.displayName || user.email || 'Tài khoản';
+    av.textContent   = label[0].toUpperCase();
+    name.textContent = label;
+    bar.classList.add('show');
+  }
+
+  /* Tiếp tục với session hiện tại */
+  async function continueSession() {
+    if (!_currentUser) return;
+    _manualLogin = true;
+    await doRedirect(_currentUser);
+  }
+
+  /* Đổi tài khoản: đăng xuất rồi cho nhập mới */
+  async function switchAccount() {
+    await auth.signOut();
+    _currentUser = null;
+    document.getElementById('alreadyBar').classList.remove('show');
+    showAlert('Đã đăng xuất. Vui lòng đăng nhập tài khoản mới.', 'info');
+  }
+
+  /* Redirect theo role sau khi xác nhận đăng nhập */
+  async function doRedirect(user) {
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      const role = snap.data()?.role || 'customer';
+
+      // Đồng bộ giỏ hàng
+      const cartSnap = await db.collection('carts').doc(user.uid).get();
+      if (cartSnap.exists) {
+        localStorage.setItem('aurora_store_cart', JSON.stringify(cartSnap.data().items || []));
+      }
+
+      // Lưu user info
+      localStorage.setItem('aurora_user', JSON.stringify({
+        uid: user.uid,
+        displayName: user.displayName || snap.data()?.displayName || '',
+        email: user.email,
+        role
+      }));
+
+      if (role === 'admin') {
+        window.location.href = returnUrl || 'admin-dashboard.html';
+      } else {
+        window.location.href = returnUrl || 'index.html';
+      }
+    } catch(err) {
+      console.error('doRedirect error:', err);
+      window.location.href = 'index.html';
+    }
+  }
 
   /* ── Tab switching ── */
   function switchTab(tab) {
@@ -296,25 +359,19 @@
     hideAlert();
   }
 
-  /* ── Alert helpers ── */
   function showAlert(msg, type = 'error') {
     const el = document.getElementById('alertBox');
     el.textContent = msg;
     el.className = `alert alert-${type} show`;
   }
-  function hideAlert() {
-    document.getElementById('alertBox').classList.remove('show');
-  }
+  function hideAlert() { document.getElementById('alertBox').classList.remove('show'); }
 
-  /* ── Loading state ── */
   function setLoading(btnId, loading) {
     const btn = document.getElementById(btnId);
     if (!btn) return;
     btn.disabled = loading;
     const labels = { btnLogin: 'Đăng nhập', btnRegister: 'Tạo tài khoản' };
-    btn.innerHTML = loading
-      ? `<span class="spinner"></span> Đang xử lý...`
-      : labels[btnId];
+    btn.innerHTML = loading ? `<span class="spinner"></span> Đang xử lý...` : labels[btnId];
   }
 
   /* ── Login ── */
@@ -322,14 +379,18 @@
     const email = document.getElementById('loginEmail').value.trim();
     const pass  = document.getElementById('loginPass').value;
     if (!email || !pass) { showAlert('Vui lòng nhập email và mật khẩu.'); return; }
+
+    _manualLogin = true; // ← cho phép redirect sau khi onAuthStateChanged kích hoạt
     setLoading('btnLogin', true);
     hideAlert();
+
     try {
       await auth.signInWithEmailAndPassword(email, pass);
-      // onAuthStateChanged sẽ xử lý redirect tiếp theo
+      // onAuthStateChanged sẽ gọi doRedirect()
     } catch (err) {
+      _manualLogin = false; // reset nếu thất bại
       setLoading('btnLogin', false);
-      showAlert(_firebaseErrMsg(err.code));
+      showAlert(firebaseErr(err.code));
     }
   }
 
@@ -338,8 +399,8 @@
     const name  = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const pass  = document.getElementById('regPass').value;
-    if (!name)        { showAlert('Vui lòng nhập họ tên.'); return; }
-    if (!email)       { showAlert('Vui lòng nhập email.'); return; }
+    if (!name)           { showAlert('Vui lòng nhập họ tên.'); return; }
+    if (!email)          { showAlert('Vui lòng nhập email.'); return; }
     if (pass.length < 6) { showAlert('Mật khẩu tối thiểu 6 ký tự.'); return; }
 
     setLoading('btnRegister', true);
@@ -350,9 +411,7 @@
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await cred.user.updateProfile({ displayName: name });
       await db.collection('users').doc(cred.user.uid).set({
-        displayName: name,
-        email,
-        role: 'customer',
+        displayName: name, email, role: 'customer',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       localStorage.setItem('aurora_user', JSON.stringify({
@@ -360,11 +419,11 @@
       }));
       _isRegistering = false;
       showAlert('🎉 Đăng ký thành công! Đang chuyển hướng...', 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+      setTimeout(() => { window.location.href = returnUrl || 'index.html'; }, 1200);
     } catch (err) {
       _isRegistering = false;
       setLoading('btnRegister', false);
-      showAlert(_firebaseErrMsg(err.code));
+      showAlert(firebaseErr(err.code));
     }
   }
 
@@ -372,15 +431,14 @@
   async function handleForgot(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
-    if (!email) { showAlert('Nhập email vào ô trên trước, rồi nhấn "Quên mật khẩu?".'); return; }
+    if (!email) { showAlert('Nhập email vào ô trên, rồi nhấn "Quên mật khẩu?".'); return; }
     try {
       await auth.sendPasswordResetEmail(email);
       showAlert(`📧 Email đặt lại mật khẩu đã gửi đến ${email}`, 'success');
-    } catch (err) { showAlert(_firebaseErrMsg(err.code)); }
+    } catch (err) { showAlert(firebaseErr(err.code)); }
   }
 
-  /* ── Firebase error messages ── */
-  function _firebaseErrMsg(code) {
+  function firebaseErr(code) {
     const map = {
       'auth/user-not-found':         'Không tìm thấy tài khoản với email này.',
       'auth/wrong-password':         'Mật khẩu không đúng.',
@@ -389,14 +447,14 @@
       'auth/weak-password':          'Mật khẩu quá yếu (tối thiểu 6 ký tự).',
       'auth/invalid-credential':     'Email hoặc mật khẩu không đúng.',
       'auth/too-many-requests':      'Quá nhiều lần thử. Vui lòng thử lại sau.',
-      'auth/network-request-failed': 'Lỗi kết nối mạng. Kiểm tra internet.',
-      'auth/popup-blocked':          'Popup bị chặn. Vui lòng cho phép popup.',
-      'auth/unauthorized-domain':    `Tên miền "${window.location.hostname}" chưa được cấp quyền trong Firebase Console.`,
+      'auth/network-request-failed': 'Lỗi kết nối mạng.',
+      'auth/popup-blocked':          'Popup bị chặn.',
+      'auth/unauthorized-domain':    `Tên miền "${location.hostname}" chưa được cấp quyền trong Firebase Console.`,
     };
     return map[code] || `Đã xảy ra lỗi (${code}).`;
   }
 
-  /* ── Enter key support ── */
+  /* ── Enter key ── */
   document.addEventListener('keydown', e => {
     if (e.key !== 'Enter') return;
     if (document.getElementById('panelLogin').classList.contains('active')) handleLogin();

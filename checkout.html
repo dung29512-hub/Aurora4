@@ -405,7 +405,7 @@
                 </div>
                 <div class="field">
                   <label for="co_phone">Số điện thoại <span class="required">*</span></label>
-                  <input type="tel" id="co_phone" name="phone" placeholder="09xxxxxxxx" inputmode="tel" autocomplete="tel">
+                  <input type="tel" id="co_phone" name="phone" placeholder="09xxxxxxxx" inputmode="tel" autocomplete="tel" maxlength="10">
                   <div class="field__hint">Vui lòng nhập số điện thoại hợp lệ.</div>
                 </div>
                 <div class="field field--full">
@@ -615,6 +615,7 @@
 
     // Cập nhật nội dung CK khi gõ SĐT
     document.getElementById('co_phone').addEventListener('input', function () {
+      this.value = this.value.replace(/\D/g, ''); // Chỉ cho phép nhập số
       const bankContentEl = document.getElementById('bankContent');
       if (bankContentEl) {
         bankContentEl.textContent = this.value.trim() || '[Số điện thoại của bạn]';
@@ -639,7 +640,7 @@
       const phone   = document.getElementById('co_phone').value.trim();
       const address = document.getElementById('co_address').value.trim();
 
-      const validPhone = /^(0[3|5|7|8|9])+([0-9]{8})$/.test(phone);
+      const validPhone = /^0[35789]\d{8}$/.test(phone);
 
       let ok = true;
       ok = validateField('co_name',    name.length >= 2)    && ok;
@@ -653,6 +654,14 @@
     ────────────────────────────── */
     async function submitOrder(e) {
       e.preventDefault();
+
+      // Chặn admin đặt hàng (bảo mật phía client)
+      const userJson = localStorage.getItem('aurora_user');
+      if (userJson && JSON.parse(userJson).role === 'admin') {
+        alert('Tài khoản quản trị viên không được phép đặt hàng. Vui lòng sử dụng tài khoản khách hàng.');
+        return;
+      }
+
       if (!validateForm()) return;
 
       // Lấy user trực tiếp từ Firebase Auth để đảm bảo chính xác
@@ -711,8 +720,23 @@
       }
     }
 
+    function checkAdminRestriction() {
+      const userJson = localStorage.getItem('aurora_user');
+      if (userJson && JSON.parse(userJson).role === 'admin') {
+        const submitBtn = document.getElementById('co_submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.style.background = '#ccc';
+        submitBtn.innerHTML = '<i class="fas fa-ban"></i> ADMIN KHÔNG THỂ ĐẶT HÀNG';
+        
+        const warningEl = document.getElementById('cartWarning');
+        warningEl.innerHTML = '⚠️ Tài khoản Admin không được phép đặt hàng. Vui lòng đăng nhập tài khoản khách hàng để mua sắm.';
+        warningEl.classList.add('show');
+      }
+    }
+
     /* ── Init ── */
     renderOrderSummary();
+    checkAdminRestriction();
   </script>
 </body>
 </html>

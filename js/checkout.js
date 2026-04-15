@@ -26,9 +26,9 @@ function submitOrder(event) {
     return;
   }
 
-  // demo validate SĐT (chỉ số, 9-11 ký tự)
-  if (!/^\d{9,11}$/.test(phone)) {
-    alert("SĐT không hợp lệ (demo: 9-11 chữ số).");
+  // validate SĐT (chỉ số, đúng 10 ký tự, bắt đầu bằng đầu số hợp lệ tại VN)
+  if (!/^0[35789]\d{8}$/.test(phone)) {
+    alert("Số điện thoại không hợp lệ (Yêu cầu đúng 10 chữ số và bắt đầu bằng đầu số hợp lệ).");
     return;
   }
 

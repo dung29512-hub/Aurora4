@@ -440,6 +440,17 @@
 
     updateSummary(cart);
     updateCartBadge(); // từ cart.js hoặc main.js
+
+    // Chặn admin tiến tới thanh toán
+    const userJson = localStorage.getItem('aurora_user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      if (user.role === 'admin') {
+        btnCheckout.style.pointerEvents = 'none';
+        btnCheckout.style.opacity = '.5';
+        btnCheckout.textContent = 'Admin không thể đặt hàng';
+      }
+    }
   }
 
   function updateSummary(cart) {

@@ -2,24 +2,132 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đơn hàng của tôi | Aurora Store</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
-    .order-item-row { background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 15px; border: 1px solid #eee; }
-    .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 800; }
-    .status-pending { background: #fff7ed; color: #c2410c; }
-    .status-completed { background: #f0fdf4; color: #15803d; }
+    body { background: #f7f7fb; }
+    .order-wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 60px; }
+    .page-title { font-size: 22px; font-weight: 900; margin-bottom: 20px; }
+    .page-title span { color: #ff6b9d; }
+
+    .order-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #eee;
+      box-shadow: 0 2px 12px rgba(0,0,0,.05);
+      transition: box-shadow .18s;
+    }
+    .order-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.09); }
+
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .order-id { font-weight: 900; font-size: 15px; font-family: monospace; color: #333; }
+    .order-date { font-size: 13px; color: #999; margin-top: 2px; }
+
+    .status-badge {
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 800; text-transform: uppercase;
+    }
+    .status-pending   { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+    .status-completed { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+    .order-items {
+      margin: 12px 0;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 10px;
+      font-size: 13px;
+    }
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .order-item-row:last-child { border-bottom: none; }
+    .item-name { color: #444; }
+    .item-price { font-weight: 700; color: #333; }
+
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .order-payment { font-size: 12px; color: #999; }
+    .order-total { font-size: 17px; font-weight: 900; color: #ff6b9d; }
+
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: #aaa;
+    }
+    .empty-state .ei { font-size: 48px; margin-bottom: 14px; }
+    .empty-state p { font-size: 15px; margin-bottom: 20px; }
+    .empty-state a {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #ff6b9d, #c850f5);
+      color: #fff; border-radius: 12px; text-decoration: none;
+      font-weight: 800; font-size: 14px;
+    }
+
+    .loading-state { text-align: center; padding: 60px 20px; color: #bbb; }
+    .spinner {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 3px solid #eee; border-top-color: #ff6b9d;
+      animation: spin .7s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      background: #fef2f2; color: #dc2626;
+      border: 1px solid #fecaca; border-radius: 12px;
+      padding: 16px; font-size: 14px; margin-top: 20px;
+    }
+
+    /* Header override */
+    .header { background: #fff; border-bottom: 1px solid #eee; }
+    .header__inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    .header-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #111; font-weight: 900; font-size: 17px; }
+    .header-brand-mark { color: #ff6b9d; }
   </style>
 </head>
 <body>
-  <header class="header"><div class="container header__inner"><a class="btn btn--ghost" href="index.html">← Trang chủ</a></div></header>
-  <main class="section"><div class="container">
-    <h1>📦 Lịch sử đặt hàng</h1>
-    <div id="orderHistoryList" style="margin-top:20px;">Đang tải lịch sử...</div>
-  </div></main>
+  <header class="header">
+    <div class="container header__inner">
+      <a class="header-brand" href="index.html">
+        <span class="header-brand-mark">✦</span> Aurora Store
+      </a>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a class="btn btn--ghost" href="shop.html">🛍️ Tiếp tục mua</a>
+        <a class="btn btn--ghost" href="index.html">← Trang chủ</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="order-wrap">
+    <div class="page-title">📦 Lịch sử <span>đặt hàng</span></div>
+    <div id="orderHistoryList">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Đang tải đơn hàng...</p>
+      </div>
+    </div>
+  </div>
 
   <script>
     const firebaseConfig = {
@@ -34,40 +142,121 @@
     const db = firebase.firestore();
 
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) { window.location.href = 'login.html'; return; }
+      if (!user) { window.location.href = 'login.html?returnUrl=orders.html'; return; }
       loadMyOrders(user.uid);
     });
 
     function loadMyOrders(uid) {
-      db.collection('orders').where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot({
-        next: (snap) => {
-        const container = document.getElementById('orderHistoryList');
-        if (snap.empty) { container.innerHTML = '<p>Bạn chưa có đơn hàng nào.</p>'; return; }
-        
-        container.innerHTML = snap.docs.map(doc => {
-          const o = doc.data();
-          const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('vi-VN') : 'Đang xử lý';
-          return `
-            <div class="order-item-row">
-              <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <strong>Mã: #${o.id}</strong>
-                <span class="status-badge status-${o.status}">${o.status === 'pending' ? 'Đang xử lý' : 'Đã hoàn thành'}</span>
-              </div>
-              <div style="font-size:14px; color:#666;">Ngày đặt: ${date}</div>
-              <div style="margin:10px 0; padding:10px; background:#f9f9f9; border-radius:8px;">
-                ${o.items.map(i => `<div>• ${i.name} x${i.qty}</div>`).join('')}
-              </div>
-              <div style="text-align:right; font-weight:800; color:#ff4757;">Tổng: ${o.total.toLocaleString()}₫</div>
-            </div>
-          `;
-        }).join('');
-        },
-        error: (err) => {
-          console.error("Lỗi lấy đơn hàng:", err);
-          if (err.message.includes("index")) {
-            console.log("👉 Bạn cần tạo Index tại link này:", err.message.split('here: ')[1]);
+      const container = document.getElementById('orderHistoryList');
+
+      // ✅ FIX: Chỉ dùng where(), KHÔNG dùng orderBy() để tránh lỗi composite index.
+      // Sắp xếp theo createdAt ở phía client thay thế.
+      db.collection('orders')
+        .where('uid', '==', uid)
+        .onSnapshot({
+          next: (snap) => {
+            if (snap.empty) {
+              container.innerHTML = `
+                <div class="empty-state">
+                  <div class="ei">🛍️</div>
+                  <p>Bạn chưa có đơn hàng nào.</p>
+                  <a href="shop.html">Khám phá Shop →</a>
+                </div>`;
+              return;
+            }
+
+            // Sắp xếp mới nhất trước ở client
+            const docs = snap.docs
+              .map(d => d.data())
+              .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            container.innerHTML = docs.map(o => {
+              const date = o.createdAt?.toDate
+                ? o.createdAt.toDate().toLocaleString('vi-VN')
+                : 'Đang xử lý';
+
+              const items = (o.items || []).map(i => `
+                <div class="order-item-row">
+                  <span class="item-name">• ${i.name} <span style="color:#bbb">×${i.qty}</span></span>
+                  <span class="item-price">${(i.price * i.qty).toLocaleString('vi-VN')}₫</span>
+                </div>`).join('');
+
+              return `
+                <div class="order-card">
+                  <div class="order-head">
+                    <div>
+                      <div class="order-id">#${String(o.id).slice(-8).toUpperCase()}</div>
+                      <div class="order-date">🕒 ${date}</div>
+                    </div>
+                    <span class="status-badge status-${o.status}">
+                      ${o.status === 'pending' ? '⏳ Đang xử lý' : '✅ Đã hoàn thành'}
+                    </span>
+                  </div>
+
+                  <div class="order-items">${items || '<div style="color:#bbb;font-size:13px">Không có sản phẩm</div>'}</div>
+
+                  <div class="order-footer">
+                    <div class="order-payment">💳 ${o.payment || '—'} &nbsp;•&nbsp; 📍 ${o.customer?.city || ''}</div>
+                    <div class="order-total">${(o.total || 0).toLocaleString('vi-VN')}₫</div>
+                  </div>
+                </div>`;
+            }).join('');
+          },
+          error: (err) => {
+            console.error('Lỗi tải đơn hàng:', err);
+            // Nếu lỗi do index → fallback: lấy tất cả orders và lọc ở client
+            if (err.code === 'failed-precondition' || err.message?.includes('index')) {
+              loadOrdersFallback(uid);
+            } else {
+              container.innerHTML = `<div class="error-msg">⚠️ Không thể tải đơn hàng: ${err.message}</div>`;
+            }
           }
+        });
+    }
+
+    // Fallback: Nếu Firestore index chưa được tạo thì lọc ở client
+    function loadOrdersFallback(uid) {
+      const container = document.getElementById('orderHistoryList');
+      db.collection('orders').onSnapshot(snap => {
+        const docs = snap.docs
+          .map(d => d.data())
+          .filter(o => o.uid === uid)
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        if (!docs.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="ei">🛍️</div>
+              <p>Bạn chưa có đơn hàng nào.</p>
+              <a href="shop.html">Khám phá Shop →</a>
+            </div>`;
+          return;
         }
+        container.innerHTML = docs.map(o => {
+          const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('vi-VN') : 'Đang xử lý';
+          const items = (o.items || []).map(i => `
+            <div class="order-item-row">
+              <span class="item-name">• ${i.name} ×${i.qty}</span>
+              <span class="item-price">${(i.price * i.qty).toLocaleString('vi-VN')}₫</span>
+            </div>`).join('');
+          return `
+            <div class="order-card">
+              <div class="order-head">
+                <div>
+                  <div class="order-id">#${String(o.id).slice(-8).toUpperCase()}</div>
+                  <div class="order-date">🕒 ${date}</div>
+                </div>
+                <span class="status-badge status-${o.status}">
+                  ${o.status === 'pending' ? '⏳ Đang xử lý' : '✅ Đã hoàn thành'}
+                </span>
+              </div>
+              <div class="order-items">${items}</div>
+              <div class="order-footer">
+                <div class="order-payment">💳 ${o.payment || '—'}</div>
+                <div class="order-total">${(o.total || 0).toLocaleString('vi-VN')}₫</div>
+              </div>
+            </div>`;
+        }).join('');
       });
     }
   </script>
