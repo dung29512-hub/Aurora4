@@ -9,1186 +9,1023 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
   <style>
-    :root {
-      --pink:   #ff6b9d;
-      --pink2:  #ff4d8d;
-      --purple: #c850f5;
-      --dark:   #0f0f1a;
-      --dark2:  #1a1a2e;
-      --dark3:  #22223b;
-      --card:   #1e1e32;
-      --border: rgba(255,255,255,.07);
-      --text:   #e8e8f0;
-      --muted:  rgba(232,232,240,.5);
-      --grad:   linear-gradient(135deg, #ff6b9d, #c850f5);
+    :root{
+      --pink:#ff6b9d;--purple:#c850f5;--green:#34d399;--amber:#fbbf24;
+      --dark:#0f0f1a;--dark2:#1a1a2e;--dark3:#22223b;--card:#1e1e32;
+      --border:rgba(255,255,255,.07);--text:#e8e8f0;--muted:rgba(232,232,240,.45);
+      --grad:linear-gradient(135deg,#ff6b9d,#c850f5);
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    /* body ẩn hoàn toàn cho đến khi Firebase xác nhận admin */
+    body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--dark);color:var(--text);display:none}
+    body.ready{display:flex}
+    .shell{display:flex;height:100vh;width:100%;overflow:hidden}
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    #gate{position:fixed;inset:0;background:var(--dark);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:99999}
+    #gate.gone{display:none}
+    .spin{width:36px;height:36px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--pink);animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      overflow: hidden;
-    }
+    /* SIDEBAR */
+    .sb{width:230px;background:var(--dark2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh}
+    .sb-top{padding:20px 16px 16px;border-bottom:1px solid var(--border)}
+    .sb-brand{display:flex;align-items:center;gap:10px}
+    .sb-ico{width:36px;height:36px;border-radius:10px;background:var(--grad);display:grid;place-items:center;font-size:16px;font-weight:900;box-shadow:0 4px 14px rgba(255,107,157,.4);flex-shrink:0}
+    .sb-name{font-size:15px;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .sb-role{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-top:2px}
+    .sb-nav{flex:1;overflow-y:auto;padding:8px}
+    .sb-sec{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:12px 10px 5px}
+    .nb{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;border:none;background:transparent;color:var(--muted);width:100%;text-align:left;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;margin-bottom:1px;text-decoration:none}
+    .nb:hover{background:var(--border);color:var(--text)}
+    .nb.on{background:linear-gradient(135deg,rgba(255,107,157,.16),rgba(200,80,245,.1));color:#fff;box-shadow:inset 2px 0 0 var(--pink)}
+    .nb-bdg{margin-left:auto;background:var(--pink);color:#fff;font-size:10px;font-weight:900;padding:2px 7px;border-radius:20px;display:none}
+    .nb-bdg.vis{display:inline-block}
+    .sb-foot{padding:11px;border-top:1px solid var(--border)}
+    .uchip{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;background:var(--border);margin-bottom:7px}
+    .uav{width:30px;height:30px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:13px;font-weight:900;flex-shrink:0}
+    .uname{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .urole{font-size:11px;color:var(--muted)}
+    .btn-out{display:flex;align-items:center;gap:8px;width:100%;padding:9px 12px;border-radius:9px;background:transparent;border:1px solid rgba(255,100,100,.2);color:#f87171;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+    .btn-out:hover{background:rgba(255,100,100,.1)}
 
-    /* ══════════════ SIDEBAR ══════════════ */
-    .sidebar {
-      width: 240px;
-      background: var(--dark2);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      height: 100vh;
-      position: relative;
-      z-index: 10;
-    }
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .topbar{padding:15px 26px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(15,15,26,.9);backdrop-filter:blur(10px);flex-shrink:0}
+    .pg-title{font-size:19px;font-weight:900}
+    .pg-sub{font-size:12px;color:var(--muted);margin-top:1px}
+    .content{flex:1;overflow-y:auto;padding:24px 26px}
 
-    .sidebar-brand {
-      padding: 26px 22px 20px;
-      border-bottom: 1px solid var(--border);
-    }
-    .brand-row {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .brand-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: var(--grad);
-      display: grid; place-items: center;
-      font-size: 16px; font-weight: 900;
-      box-shadow: 0 4px 14px rgba(255,107,157,.4);
-    }
-    .brand-name {
-      font-size: 16px; font-weight: 900;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .brand-badge {
-      font-size: 10px; font-weight: 700;
-      color: var(--muted); margin-top: 2px; letter-spacing: .05em;
-      text-transform: uppercase;
-    }
+    /* PAGES */
+    .page{display:none}
+    .page.on{display:block;animation:fi .22s ease}
+    @keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-    .nav-section {
-      padding: 16px 14px 8px;
-      font-size: 10px; font-weight: 700;
-      color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
-    }
+    /* STAT CARDS */
+    .srow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
+    .sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:17px;transition:transform .18s}
+    .sc:hover{transform:translateY(-2px)}
+    .sc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .sc-lbl{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .sc-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:14px}
+    .ip{background:rgba(255,107,157,.15)}.iv{background:rgba(200,80,245,.15)}.ig{background:rgba(52,211,153,.15)}.ib{background:rgba(96,165,250,.15)}
+    .sc-val{font-size:23px;font-weight:900;line-height:1}
+    .sc-note{font-size:11px;color:var(--muted);margin-top:6px}
 
-    .nav-links { padding: 0 10px; flex: 1; overflow-y: auto; }
+    /* CARD */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:15px}
+    .card-t{font-size:13px;font-weight:800;padding-left:10px;border-left:3px solid var(--pink);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+    .lnk{font-size:12px;color:var(--muted);font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit}
+    .lnk:hover{color:var(--pink)}
 
-    .nav-item {
-      display: flex; align-items: center; gap: 11px;
-      padding: 11px 14px; border-radius: 12px;
-      cursor: pointer; font-size: 14px; font-weight: 600;
-      color: var(--muted); border: none; background: transparent;
-      width: 100%; text-align: left; font-family: inherit;
-      transition: all .18s; margin-bottom: 2px; text-decoration: none;
-    }
-    .nav-item:hover { background: var(--border); color: var(--text); }
-    .nav-item.active {
-      background: linear-gradient(135deg, rgba(255,107,157,.18), rgba(200,80,245,.12));
-      color: #fff;
-      box-shadow: inset 2px 0 0 var(--pink);
-    }
-    .nav-item.active .nav-icon { filter: none; }
-    .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    /* TABLE */
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead th{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+    tbody td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover td{background:rgba(255,255,255,.025)}
 
-    .nav-badge {
-      margin-left: auto; background: var(--pink); color: #fff;
-      font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 20px;
-    }
+    /* BADGES */
+    .bdg{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;white-space:nowrap}
+    .b-pend{background:rgba(251,191,36,.15);color:#fbbf24}
+    .b-done{background:rgba(52,211,153,.15);color:#34d399}
+    .b-admin{background:rgba(200,80,245,.18);color:#c850f5}
+    .b-cust{background:rgba(255,255,255,.07);color:var(--muted)}
+    .b-ok{background:rgba(52,211,153,.13);color:#34d399}
+    .b-low{background:rgba(251,191,36,.13);color:#fbbf24}
+    .b-out{background:rgba(239,68,68,.13);color:#f87171}
 
-    .sidebar-footer {
-      padding: 14px 10px;
-      border-top: 1px solid var(--border);
-    }
-    .user-chip {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 14px; border-radius: 12px;
-      background: var(--border); margin-bottom: 8px;
-    }
-    .user-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--grad);
-      display: grid; place-items: center;
-      font-size: 14px; font-weight: 800; flex-shrink: 0;
-    }
-    .user-name { font-size: 13px; font-weight: 700; }
-    .user-role { font-size: 11px; color: var(--muted); }
-    .btn-logout {
-      display: flex; align-items: center; gap: 8px;
-      width: 100%; padding: 10px 14px; border-radius: 10px;
-      background: transparent; border: 1px solid rgba(255,100,100,.2);
-      color: #ff6b6b; font-size: 13px; font-weight: 700;
-      cursor: pointer; font-family: inherit; transition: all .18s;
-    }
-    .btn-logout:hover { background: rgba(255,100,100,.1); }
+    /* BUTTONS */
+    .btn{padding:6px 13px;border-radius:8px;border:none;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+    .btn-pri{background:var(--grad);color:#fff;box-shadow:0 4px 14px rgba(255,107,157,.22)}
+    .btn-pri:hover{filter:brightness(1.08)}
+    .btn-dan{background:rgba(239,68,68,.13);color:#f87171}.btn-dan:hover{background:rgba(239,68,68,.22)}
+    .btn-suc{background:rgba(52,211,153,.13);color:#34d399}.btn-suc:hover{background:rgba(52,211,153,.22)}
+    .btn-gho{background:var(--border);color:var(--text)}.btn-gho:hover{background:rgba(255,255,255,.12)}
+    .btn-amb{background:rgba(251,191,36,.13);color:#fbbf24}.btn-amb:hover{background:rgba(251,191,36,.22)}
+    .btn-blue{background:rgba(96,165,250,.13);color:#60a5fa}.btn-blue:hover{background:rgba(96,165,250,.22)}
+    .btn:disabled{opacity:.45;cursor:default}
 
-    /* ══════════════ MAIN CONTENT ══════════════ */
-    .main {
-      flex: 1; overflow-y: auto; display: flex; flex-direction: column;
-    }
+    /* FORMS */
+    .fg{margin-bottom:12px}
+    .fg label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+    .fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;background:var(--dark3);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:13px;font-weight:500;font-family:inherit;outline:none;transition:border-color .18s,box-shadow .18s}
+    .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:rgba(255,107,157,.5);box-shadow:0 0 0 3px rgba(255,107,157,.07)}
+    .fg input::placeholder{color:rgba(255,255,255,.18)}
+    .fg select option{background:var(--dark2)}
+    .fg textarea{resize:vertical;min-height:70px}
+    .fg.sp2{grid-column:span 2}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn-sub{width:100%;padding:12px;border-radius:10px;background:var(--grad);border:none;color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;transition:filter .18s;box-shadow:0 6px 20px rgba(255,107,157,.2);margin-top:4px}
+    .btn-sub:hover{filter:brightness(1.08)}
+    .btn-sub:disabled{opacity:.45;cursor:default}
 
-    .topbar {
-      padding: 18px 30px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; background: var(--dark);
-      z-index: 5; backdrop-filter: blur(10px);
-    }
-    .page-title { font-size: 22px; font-weight: 900; }
-    .page-subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
-    .btn-action {
-      padding: 8px 18px; border-radius: 10px;
-      background: var(--grad); border: none; color: #fff;
-      font-size: 13px; font-weight: 800; cursor: pointer;
-      font-family: inherit; transition: filter .18s;
-      box-shadow: 0 4px 14px rgba(255,107,157,.3);
-    }
-    .btn-action:hover { filter: brightness(1.1); }
+    /* PRODUCT TABLE */
+    .pthumb{width:40px;height:40px;border-radius:7px;object-fit:cover;background:var(--dark3);flex-shrink:0}
+    .pph{width:40px;height:40px;border-radius:7px;background:var(--dark3);display:grid;place-items:center;font-size:17px;flex-shrink:0}
+    .sk-cell{display:flex;align-items:center;gap:5px}
+    .sk-input{display:none;width:60px;padding:3px 7px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px;font-weight:700;font-family:inherit;outline:none}
+    .sk-input:focus{border-color:var(--pink)}
+    .btn-sk{padding:3px 7px;border-radius:5px;background:var(--border);border:none;color:var(--muted);font-size:11px;cursor:pointer;font-weight:700;font-family:inherit}
+    .btn-sk:hover{color:var(--text)}
 
-    .content { padding: 28px 30px; flex: 1; }
+    /* SEED BANNER */
+    .seed-banner{background:linear-gradient(135deg,rgba(96,165,250,.12),rgba(200,80,245,.08));border:1px solid rgba(96,165,250,.25);border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .seed-banner p{font-size:13px;color:var(--text);line-height:1.5}
+    .seed-banner strong{color:#60a5fa}
 
-    /* PAGE visibility */
-    .page { display: none; }
-    .page.active { display: block; animation: fadeIn .25s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    /* FILTER TABS */
+    .ftabs{display:flex;gap:4px;margin-bottom:14px;padding:4px;background:var(--dark3);border-radius:11px;width:fit-content}
+    .ftab{padding:6px 14px;border-radius:8px;border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+    .ftab.on{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.2)}
 
-    /* ══════════════ STATS CARDS ══════════════ */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 18px; margin-bottom: 28px;
-    }
-    .stat-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 18px; padding: 22px 20px;
-      display: flex; flex-direction: column; gap: 12px;
-      transition: transform .18s, box-shadow .18s;
-    }
-    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
-    .stat-head { display: flex; align-items: center; justify-content: space-between; }
-    .stat-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-    .stat-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      display: grid; place-items: center; font-size: 16px;
-    }
-    .si-pink   { background: rgba(255,107,157,.15); }
-    .si-purple { background: rgba(200,80,245,.15); }
-    .si-green  { background: rgba(52,211,153,.15); }
-    .si-blue   { background: rgba(96,165,250,.15); }
+    /* SEARCH */
+    .sbar{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--dark3);border:1px solid var(--border);border-radius:9px;margin-bottom:14px}
+    .sbar input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:inherit;flex:1}
+    .sbar input::placeholder{color:var(--muted)}
+    .sbar select{background:transparent;border:none;outline:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+    .sbar select option{background:var(--dark2)}
 
-    .stat-value { font-size: 28px; font-weight: 900; }
-    .stat-change {
-      font-size: 12px; font-weight: 700;
-      display: flex; align-items: center; gap: 4px;
-    }
-    .stat-change.up   { color: #34d399; }
-    .stat-change.down { color: #f87171; }
+    /* ORDER CARDS */
+    .ocard{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:13px}
+    .ohd{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;flex-wrap:wrap;gap:7px}
 
-    /* ══════════════ CARDS / TABLES ══════════════ */
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    /* EMPTY */
+    .empty{text-align:center;padding:36px 20px;color:var(--muted)}
+    .empty .ei{font-size:32px;margin-bottom:8px}
 
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 18px; padding: 22px;
-      margin-bottom: 20px;
-    }
-    .card-title {
-      font-size: 14px; font-weight: 800;
-      padding-left: 12px;
-      border-left: 3px solid var(--pink);
-      margin-bottom: 18px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .card-title span { font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer; }
-    .card-title span:hover { color: var(--pink); }
+    /* TOAST */
+    #toast{position:fixed;bottom:20px;right:20px;z-index:99998;padding:12px 17px;border-radius:11px;font-size:13px;font-weight:700;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.35);transform:translateY(70px);opacity:0;transition:all .28s cubic-bezier(.16,1,.3,1);max-width:280px;pointer-events:none}
+    #toast.vis{transform:translateY(0);opacity:1}
+    #toast.success{background:linear-gradient(135deg,#059669,#10b981)}
+    #toast.error{background:linear-gradient(135deg,#dc2626,#ef4444)}
+    #toast.info{background:var(--grad)}
 
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    thead th {
-      text-align: left; padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted); font-size: 11px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: .05em;
-    }
-    tbody td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,.04); }
-    tbody tr:hover td { background: rgba(255,255,255,.03); }
-    tbody tr:last-child td { border-bottom: none; }
+    /* MODAL */
+    .mbg{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:9999;display:none;align-items:center;justify-content:center}
+    .mbg.vis{display:flex}
+    .mbox{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:24px;max-width:380px;width:90%;animation:fi .28s cubic-bezier(.16,1,.3,1)}
+    .mbox.wide{max-width:520px}
+    .mico{font-size:2.1rem;margin-bottom:9px}
+    .mtit{font-size:16px;font-weight:900;margin-bottom:6px}
+    .mdsc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:18px}
+    .macts{display:flex;gap:8px}
+    .macts button{flex:1;padding:10px;border-radius:9px;border:none;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;transition:filter .15s}
+    .m-no{background:var(--border);color:var(--text)}
+    .m-yes{background:var(--grad);color:#fff}.m-yes:hover{filter:brightness(1.1)}
 
-    /* ══════════════ BADGES ══════════════ */
-    .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 800; text-transform: uppercase;
-    }
-    .badge-pending   { background: rgba(251,191,36,.15); color: #fbbf24; }
-    .badge-completed { background: rgba(52,211,153,.15); color: #34d399; }
-    .badge-admin     { background: rgba(200,80,245,.15);  color: #c850f5; }
-    .badge-customer  { background: rgba(255,255,255,.08); color: var(--muted); }
-
-    /* ══════════════ FORMS ══════════════ */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 7px; text-transform: uppercase; letter-spacing: .04em; }
-    .field input, .field select, .field textarea {
-      width: 100%; padding: 11px 14px;
-      background: var(--dark3); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--text);
-      font-size: 13px; font-weight: 500; font-family: inherit;
-      outline: none; transition: border-color .18s, box-shadow .18s;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      border-color: rgba(255,107,157,.5);
-      box-shadow: 0 0 0 3px rgba(255,107,157,.08);
-    }
-    .field input::placeholder { color: rgba(255,255,255,.2); }
-    .field select option { background: var(--dark2); }
-    .field textarea { resize: vertical; min-height: 80px; }
-    .field.span2 { grid-column: span 2; }
-
-    .btn-submit {
-      width: 100%; padding: 13px; border-radius: 12px;
-      background: var(--grad); border: none; color: #fff;
-      font-size: 14px; font-weight: 800; cursor: pointer;
-      font-family: inherit; transition: filter .18s;
-      box-shadow: 0 6px 20px rgba(255,107,157,.25); margin-top: 6px;
-    }
-    .btn-submit:hover { filter: brightness(1.08); }
-    .btn-submit:disabled { opacity: .5; cursor: default; }
-
-    .btn-sm {
-      padding: 5px 12px; border-radius: 7px; border: none;
-      font-size: 11px; font-weight: 800; cursor: pointer; font-family: inherit;
-      transition: all .15s;
-    }
-    .btn-danger { background: rgba(239,68,68,.15); color: #ef4444; }
-    .btn-danger:hover { background: rgba(239,68,68,.25); }
-    .btn-secondary { background: var(--border); color: var(--text); }
-    .btn-secondary:hover { background: rgba(255,255,255,.12); }
-    .btn-success { background: rgba(52,211,153,.15); color: #34d399; }
-    .btn-success:hover { background: rgba(52,211,153,.25); }
-    .btn-purple { background: rgba(200,80,245,.15); color: #c850f5; }
-    .btn-purple:hover { background: rgba(200,80,245,.25); }
-
-    /* ══════════════ EMPTY STATE ══════════════ */
-    .empty-state {
-      text-align: center; padding: 50px 20px; color: var(--muted);
-    }
-    .empty-state .es-icon { font-size: 40px; margin-bottom: 12px; }
-    .empty-state p { font-size: 14px; }
-
-    /* ══════════════ FILTER TABS ══════════════ */
-    .filter-tabs {
-      display: flex; gap: 6px; margin-bottom: 18px;
-      padding: 4px; background: var(--dark3); border-radius: 12px;
-      width: fit-content;
-    }
-    .filter-tab {
-      padding: 7px 16px; border-radius: 9px; border: none;
-      background: transparent; color: var(--muted);
-      font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;
-      transition: all .18s;
-    }
-    .filter-tab.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-
-    /* ══════════════ PRODUCT GRID ══════════════ */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-    .product-card {
-      background: var(--dark3); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden;
-      transition: transform .18s, box-shadow .18s;
-    }
-    .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,.3); }
-    .product-img {
-      width: 100%; height: 140px; object-fit: cover;
-      background: var(--border);
-    }
-    .product-img-placeholder {
-      width: 100%; height: 140px;
-      background: linear-gradient(135deg, rgba(255,107,157,.1), rgba(200,80,245,.1));
-      display: grid; place-items: center; font-size: 32px;
-    }
-    .product-body { padding: 14px; }
-    .product-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .product-price { font-size: 15px; font-weight: 900; color: var(--pink); margin-bottom: 10px; }
-    .product-cat {
-      font-size: 10px; font-weight: 700; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .06em;
-    }
-    .product-actions { display: flex; gap: 6px; margin-top: 10px; }
-
-    /* ══════════════ REVENUE CHART ══════════════ */
-    .mini-chart {
-      height: 60px; display: flex; align-items: flex-end; gap: 4px; margin-top: 8px;
-    }
-    .chart-bar {
-      flex: 1; border-radius: 4px 4px 0 0;
-      background: linear-gradient(to top, rgba(255,107,157,.4), rgba(200,80,245,.6));
-      min-height: 4px; transition: height .5s cubic-bezier(.16,1,.3,1);
-    }
-    .chart-bar:hover {
-      background: linear-gradient(to top, var(--pink), var(--purple));
-    }
-
-    /* ══════════════ ACTIVITY LOG ══════════════ */
-    .activity-item {
-      display: flex; gap: 12px; align-items: flex-start;
-      padding: 12px 0; border-bottom: 1px solid var(--border);
-    }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      margin-top: 5px; flex-shrink: 0;
-    }
-    .activity-text { font-size: 13px; line-height: 1.4; }
-    .activity-time { font-size: 11px; color: var(--muted); margin-top: 3px; }
-
-    /* ══════════════ SEARCH ══════════════ */
-    .search-bar {
-      display: flex; align-items: center; gap: 8px;
-      padding: 9px 14px;
-      background: var(--dark3); border: 1px solid var(--border);
-      border-radius: 10px; margin-bottom: 18px;
-    }
-    .search-bar input {
-      background: transparent; border: none; outline: none;
-      color: var(--text); font-size: 13px; font-family: inherit;
-      flex: 1;
-    }
-    .search-bar input::placeholder { color: var(--muted); }
-
-    /* ══════════════ SCROLLBAR ══════════════ */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
-
-    /* ══════════════ LOADING ══════════════ */
-    #loadingOverlay {
-      position: fixed; inset: 0;
-      background: var(--dark);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 9999; flex-direction: column; gap: 16px;
-    }
-    .loader-ring {
-      width: 40px; height: 40px; border-radius: 50%;
-      border: 3px solid var(--border); border-top-color: var(--pink);
-      animation: spin .7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #loadingOverlay.hidden { display: none; }
-
-    /* ══════════════ TOAST ══════════════ */
-    #toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-      padding: 14px 20px; border-radius: 14px;
-      font-size: 13px; font-weight: 700; color: #fff;
-      box-shadow: 0 8px 24px rgba(0,0,0,.3);
-      transform: translateY(80px); opacity: 0;
-      transition: all .3s cubic-bezier(.16,1,.3,1);
-      max-width: 300px;
-    }
-    #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.success { background: linear-gradient(135deg, #059669, #10b981); }
-    #toast.error   { background: linear-gradient(135deg, #dc2626, #ef4444); }
-    #toast.info    { background: var(--grad); }
-
-    /* ══════════════ CONFIRM MODAL ══════════════ */
-    .modal-backdrop {
-      position: fixed; inset: 0; background: rgba(0,0,0,.6);
-      z-index: 1000; display: none; align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
-    }
-    .modal-backdrop.show { display: flex; }
-    .modal-box {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 20px; padding: 28px; max-width: 380px; width: 90%;
-      animation: slideUp .3s cubic-bezier(.16,1,.3,1);
-    }
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-    .modal-icon { font-size: 2.5rem; margin-bottom: 12px; }
-    .modal-title { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
-    .modal-desc { font-size: 14px; color: var(--muted); line-height: 1.5; margin-bottom: 22px; }
-    .modal-actions { display: flex; gap: 10px; }
-    .modal-actions button { flex: 1; padding: 12px; border-radius: 10px; border: none; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; transition: filter .15s; }
-    .modal-cancel { background: var(--border); color: var(--text); }
-    .modal-confirm { background: var(--grad); color: #fff; }
-    .modal-confirm:hover { filter: brightness(1.1); }
+    ::-webkit-scrollbar{width:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
   </style>
 </head>
 <body>
 
-<!-- Loading -->
-<div id="loadingOverlay">
-  <div class="loader-ring"></div>
-  <div style="font-size:13px; color:var(--muted); font-weight:600;">Đang xác thực quyền truy cập...</div>
+<div id="gate">
+  <div class="spin"></div>
+  <div style="font-size:12px;color:var(--muted);font-weight:600">Đang xác thực quyền truy cập...</div>
 </div>
 
-<!-- Toast -->
 <div id="toast"></div>
 
-<!-- Confirm Modal -->
-<div class="modal-backdrop" id="confirmModal">
-  <div class="modal-box">
-    <div class="modal-icon" id="modalIcon">⚠️</div>
-    <div class="modal-title" id="modalTitle">Xác nhận</div>
-    <div class="modal-desc" id="modalDesc">Bạn có chắc chắn?</div>
-    <div class="modal-actions">
-      <button class="modal-cancel" onclick="closeConfirm()">Hủy</button>
-      <button class="modal-confirm" id="modalConfirmBtn">Xác nhận</button>
+<!-- CONFIRM MODAL -->
+<div class="mbg" id="cModal">
+  <div class="mbox">
+    <div class="mico" id="cIco">⚠️</div>
+    <div class="mtit" id="cTit">Xác nhận</div>
+    <div class="mdsc" id="cDsc"></div>
+    <div class="macts">
+      <button class="m-no" onclick="closeM('cModal')">Hủy</button>
+      <button class="m-yes" id="cOk">Xác nhận</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════ SIDEBAR ══════════════ -->
-<div class="sidebar">
-  <div class="sidebar-brand">
-    <div class="brand-row">
-      <div class="brand-icon">✦</div>
-      <div>
-        <div class="brand-name">Aurora Admin</div>
-        <div class="brand-badge">Control Panel</div>
-      </div>
+<!-- EDIT PRODUCT MODAL -->
+<div class="mbg" id="eModal">
+  <div class="mbox wide">
+    <div style="font-size:15px;font-weight:900;margin-bottom:15px;padding-left:10px;border-left:3px solid var(--pink)">✏️ Chỉnh sửa sản phẩm</div>
+    <div class="fgrid">
+      <div class="fg"><label>Tên sản phẩm</label><input id="eName" type="text"></div>
+      <div class="fg"><label>Giá (VNĐ)</label><input id="ePrice" type="number"></div>
+      <div class="fg"><label>Danh mục</label><select id="eCat"></select></div>
+      <div class="fg"><label>Tồn kho</label><input id="eStock" type="number" min="0"></div>
+      <div class="fg sp2"><label>URL Hình ảnh</label><input id="eImg" type="url"></div>
+      <div class="fg sp2"><label>Mô tả</label><textarea id="eDesc"></textarea></div>
     </div>
-  </div>
-
-  <div class="nav-links" style="padding-top:10px;">
-    <div class="nav-section">Tổng quan</div>
-    <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
-      <span class="nav-icon">🏠</span> Dashboard
-    </button>
-
-    <div class="nav-section">Quản lý</div>
-    <button class="nav-item" onclick="showPage('orders')" id="nav-orders">
-      <span class="nav-icon">📦</span> Đơn hàng
-      <span class="nav-badge" id="pendingBadge">0</span>
-    </button>
-    <button class="nav-item" onclick="showPage('products')" id="nav-products">
-      <span class="nav-icon">🛍️</span> Sản phẩm
-    </button>
-    <button class="nav-item" onclick="showPage('users')" id="nav-users">
-      <span class="nav-icon">👥</span> Người dùng
-    </button>
-
-    <div class="nav-section">Hệ thống</div>
-    <a class="nav-item" href="index.html">
-      <span class="nav-icon">🌐</span> Xem trang web
-    </a>
-  </div>
-
-  <div class="sidebar-footer">
-    <div class="user-chip">
-      <div class="user-avatar" id="adminAvatar">A</div>
-      <div>
-        <div class="user-name" id="adminName">Admin</div>
-        <div class="user-role">Quản trị viên</div>
-      </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-gho" style="flex:1" onclick="closeM('eModal')">Hủy</button>
+      <button class="btn btn-pri" style="flex:2;padding:10px" onclick="saveEdit()">💾 Lưu thay đổi</button>
     </div>
-    <button class="btn-logout" onclick="handleLogout()">
-      <span>🚪</span> Đăng xuất
-    </button>
   </div>
 </div>
 
-<!-- ══════════════ MAIN ══════════════ -->
-<div class="main">
-  <div class="topbar">
-    <div>
-      <div class="page-title" id="pageTitle">Dashboard</div>
-      <div class="page-subtitle" id="pageSubtitle">Tổng quan hệ thống Aurora Store</div>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <div class="sb">
+    <div class="sb-top">
+      <div class="sb-brand">
+        <div class="sb-ico">✦</div>
+        <div>
+          <div class="sb-name">Aurora Admin</div>
+          <div class="sb-role">Control Panel</div>
+        </div>
+      </div>
     </div>
-    <div class="topbar-actions">
-      <div id="topbarDate" style="font-size:13px; color:var(--muted); font-weight:600;"></div>
+    <div class="sb-nav">
+      <div class="sb-sec">Tổng quan</div>
+      <button class="nb on" id="nav-dash" onclick="go('dash')">🏠 Dashboard</button>
+      <div class="sb-sec">Quản lý</div>
+      <button class="nb" id="nav-orders" onclick="go('orders')">📦 Đơn hàng <span class="nb-bdg" id="pBdg">0</span></button>
+      <button class="nb" id="nav-products" onclick="go('products')">🛍️ Sản phẩm</button>
+      <button class="nb" id="nav-categories" onclick="go('categories')">🏷️ Danh mục</button>
+      <button class="nb" id="nav-users" onclick="go('users')">👥 Người dùng</button>
+      <div class="sb-sec">Hệ thống</div>
+      <a class="nb" href="index.html" target="_blank">🌐 Xem trang web</a>
+    </div>
+    <div class="sb-foot">
+      <div class="uchip">
+        <div class="uav" id="adminAv">A</div>
+        <div style="min-width:0">
+          <div class="uname" id="adminName">Admin</div>
+          <div class="urole">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="btn-out" onclick="doLogout()">🚪 Đăng xuất</button>
     </div>
   </div>
 
-  <div class="content">
-
-    <!-- ═══ PAGE: DASHBOARD ═══ -->
-    <div class="page active" id="page-dashboard">
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-head">
-            <div class="stat-label">Doanh thu</div>
-            <div class="stat-icon si-pink">💰</div>
-          </div>
-          <div class="stat-value" id="statRevenue">--</div>
-          <div class="stat-change up">↑ Tổng doanh thu hoàn thành</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-head">
-            <div class="stat-label">Tổng đơn hàng</div>
-            <div class="stat-icon si-purple">📦</div>
-          </div>
-          <div class="stat-value" id="statOrders">--</div>
-          <div class="stat-change up" id="statPendingInfo">↻ Đang tải...</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-head">
-            <div class="stat-label">Người dùng</div>
-            <div class="stat-icon si-blue">👥</div>
-          </div>
-          <div class="stat-value" id="statUsers">--</div>
-          <div class="stat-change up">↑ Tài khoản đã đăng ký</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-head">
-            <div class="stat-label">Sản phẩm</div>
-            <div class="stat-icon si-green">🛍️</div>
-          </div>
-          <div class="stat-value" id="statProducts">--</div>
-          <div class="stat-change up">↑ Trong kho hàng</div>
-        </div>
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="pg-title" id="pgT">Dashboard</div>
+        <div class="pg-sub" id="pgS">Tổng quan hệ thống</div>
       </div>
-
-      <div class="grid-2">
-        <!-- Recent Orders -->
-        <div class="card">
-          <div class="card-title">
-            Đơn hàng gần đây
-            <span onclick="showPage('orders')">Xem tất cả →</span>
-          </div>
-          <table>
-            <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
-            <tbody id="recentOrdersBody">
-              <tr><td colspan="4"><div class="empty-state"><div class="es-icon">⏳</div><p>Đang tải...</p></div></td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Revenue chart placeholder + quick stats -->
-        <div class="card">
-          <div class="card-title">Phân bổ trạng thái đơn hàng</div>
-          <canvas id="statusChart" height="160"></canvas>
-          <div id="statusBreakdown" style="margin-top:14px; display:flex; gap:16px; flex-wrap:wrap;"></div>
-        </div>
-      </div>
-
-      <!-- Recent Users -->
-      <div class="card">
-        <div class="card-title">
-          Người dùng mới nhất
-          <span onclick="showPage('users')">Xem tất cả →</span>
-        </div>
-        <table>
-          <thead><tr><th>Tên / Email</th><th>Vai trò</th><th>Ngày tham gia</th></tr></thead>
-          <tbody id="recentUsersBody">
-            <tr><td colspan="3"><div class="empty-state"><div class="es-icon">⏳</div><p>Đang tải...</p></div></td></tr>
-          </tbody>
-        </table>
-      </div>
+      <div style="font-size:12px;color:var(--muted);font-weight:600" id="topD"></div>
     </div>
 
-    <!-- ═══ PAGE: ORDERS ═══ -->
-    <div class="page" id="page-orders">
-      <div class="filter-tabs">
-        <button class="filter-tab active" onclick="filterOrders('all', this)">Tất cả</button>
-        <button class="filter-tab" onclick="filterOrders('pending', this)">⏳ Chờ xử lý</button>
-        <button class="filter-tab" onclick="filterOrders('completed', this)">✅ Hoàn thành</button>
-      </div>
-      <div id="orderList">
-        <div class="empty-state"><div class="es-icon">⏳</div><p>Đang tải đơn hàng...</p></div>
-      </div>
-    </div>
+    <div class="content">
 
-    <!-- ═══ PAGE: PRODUCTS ═══ -->
-    <div class="page" id="page-products">
-      <div class="grid-2" style="align-items: start;">
-        <!-- Add Product Form -->
-        <div class="card" style="margin-bottom:0;">
-          <div class="card-title">Thêm sản phẩm mới</div>
-          <div class="form-grid">
-            <div class="field">
-              <label>Tên sản phẩm</label>
-              <input type="text" id="pName" placeholder="Gấu bông Aurora...">
+      <!-- DASHBOARD -->
+      <div class="page on" id="pg-dash">
+        <div class="srow">
+          <div class="sc"><div class="sc-hd"><div class="sc-lbl">Doanh thu</div><div class="sc-ico ip">💰</div></div><div class="sc-val" id="sRev">—</div><div class="sc-note">Từ đơn hoàn thành</div></div>
+          <div class="sc"><div class="sc-hd"><div class="sc-lbl">Đơn hàng</div><div class="sc-ico iv">📦</div></div><div class="sc-val" id="sOrd">—</div><div class="sc-note" id="sOrdN">—</div></div>
+          <div class="sc"><div class="sc-hd"><div class="sc-lbl">Người dùng</div><div class="sc-ico ib">👥</div></div><div class="sc-val" id="sUsr">—</div><div class="sc-note">Tài khoản</div></div>
+          <div class="sc"><div class="sc-hd"><div class="sc-lbl">Sản phẩm</div><div class="sc-ico ig">🛍️</div></div><div class="sc-val" id="sPrd">—</div><div class="sc-note" id="sPrdN">Trong kho</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:15px">
+          <div class="card">
+            <div class="card-t">Đơn hàng gần đây <button class="lnk" onclick="go('orders')">Xem tất cả →</button></div>
+            <table><thead><tr><th>Mã đơn</th><th>Khách</th><th>Tổng tiền</th><th>TT</th></tr></thead><tbody id="tRO"></tbody></table>
+          </div>
+          <div class="card">
+            <div class="card-t">Sắp hết hàng <button class="lnk" onclick="go('products')">Xem kho →</button></div>
+            <div id="lowSt"><div class="empty"><div class="ei">⏳</div></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-t">Người dùng mới <button class="lnk" onclick="go('users')">Xem tất cả →</button></div>
+          <table><thead><tr><th>Tên / Email</th><th>Vai trò</th><th>Ngày tham gia</th></tr></thead><tbody id="tRU"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="page" id="pg-orders">
+        <div class="ftabs">
+          <button class="ftab on" onclick="setOF('all',this)">Tất cả</button>
+          <button class="ftab" onclick="setOF('pending',this)">⏳ Chờ xử lý</button>
+          <button class="ftab" onclick="setOF('completed',this)">✅ Hoàn thành</button>
+        </div>
+        <div id="oList"><div class="empty"><div class="ei">⏳</div><p>Đang tải...</p></div></div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="page" id="pg-products">
+        <!-- Banner seed khi chưa có sản phẩm mặc định -->
+        <div class="seed-banner" id="seedBanner" style="display:none">
+          <p>🚀 <strong>Chưa có sản phẩm nào trong Firestore.</strong><br>
+          Nhấn nút để nhập các sản phẩm mặc định từ store của bạn vào hệ thống quản lý.</p>
+          <button class="btn btn-blue" id="btnSeed" onclick="seedDefaultProducts()">⬇️ Nhập sản phẩm mặc định</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start">
+          <!-- ADD FORM -->
+          <div class="card" style="position:sticky;top:0;margin-bottom:0">
+            <div class="card-t">✚ Thêm sản phẩm</div>
+            <div class="fg"><label>Tên sản phẩm</label><input id="pName" type="text" placeholder="Gấu bông Aurora..."></div>
+            <div class="fgrid">
+              <div class="fg"><label>Giá (VNĐ)</label><input id="pPrice" type="number" placeholder="189000"></div>
+              <div class="fg"><label>Tồn kho</label><input id="pStock" type="number" placeholder="50" min="0"></div>
             </div>
-            <div class="field">
-              <label>Giá (VNĐ)</label>
-              <input type="number" id="pPrice" placeholder="189000">
-            </div>
-            <div class="field">
+            <div class="fg">
               <label>Danh mục</label>
-              <select id="pCat">
-                <option value="plush">🧸 Gấu bông</option>
-                <option value="pen">✏️ Bút</option>
-                <option value="notebook">📓 Sổ</option>
-                <option value="accessory">🎀 Phụ kiện</option>
-                <option value="combo">🎁 Combo</option>
+              <select id="pCat"><option value="">— Chọn danh mục —</option></select>
+            </div>
+            <div class="fg"><label>URL Hình ảnh</label><input id="pImg" type="url" placeholder="https://..."></div>
+            <div class="fg"><label>Mô tả</label><textarea id="pDesc" placeholder="Mô tả ngắn..."></textarea></div>
+            <button class="btn-sub" id="btnAdd" onclick="addProd()">✚ Thêm sản phẩm</button>
+          </div>
+
+          <!-- PRODUCT LIST -->
+          <div>
+            <div class="sbar">
+              <span style="color:var(--muted)">🔍</span>
+              <input type="text" id="pSearch" placeholder="Tìm sản phẩm..." oninput="renderProds()">
+              <select id="pCatF" onchange="renderProds()">
+                <option value="">Tất cả danh mục</option>
               </select>
             </div>
-            <div class="field">
-              <label>Tồn kho</label>
-              <input type="number" id="pStock" placeholder="50">
+            <div class="card" style="padding:0;overflow:hidden;margin-bottom:0">
+              <table>
+                <thead><tr>
+                  <th style="padding:12px 14px">Sản phẩm</th>
+                  <th>Danh mục</th>
+                  <th>Giá</th>
+                  <th>Tồn kho</th>
+                  <th>Hành động</th>
+                </tr></thead>
+                <tbody id="pBody"><tr><td colspan="5" style="padding:28px;text-align:center;color:var(--muted)">Đang tải...</td></tr></tbody>
+              </table>
             </div>
-            <div class="field span2">
-              <label>URL Hình ảnh</label>
-              <input type="url" id="pImg" placeholder="https://...">
-            </div>
-            <div class="field span2">
-              <label>Mô tả ngắn</label>
-              <textarea id="pDesc" placeholder="Mô tả sản phẩm..."></textarea>
-            </div>
-          </div>
-          <button class="btn-submit" id="btnAddProduct" onclick="addProduct()">✚ Thêm sản phẩm</button>
-        </div>
-
-        <!-- Product list -->
-        <div>
-          <div class="search-bar">
-            <span>🔍</span>
-            <input type="text" id="productSearch" placeholder="Tìm sản phẩm..." oninput="renderProducts()">
-          </div>
-          <div class="product-grid" id="productGrid">
-            <div class="empty-state" style="grid-column:1/-1"><div class="es-icon">⏳</div><p>Đang tải sản phẩm...</p></div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- ═══ PAGE: USERS ═══ -->
-    <div class="page" id="page-users">
-      <div class="search-bar">
-        <span>🔍</span>
-        <input type="text" id="userSearch" placeholder="Tìm người dùng..." oninput="renderUsers()">
+      <!-- CATEGORIES -->
+      <div class="page" id="pg-categories">
+        <div style="display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:start">
+          <div class="card" style="position:sticky;top:0;margin-bottom:0">
+            <div class="card-t">✚ Tạo danh mục mới</div>
+            <div class="fg">
+              <label>Emoji biểu tượng</label>
+              <input id="cEmoji" type="text" placeholder="🐻" maxlength="4" style="font-size:24px;text-align:center;height:54px">
+            </div>
+            <div class="fg"><label>Tên danh mục</label><input id="cName" type="text" placeholder="Gấu bông"></div>
+            <div class="fg"><label>Mô tả (tuỳ chọn)</label><input id="cDescI" type="text" placeholder="Các loại gấu bông..."></div>
+            <button class="btn-sub" id="btnAddCat" onclick="addCat()">✚ Tạo danh mục</button>
+            <div style="margin-top:14px;padding-top:13px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.7">
+              💡 Danh mục lưu vào Firestore, tự động cập nhật form thêm sản phẩm.<br>
+              Xóa danh mục <strong style="color:var(--text)">không</strong> ảnh hưởng sản phẩm đang dùng.
+            </div>
+          </div>
+          <div class="card" style="margin-bottom:0">
+            <div class="card-t">Danh sách danh mục <span style="font-size:11px;color:var(--muted);font-weight:600" id="catCnt"></span></div>
+            <table>
+              <thead><tr><th style="padding:11px 14px">Danh mục</th><th>Mô tả</th><th>Số SP</th><th>Hành động</th></tr></thead>
+              <tbody id="catBody"><tr><td colspan="4" style="padding:28px;text-align:center;color:var(--muted)">Đang tải...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="card" style="padding: 0; overflow: hidden;">
-        <table>
-          <thead>
-            <tr>
-              <th style="padding:16px 20px;">Người dùng</th>
+
+      <!-- USERS -->
+      <div class="page" id="pg-users">
+        <div class="sbar">
+          <span style="color:var(--muted)">🔍</span>
+          <input type="text" id="uSearch" placeholder="Tìm theo tên hoặc email..." oninput="renderUsers()">
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table>
+            <thead><tr>
+              <th style="padding:12px 16px">Người dùng</th>
               <th>Vai trò</th>
               <th>Email</th>
               <th>Ngày tham gia</th>
               <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody" style="font-size:13px;">
-            <tr><td colspan="5" style="padding:30px; text-align:center; color:var(--muted);">Đang tải...</td></tr>
-          </tbody>
-        </table>
+            </tr></thead>
+            <tbody id="uBody"><tr><td colspan="5" style="padding:28px;text-align:center;color:var(--muted)">Đang tải...</td></tr></tbody>
+          </table>
+        </div>
       </div>
-    </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
+    </div>
+  </div>
+</div>
 
 <script>
-/* ══════════════════════════════════════
-   FIREBASE INIT
-══════════════════════════════════════ */
-const firebaseConfig = {
-  apiKey: "AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
-  authDomain: "aurorashop1-1246d.firebaseapp.com",
-  projectId: "aurorashop1-1246d",
-  storageBucket: "aurorashop1-1246d.firebasestorage.app",
-  messagingSenderId: "220058602608",
-  appId: "1:220058602608:web:7bc5f71ef2610a70a6f8b5"
-};
-firebase.initializeApp(firebaseConfig);
-const db   = firebase.firestore();
-const auth = firebase.auth();
+/* ═══════════ FIREBASE ═══════════ */
+firebase.initializeApp({
+  apiKey:"AIzaSyC51aDs65qXDcJxkpuc2z4FgdRQ_L7YZho",
+  authDomain:"aurorashop1-1246d.firebaseapp.com",
+  projectId:"aurorashop1-1246d",
+  storageBucket:"aurorashop1-1246d.firebasestorage.app",
+  messagingSenderId:"220058602608",
+  appId:"1:220058602608:web:7bc5f71ef2610a70a6f8b5"
+});
+const db=firebase.firestore(), auth=firebase.auth();
 
-/* ── Data cache ── */
-let _allOrders   = [];
-let _allUsers    = [];
-let _allProducts = [];
-let _orderFilter = 'all';
-let _confirmCb   = null;
+/* ═══════════ DEFAULT DATA ═══════════
+   Sản phẩm đã code sẵn trong store
+   → Seed vào Firestore lần đầu
+════════════════════════════════════ */
+const DEFAULT_CATS = [
+  {emoji:'🧸', name:'Gấu bông',      desc:'Các loại gấu bông dễ thương'},
+  {emoji:'✏️', name:'Bút',           desc:'Bút bi, bút gel các loại'},
+  {emoji:'📓', name:'Sổ tay',        desc:'Sổ tay, notepad các loại'},
+  {emoji:'🎀', name:'Phụ kiện',      desc:'Phụ kiện văn phòng, trang trí'},
+  {emoji:'🎁', name:'Combo',         desc:'Bộ combo tiết kiệm'},
+];
 
-/* ══════════════════════════════════════
-   AUTH GUARD
-══════════════════════════════════════ */
-auth.onAuthStateChanged(async user => {
-  if (!user) { window.location.href = 'login.html'; return; }
-  const snap = await db.collection('users').doc(user.uid).get();
-  if (snap.data()?.role !== 'admin') { window.location.href = 'index.html'; return; }
+// Sản phẩm hardcode trong store (lấy từ index.html + shop.html)
+// Sau khi seed → chúng xuất hiện trong bảng quản lý
+const DEFAULT_PRODS = [
+  {
+    name:'Gấu bông "Aurora Bear"', price:189000, stock:30,
+    category:'Gấu bông',
+    img:'assets/img/gau-bong-aurora-bear.jpg',
+    desc:'Gấu bông mềm mại, cute, phù hợp làm quà tặng',
+    legacyId:1
+  },
+  {
+    name:'Gấu bông "Chiikawa Mini"', price:149000, stock:25,
+    category:'Gấu bông',
+    img:'assets/img/chiikawa-mini.jpg',
+    desc:'Gấu bông Chiikawa phiên bản mini siêu cute',
+    legacyId:2
+  },
+  {
+    name:'Gấu bông "Usagi"', price:169000, stock:20,
+    category:'Gấu bông',
+    img:'assets/img/usagi.jpg',
+    desc:'Thỏ bông Usagi từ series Chiikawa',
+    legacyId:3
+  },
+  {
+    name:'Bút bi gel 0.5 (set 5 màu)', price:59000, stock:100,
+    category:'Bút',
+    img:'assets/img/but-bi-gel-05.jpg',
+    desc:'Set bút bi gel 0.5mm 5 màu pastel',
+    legacyId:4
+  },
+  {
+    name:'Bút highlight pastel (set 6)', price:45000, stock:80,
+    category:'Bút',
+    img:'assets/img/but-highlight.jpg',
+    desc:'Bút highlight màu pastel nhẹ nhàng',
+    legacyId:5
+  },
+  {
+    name:'Bút chì bấm 0.5', price:35000, stock:60,
+    category:'Bút',
+    img:'assets/img/but-chi-bam.jpg',
+    desc:'Bút chì bấm tiện lợi, ngòi 0.5mm',
+    legacyId:6
+  },
+  {
+    name:'Sổ tay Aurora (A5, 120 trang)', price:79000, stock:40,
+    category:'Sổ tay',
+    img:'assets/img/chiikawa-A5.jpg',
+    desc:'Sổ tay Aurora bìa cứng, 120 trang kẻ ngang',
+    legacyId:7
+  },
+  {
+    name:'Sổ tay Chiikawa (A6)', price:65000, stock:35,
+    category:'Sổ tay',
+    img:'assets/img/so-tay-a6.jpg',
+    desc:'Sổ tay mini A6 in hình Chiikawa',
+    legacyId:8
+  },
+  {
+    name:'Sticky note Chiikawa (5 xấp)', price:39000, stock:50,
+    category:'Phụ kiện',
+    img:'assets/img/sticky-note.jpg',
+    desc:'Giấy nhớ sticky note in hình Chiikawa',
+    legacyId:9
+  },
+  {
+    name:'Kẹp giấy Chiikawa (set 10)', price:29000, stock:70,
+    category:'Phụ kiện',
+    img:'assets/img/kep-giay.jpg',
+    desc:'Kẹp giấy kute in hình nhân vật Chiikawa',
+    legacyId:10
+  },
+  {
+    name:'Băng keo washi Chiikawa', price:35000, stock:45,
+    category:'Phụ kiện',
+    img:'assets/img/washi-tape.jpg',
+    desc:'Băng keo washi tape họa tiết Chiikawa',
+    legacyId:11
+  },
+  {
+    name:'Thước kẻ trong Aurora', price:25000, stock:90,
+    category:'Phụ kiện',
+    img:'assets/img/thuoc-ke.jpg',
+    desc:'Thước kẻ nhựa trong 30cm, in logo Aurora',
+    legacyId:12
+  },
+  {
+    name:'Combo văn phòng phẩm "Study Kit"', price:129000, stock:20,
+    category:'Combo',
+    img:'assets/img/Study-kid-chiikawa 1.jpg',
+    desc:'Bộ combo đầy đủ: bút, sổ, kẹp giấy, sticky note',
+    legacyId:13
+  },
+  {
+    name:'Combo gấu bông + sổ tay', price:239000, stock:15,
+    category:'Combo',
+    img:'assets/img/combo-gau-so.jpg',
+    desc:'Combo quà tặng: 1 gấu bông Aurora Bear + 1 sổ tay A5',
+    legacyId:14
+  },
+];
 
-  // Update UI
-  const name = user.displayName || snap.data()?.displayName || 'Admin';
-  document.getElementById('adminName').textContent = name;
-  document.getElementById('adminAvatar').textContent = name[0].toUpperCase();
+/* ═══════════ CACHE ═══════════ */
+let ORDERS=[], USERS=[], PRODS=[], CATS=[];
+let OF='all', EDIT_ID=null, CONFIRM_CB=null;
 
-  document.getElementById('loadingOverlay').classList.add('hidden');
-  initDashboard();
+/* ═══════════ AUTH GUARD ═══════════ */
+auth.onAuthStateChanged(async user=>{
+  if(!user){ window.location.replace('login.html'); return; }
+  const snap=await db.collection('users').doc(user.uid).get();
+  if(snap.data()?.role!=='admin'){ window.location.replace('index.html'); return; }
+
+  const name=user.displayName||snap.data()?.displayName||'Admin';
+  document.getElementById('adminName').textContent=name;
+  document.getElementById('adminAv').textContent=name[0].toUpperCase();
+  document.getElementById('topD').textContent=
+    new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  document.getElementById('gate').classList.add('gone');
+  document.body.classList.add('ready');
+  startListeners();
+  autoSeedCategories(); // Tự seed danh mục mặc định nếu chưa có
 });
 
-/* ══════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════ */
-const pageMeta = {
-  dashboard: { title: 'Dashboard',    subtitle: 'Tổng quan hệ thống Aurora Store' },
-  orders:    { title: 'Đơn hàng',     subtitle: 'Quản lý và xử lý đơn hàng' },
-  products:  { title: 'Sản phẩm',     subtitle: 'Quản lý kho hàng và sản phẩm' },
-  users:     { title: 'Người dùng',   subtitle: 'Quản lý tài khoản người dùng' },
+/* ═══════════ SEED: Danh mục mặc định ═══════════
+   Chạy 1 lần duy nhất khi categories collection trống
+════════════════════════════════════════════════ */
+async function autoSeedCategories(){
+  const existing=await db.collection('categories').limit(1).get();
+  if(!existing.empty) return; // Đã có danh mục → bỏ qua
+
+  const batch=db.batch();
+  DEFAULT_CATS.forEach(c=>{
+    const ref=db.collection('categories').doc();
+    batch.set(ref,{...c, createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  });
+  await batch.commit();
+  toast('✅ Đã tạo danh mục mặc định','success');
+}
+
+/* ═══════════ SEED: Sản phẩm mặc định ═══════════
+   Gọi khi admin bấm nút "Nhập sản phẩm mặc định"
+   Map tên danh mục → Firestore category ID
+════════════════════════════════════════════════ */
+async function seedDefaultProducts(){
+  const btn=document.getElementById('btnSeed');
+  btn.disabled=true; btn.textContent='Đang nhập...';
+
+  try{
+    // Lấy map tên danh mục → ID
+    const catSnap=await db.collection('categories').get();
+    const catMap={};
+    catSnap.forEach(d=>{ catMap[d.data().name]=d.id; });
+
+    const batch=db.batch();
+    let count=0;
+    DEFAULT_PRODS.forEach(p=>{
+      // Bỏ qua nếu đã tồn tại (check theo legacyId)
+      const exists=PRODS.find(x=>x.legacyId===p.legacyId);
+      if(exists) return;
+      const ref=db.collection('products_db').doc();
+      const catId=catMap[p.category]||p.category;
+      batch.set(ref,{
+        ...p,
+        category:catId,
+        createdAt:firebase.firestore.FieldValue.serverTimestamp()
+      });
+      count++;
+    });
+
+    if(count===0){
+      toast('Tất cả sản phẩm mặc định đã có trong hệ thống!','info');
+    } else {
+      await batch.commit();
+      toast(`✅ Đã nhập ${count} sản phẩm vào hệ thống!`,'success');
+    }
+    document.getElementById('seedBanner').style.display='none';
+  } catch(e){
+    toast('Lỗi: '+e.message,'error');
+  } finally {
+    btn.disabled=false; btn.textContent='⬇️ Nhập sản phẩm mặc định';
+  }
+}
+
+/* ═══════════ LISTENERS ═══════════ */
+function startListeners(){
+  // Orders — không cần index phức tạp
+  db.collection('orders').orderBy('createdAt','desc').onSnapshot(s=>{
+    ORDERS=s.docs.map(d=>({_id:d.id,...d.data()}));
+    refreshOrders();
+  }, err=>console.warn('orders listener:',err));
+
+  // ✅ FIX: Lấy TẤT CẢ users, KHÔNG dùng orderBy (tránh bỏ sót user thiếu createdAt)
+  // Sắp xếp ở phía client theo createdAt
+  db.collection('users').onSnapshot(s=>{
+    USERS=s.docs
+      .map(d=>({_id:d.id,...d.data()}))
+      .sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    document.getElementById('sUsr').textContent=USERS.length;
+    renderRU(); renderUsers();
+  }, err=>console.warn('users listener:',err));
+
+  // Products
+  db.collection('products_db').orderBy('createdAt','desc').onSnapshot(s=>{
+    PRODS=s.docs.map(d=>({_id:d.id,...d.data()}));
+    refreshProdStats(); renderProds(); renderLowStock(); syncCatFilter();
+    // Hiển thị banner seed nếu chưa có sản phẩm nào
+    document.getElementById('seedBanner').style.display=PRODS.length===0?'flex':'none';
+  }, err=>console.warn('products listener:',err));
+
+  // Categories
+  db.collection('categories').orderBy('createdAt','asc').onSnapshot(s=>{
+    CATS=s.docs.map(d=>({_id:d.id,...d.data()}));
+    syncCatSelects(); renderCatTable();
+  }, err=>console.warn('categories listener:',err));
+}
+
+/* ═══════════ NAV ═══════════ */
+const META={
+  dash:{t:'Dashboard',s:'Tổng quan hệ thống Aurora Store'},
+  orders:{t:'Đơn hàng',s:'Quản lý và xử lý đơn hàng khách hàng'},
+  products:{t:'Sản phẩm',s:'Quản lý toàn bộ sản phẩm — sửa tồn kho trực tiếp'},
+  categories:{t:'Danh mục',s:'Tạo và quản lý danh mục sản phẩm tự do'},
+  users:{t:'Người dùng',s:'Quản lý tài khoản và phân quyền'},
 };
-
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  const navEl = document.getElementById('nav-' + id);
-  if (navEl) navEl.classList.add('active');
-  const meta = pageMeta[id] || {};
-  document.getElementById('pageTitle').textContent = meta.title || id;
-  document.getElementById('pageSubtitle').textContent = meta.subtitle || '';
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  document.getElementById('nav-'+id)?.classList.add('on');
+  const m=META[id]||{};
+  document.getElementById('pgT').textContent=m.t||id;
+  document.getElementById('pgS').textContent=m.s||'';
 }
 
-/* ══════════════════════════════════════
-   INIT
-══════════════════════════════════════ */
-function initDashboard() {
-  // Current date
-  document.getElementById('topbarDate').textContent =
-    new Date().toLocaleDateString('vi-VN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-
-  // Realtime listeners
-  db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap => {
-    _allOrders = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    updateOrderStats();
-    renderRecentOrders();
-    renderOrders();
-    renderStatusChart();
-  });
-
-  db.collection('users').orderBy('createdAt','desc').onSnapshot(snap => {
-    _allUsers = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    document.getElementById('statUsers').textContent = _allUsers.length;
-    renderRecentUsers();
-    renderUsers();
-  });
-
-  db.collection('products_db').orderBy('createdAt','desc').onSnapshot(snap => {
-    _allProducts = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
-    document.getElementById('statProducts').textContent = _allProducts.length;
-    renderProducts();
-  });
+/* ═══════════ ORDERS ═══════════ */
+function refreshOrders(){
+  const pend=ORDERS.filter(o=>o.status==='pending').length;
+  const comp=ORDERS.filter(o=>o.status==='completed').length;
+  const rev=ORDERS.filter(o=>o.status==='completed').reduce((s,o)=>s+(o.total||0),0);
+  document.getElementById('sRev').textContent=vnd(rev);
+  document.getElementById('sOrd').textContent=ORDERS.length;
+  document.getElementById('sOrdN').textContent=`${pend} chờ • ${comp} hoàn thành`;
+  const b=document.getElementById('pBdg');
+  b.textContent=pend; b.classList.toggle('vis',pend>0);
+  renderRO(); renderOrders();
 }
-
-/* ══════════════════════════════════════
-   STATS
-══════════════════════════════════════ */
-function updateOrderStats() {
-  const total    = _allOrders.length;
-  const pending  = _allOrders.filter(o => o.status === 'pending').length;
-  const completed= _allOrders.filter(o => o.status === 'completed').length;
-  const revenue  = _allOrders
-    .filter(o => o.status === 'completed')
-    .reduce((s, o) => s + (o.total || 0), 0);
-
-  document.getElementById('statRevenue').textContent = formatVND(revenue);
-  document.getElementById('statOrders').textContent  = total;
-  document.getElementById('statPendingInfo').textContent =
-    `${pending} chờ xử lý • ${completed} hoàn thành`;
-  document.getElementById('pendingBadge').textContent = pending;
-  document.getElementById('pendingBadge').style.display = pending > 0 ? '' : 'none';
-}
-
-/* ══════════════════════════════════════
-   RECENT ORDERS (dashboard)
-══════════════════════════════════════ */
-function renderRecentOrders() {
-  const tbody = document.getElementById('recentOrdersBody');
-  const recent = _allOrders.slice(0, 6);
-  if (!recent.length) {
-    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><div class="es-icon">📭</div><p>Chưa có đơn hàng</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = recent.map(o => `
+function renderRO(){
+  const tb=document.getElementById('tRO');
+  if(!ORDERS.length){tb.innerHTML=erow(4,'Chưa có đơn hàng');return}
+  tb.innerHTML=ORDERS.slice(0,6).map(o=>`
     <tr>
-      <td><span style="font-family:monospace; font-weight:800; color:var(--pink);">#${String(o.id).slice(-6)}</span></td>
-      <td>${o.customer?.name || '—'}</td>
-      <td style="font-weight:800;">${formatVND(o.total)}</td>
-      <td><span class="badge badge-${o.status}">${o.status === 'pending' ? 'Chờ xử lý' : 'Hoàn thành'}</span></td>
-    </tr>
-  `).join('');
+      <td><span style="font-family:monospace;font-weight:800;color:var(--pink)">#${str(o.id).slice(-6)}</span></td>
+      <td>${o.customer?.name||'—'}</td>
+      <td style="font-weight:800">${vnd(o.total)}</td>
+      <td><span class="bdg ${o.status==='pending'?'b-pend':'b-done'}">${o.status==='pending'?'Chờ':'Xong'}</span></td>
+    </tr>`).join('');
 }
-
-/* ══════════════════════════════════════
-   STATUS CHART (simple bar)
-══════════════════════════════════════ */
-function renderStatusChart() {
-  const pending   = _allOrders.filter(o => o.status === 'pending').length;
-  const completed = _allOrders.filter(o => o.status === 'completed').length;
-  const total     = pending + completed || 1;
-
-  const ctx = document.getElementById('statusChart').getContext('2d');
-  ctx.canvas.width  = ctx.canvas.offsetWidth;
-  ctx.canvas.height = 160;
-
-  const W = ctx.canvas.width, H = 160;
-  ctx.clearRect(0, 0, W, H);
-
-  const bars = [
-    { label: 'Chờ xử lý', val: pending,   color: '#fbbf24' },
-    { label: 'Hoàn thành', val: completed, color: '#34d399' },
-  ];
-
-  const barW = 60, gap = 40, total2 = bars.length;
-  const startX = (W - (total2 * barW + (total2-1) * gap)) / 2;
-
-  bars.forEach((b, i) => {
-    const h = Math.max((b.val / total) * (H - 50), b.val > 0 ? 8 : 0);
-    const x = startX + i * (barW + gap);
-    const y = H - 35 - h;
-
-    // Bar
-    const grad = ctx.createLinearGradient(x, y, x, H - 35);
-    grad.addColorStop(0, b.color);
-    grad.addColorStop(1, b.color + '44');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.roundRect(x, y, barW, h, [6, 6, 0, 0]);
-    ctx.fill();
-
-    // Value
-    ctx.fillStyle = '#e8e8f0';
-    ctx.font = 'bold 20px Plus Jakarta Sans, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(b.val, x + barW / 2, y - 8);
-
-    // Label
-    ctx.fillStyle = 'rgba(232,232,240,.6)';
-    ctx.font = '11px Plus Jakarta Sans, sans-serif';
-    ctx.fillText(b.label, x + barW / 2, H - 14);
-  });
-
-  // Breakdown pills
-  document.getElementById('statusBreakdown').innerHTML = bars.map(b => `
-    <div style="display:flex; align-items:center; gap:7px; font-size:12px;">
-      <div style="width:10px; height:10px; border-radius:3px; background:${b.color};"></div>
-      <span style="font-weight:700; color:var(--muted);">${b.label}: <strong style="color:var(--text);">${b.val}</strong></span>
-    </div>
-  `).join('');
-}
-
-/* ══════════════════════════════════════
-   RECENT USERS (dashboard)
-══════════════════════════════════════ */
-function renderRecentUsers() {
-  const tbody = document.getElementById('recentUsersBody');
-  const recent = _allUsers.slice(0, 5);
-  if (!recent.length) {
-    tbody.innerHTML = `<tr><td colspan="3"><div class="empty-state"><div class="es-icon">👤</div><p>Chưa có người dùng</p></div></td></tr>`;
-    return;
-  }
-  tbody.innerHTML = recent.map(u => `
-    <tr>
-      <td>
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="width:30px; height:30px; border-radius:50%; background:var(--grad); display:grid; place-items:center; font-size:12px; font-weight:900; flex-shrink:0;">
-            ${(u.displayName || u.email || '?')[0].toUpperCase()}
-          </div>
-          <div>
-            <div style="font-weight:700;">${u.displayName || 'N/A'}</div>
-            <div style="font-size:11px; color:var(--muted);">${u.email}</div>
-          </div>
-        </div>
-      </td>
-      <td><span class="badge badge-${u.role}">${u.role}</span></td>
-      <td style="color:var(--muted); font-size:12px;">${formatDate(u.createdAt)}</td>
-    </tr>
-  `).join('');
-}
-
-/* ══════════════════════════════════════
-   ORDERS PAGE
-══════════════════════════════════════ */
-function filterOrders(f, el) {
-  _orderFilter = f;
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  renderOrders();
-}
-
-function renderOrders() {
-  const container = document.getElementById('orderList');
-  let list = _allOrders;
-  if (_orderFilter !== 'all') list = list.filter(o => o.status === _orderFilter);
-
-  if (!list.length) {
-    container.innerHTML = `<div class="empty-state"><div class="es-icon">📭</div><p>Không có đơn hàng nào</p></div>`;
-    return;
-  }
-
-  container.innerHTML = list.map(o => {
-    const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('vi-VN') : 'Đang xử lý';
-    const items = (o.items || []).map(i => `<div style="font-size:12px; padding:4px 0; border-bottom:1px solid var(--border);">• ${i.name} ×${i.qty} — <strong>${formatVND(i.price)}</strong></div>`).join('');
+function setOF(f,el){OF=f;document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));el.classList.add('on');renderOrders()}
+function renderOrders(){
+  const w=document.getElementById('oList');
+  const list=OF==='all'?ORDERS:ORDERS.filter(o=>o.status===OF);
+  if(!list.length){w.innerHTML=`<div class="empty"><div class="ei">📭</div><p>Không có đơn hàng</p></div>`;return}
+  w.innerHTML=list.map(o=>{
+    const dt=o.createdAt?.toDate?o.createdAt.toDate().toLocaleString('vi-VN'):'Đang xử lý';
+    const its=(o.items||[]).map(i=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)">• ${i.name} ×${i.qty} — <strong>${vnd(i.price)}</strong></div>`).join('');
     return `
-      <div class="card" style="margin-bottom:14px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <div style="font-size:14px; font-weight:900; font-family:monospace; color:var(--pink);">#${String(o.id).slice(-8)}</div>
-            <span class="badge badge-${o.status}">${o.status === 'pending' ? '⏳ Chờ xử lý' : '✅ Hoàn thành'}</span>
+      <div class="ocard">
+        <div class="ohd">
+          <div style="display:flex;align-items:center;gap:9px">
+            <span style="font-family:monospace;font-weight:900;color:var(--pink)">#${str(o.id).slice(-8)}</span>
+            <span class="bdg ${o.status==='pending'?'b-pend':'b-done'}">${o.status==='pending'?'⏳ Chờ xử lý':'✅ Hoàn thành'}</span>
           </div>
-          <div style="font-size:18px; font-weight:900; color:var(--pink);">${formatVND(o.total)}</div>
+          <span style="font-size:17px;font-weight:900;color:var(--pink)">${vnd(o.total)}</span>
         </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:13px; margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;margin-bottom:11px">
           <div>
-            <div style="color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Khách hàng</div>
-            <div><strong>${o.customer?.name || '—'}</strong></div>
-            <div style="color:var(--muted);">📞 ${o.customer?.phone || '—'}</div>
-            <div style="color:var(--muted); margin-top:4px; font-size:12px;">📍 ${[o.customer?.address, o.customer?.district, o.customer?.city].filter(Boolean).join(', ')}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Khách hàng</div>
+            <div><strong>${o.customer?.name||'—'}</strong></div>
+            <div style="color:var(--muted)">📞 ${o.customer?.phone||'—'}</div>
+            <div style="color:var(--muted);font-size:12px;margin-top:3px">📍 ${[o.customer?.address,o.customer?.district,o.customer?.city].filter(Boolean).join(', ')||'—'}</div>
           </div>
           <div>
-            <div style="color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin-bottom:8px;">Thanh toán & Thời gian</div>
-            <div>💳 ${o.payment || '—'}</div>
-            <div style="color:var(--muted); margin-top:4px; font-size:12px;">🕒 ${date}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Thanh toán</div>
+            <div>💳 ${o.payment||'—'}</div>
+            <div style="color:var(--muted);font-size:12px;margin-top:3px">🕒 ${dt}</div>
           </div>
         </div>
-
-        <div style="background:var(--dark3); border-radius:10px; padding:10px; margin-bottom:12px;">${items || '<div style="font-size:12px; color:var(--muted);">Không có sản phẩm</div>'}</div>
-
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          ${o.status === 'pending' ? `<button class="btn-sm btn-success" onclick="completeOrder('${o._docId}', '${o.id}')">✅ Hoàn thành đơn</button>` : ''}
-          <button class="btn-sm btn-danger" onclick="deleteOrder('${o._docId}', '${o.id}')">🗑 Xóa đơn</button>
+        <div style="background:var(--dark3);border-radius:8px;padding:9px;margin-bottom:10px;min-height:32px">${its||'<div style="font-size:12px;color:var(--muted)">Không có SP</div>'}</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${o.status==='pending'?`<button class="btn btn-suc" onclick="completeOrd('${o._id}','${o.id}')">✅ Hoàn thành đơn</button>`:''}
+          <button class="btn btn-dan" onclick="deleteOrd('${o._id}','${o.id}')">🗑 Xóa đơn</button>
         </div>
-      </div>
-    `;
+      </div>`;
+  }).join('');
+}
+async function completeOrd(did,oid){confirm2({ico:'✅',tit:'Hoàn thành đơn',dsc:`Xác nhận đơn <strong>#${str(oid).slice(-8)}</strong> đã giao?`,cb:async()=>{await db.collection('orders').doc(did).update({status:'completed'});toast('Đơn đã hoàn thành!','success')}})}
+async function deleteOrd(did,oid){confirm2({ico:'🗑️',tit:'Xóa đơn hàng',dsc:`Xóa đơn <strong>#${str(oid).slice(-8)}</strong>? Không thể hoàn tác.`,cb:async()=>{await db.collection('orders').doc(did).delete();toast('Đã xóa đơn','info')}})}
+
+/* ═══════════ PRODUCTS ═══════════ */
+function refreshProdStats(){
+  document.getElementById('sPrd').textContent=PRODS.length;
+  const low=PRODS.filter(p=>(p.stock??0)<=5).length;
+  document.getElementById('sPrdN').textContent=low?`⚠️ ${low} sắp hết hàng`:'Trong kho';
+}
+function renderLowStock(){
+  const w=document.getElementById('lowSt');
+  const list=PRODS.filter(p=>(p.stock??0)<=5).sort((a,b)=>(a.stock??0)-(b.stock??0)).slice(0,7);
+  if(!list.length){w.innerHTML=`<div class="empty"><div class="ei">✅</div><p>Tất cả còn hàng</p></div>`;return}
+  w.innerHTML=list.map(p=>{
+    const s=p.stock??0;
+    return `<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--border)">
+      ${p.img?`<img style="width:30px;height:30px;border-radius:6px;object-fit:cover;flex-shrink:0" src="${p.img}" onerror="this.style.display='none'">`:`<div style="width:30px;height:30px;border-radius:6px;background:var(--dark3);display:grid;place-items:center;flex-shrink:0">📦</div>`}
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||'—'}</div></div>
+      <span class="bdg ${s<=0?'b-out':'b-low'}">${s<=0?'Hết':''+s}</span>
+    </div>`;
   }).join('');
 }
 
-async function completeOrder(docId, orderId) {
-  showConfirm({
-    icon: '✅',
-    title: 'Hoàn thành đơn hàng',
-    desc: `Xác nhận đơn #${String(orderId).slice(-8)} đã hoàn thành?`,
-    onConfirm: async () => {
-      await db.collection('orders').doc(docId).update({ status: 'completed' });
-      showToast('Đơn hàng đã hoàn thành!', 'success');
-    }
-  });
+// Lấy nhãn danh mục từ CATS cache
+function catLabel(catId){
+  const c=CATS.find(x=>x._id===catId||x.name===catId);
+  return c?`${c.emoji||''} ${c.name}`:(catId||'—');
 }
 
-async function deleteOrder(docId, orderId) {
-  showConfirm({
-    icon: '🗑️',
-    title: 'Xóa đơn hàng',
-    desc: `Bạn muốn xóa đơn #${String(orderId).slice(-8)}? Hành động này không thể hoàn tác.`,
-    onConfirm: async () => {
-      await db.collection('orders').doc(docId).delete();
-      showToast('Đã xóa đơn hàng.', 'info');
-    }
-  });
-}
-
-/* ══════════════════════════════════════
-   PRODUCTS PAGE
-══════════════════════════════════════ */
-async function addProduct() {
-  const name  = document.getElementById('pName').value.trim();
-  const price = Number(document.getElementById('pPrice').value);
-  const cat   = document.getElementById('pCat').value;
-  const img   = document.getElementById('pImg').value.trim();
-  const stock = Number(document.getElementById('pStock').value) || 0;
-  const desc  = document.getElementById('pDesc').value.trim();
-
-  if (!name)  { showToast('Nhập tên sản phẩm!', 'error'); return; }
-  if (!price) { showToast('Nhập giá sản phẩm!', 'error'); return; }
-
-  const btn = document.getElementById('btnAddProduct');
-  btn.disabled = true; btn.textContent = 'Đang lưu...';
-
-  try {
-    await db.collection('products_db').add({
-      id: Date.now(),
-      name, price, category: cat, img, stock, desc,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    showToast(`✨ Đã thêm "${name}"!`, 'success');
-    ['pName','pPrice','pImg','pStock','pDesc'].forEach(id => document.getElementById(id).value = '');
-  } catch(e) {
-    showToast('Lỗi: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false; btn.textContent = '✚ Thêm sản phẩm';
-  }
-}
-
-function renderProducts() {
-  const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
-  const list = _allProducts.filter(p => !q || p.name?.toLowerCase().includes(q));
-  const grid = document.getElementById('productGrid');
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">📦</div><p>Chưa có sản phẩm nào</p></div>`;
-    return;
-  }
-  const catLabel = { plush:'🧸', pen:'✏️', notebook:'📓', accessory:'🎀', combo:'🎁' };
-  grid.innerHTML = list.map(p => `
-    <div class="product-card">
-      ${p.img
-        ? `<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
-           <div class="product-img-placeholder" style="display:none;">${catLabel[p.category] || '📦'}</div>`
-        : `<div class="product-img-placeholder">${catLabel[p.category] || '📦'}</div>`}
-      <div class="product-body">
-        <div class="product-cat">${catLabel[p.category] || ''} ${p.category || ''}</div>
-        <div class="product-name" title="${p.name}">${p.name}</div>
-        <div class="product-price">${formatVND(p.price)}</div>
-        ${p.stock !== undefined ? `<div style="font-size:11px; color:var(--muted);">Tồn kho: <strong style="color:var(--text);">${p.stock}</strong></div>` : ''}
-        <div class="product-actions">
-          <button class="btn-sm btn-danger" onclick="deleteProduct('${p._docId}', '${p.name}')">🗑 Xóa</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function deleteProduct(docId, name) {
-  showConfirm({
-    icon: '🗑️',
-    title: 'Xóa sản phẩm',
-    desc: `Bạn muốn xóa sản phẩm "${name}"? Hành động này không thể hoàn tác.`,
-    onConfirm: async () => {
-      await db.collection('products_db').doc(docId).delete();
-      showToast(`Đã xóa "${name}".`, 'info');
-    }
-  });
-}
-
-/* ══════════════════════════════════════
-   USERS PAGE
-══════════════════════════════════════ */
-function renderUsers() {
-  const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
-  const list = _allUsers.filter(u =>
-    !q || u.displayName?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q)
+function renderProds(){
+  const q=(document.getElementById('pSearch')?.value||'').toLowerCase();
+  const cf=document.getElementById('pCatF')?.value||'';
+  const list=PRODS.filter(p=>
+    (!q||(p.name||'').toLowerCase().includes(q))&&
+    (!cf||p.category===cf)
   );
-  const tbody = document.getElementById('userTableBody');
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="5" style="padding:30px; text-align:center; color:var(--muted);">Không tìm thấy người dùng</td></tr>`;
+  const tb=document.getElementById('pBody');
+  if(!list.length){
+    tb.innerHTML=erow(5, PRODS.length===0
+      ? '⬆️ Chưa có sản phẩm. Nhấn "Nhập sản phẩm mặc định" ở trên, hoặc thêm thủ công.'
+      : 'Không tìm thấy sản phẩm phù hợp');
     return;
   }
-  const currentUser = auth.currentUser;
-  tbody.innerHTML = list.map(u => `
+  tb.innerHTML=list.map(p=>{
+    const s=p.stock??0;
+    const sb=s<=0?'b-out':s<=5?'b-low':'b-ok';
+    return `
+      <tr>
+        <td style="padding:9px 14px">
+          <div style="display:flex;align-items:center;gap:9px">
+            ${p.img
+              ?`<img class="pthumb" src="${p.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="pph" style="display:none">📦</div>`
+              :`<div class="pph">📦</div>`}
+            <div>
+              <div style="font-weight:700;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${esc2(p.name)}">${p.name||'—'}</div>
+              ${p.desc?`<div style="font-size:11px;color:var(--muted);max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.desc}</div>`:''}
+            </div>
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--muted)">${catLabel(p.category)}</td>
+        <td style="font-weight:800;color:var(--pink);white-space:nowrap">${vnd(p.price)}</td>
+        <td>
+          <div class="sk-cell">
+            <span class="bdg ${sb}">${s<=0?'Hết hàng':s+' sp'}</span>
+            <button class="btn-sk" onclick="toggleSK('${p._id}')">✏</button>
+            <input class="sk-input" id="si-${p._id}" type="number" min="0" value="${s}"
+              onblur="saveSK('${p._id}')" onkeydown="if(event.key==='Enter')saveSK('${p._id}')">
+          </div>
+        </td>
+        <td>
+          <div style="display:flex;gap:5px">
+            <button class="btn btn-gho" onclick="openEdit('${p._id}')">✏️ Sửa</button>
+            <button class="btn btn-dan" onclick="delProd('${p._id}','${esc(p.name)}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function toggleSK(id){
+  const inp=document.getElementById('si-'+id);
+  const vis=inp.style.display==='inline-block';
+  inp.style.display=vis?'none':'inline-block';
+  if(!vis){inp.focus();inp.select()}
+}
+async function saveSK(id){
+  const inp=document.getElementById('si-'+id);
+  const v=Math.max(0,parseInt(inp.value)||0);
+  inp.style.display='none';
+  await db.collection('products_db').doc(id).update({stock:v});
+  toast(`Tồn kho → ${v} sp`,'success');
+}
+
+async function addProd(){
+  const name=document.getElementById('pName').value.trim();
+  const price=Number(document.getElementById('pPrice').value)||0;
+  const stock=Math.max(0,Number(document.getElementById('pStock').value)||0);
+  const cat=document.getElementById('pCat').value;
+  const img=document.getElementById('pImg').value.trim();
+  const desc=document.getElementById('pDesc').value.trim();
+  if(!name){toast('Nhập tên sản phẩm!','error');return}
+  if(!price){toast('Nhập giá sản phẩm!','error');return}
+  if(!cat){toast('Chọn danh mục! (Tạo danh mục ở tab Danh mục trước)','error');return}
+  const btn=document.getElementById('btnAdd');
+  btn.disabled=true;btn.textContent='Đang lưu...';
+  try{
+    await db.collection('products_db').add({name,price,stock,category:cat,img,desc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    toast(`✨ Đã thêm "${name}"!`,'success');
+    ['pName','pPrice','pStock','pImg','pDesc'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Lỗi: '+e.message,'error')}
+  finally{btn.disabled=false;btn.textContent='✚ Thêm sản phẩm'}
+}
+
+function openEdit(id){
+  const p=PRODS.find(x=>x._id===id);if(!p)return;
+  EDIT_ID=id;
+  document.getElementById('eName').value=p.name||'';
+  document.getElementById('ePrice').value=p.price||0;
+  document.getElementById('eStock').value=p.stock??0;
+  document.getElementById('eImg').value=p.img||'';
+  document.getElementById('eDesc').value=p.desc||'';
+  const sel=document.getElementById('eCat');
+  sel.innerHTML=CATS.map(c=>`<option value="${c._id}" ${p.category===c._id?'selected':''}>${c.emoji||''} ${c.name}</option>`).join('');
+  // Nếu danh mục là text cũ (không match ID) thì thêm vào
+  if(!sel.value&&p.category) sel.innerHTML+=`<option value="${p.category}" selected>${p.category}</option>`;
+  document.getElementById('eModal').classList.add('vis');
+}
+async function saveEdit(){
+  if(!EDIT_ID)return;
+  const name=document.getElementById('eName').value.trim();
+  const price=Number(document.getElementById('ePrice').value)||0;
+  const stock=Math.max(0,Number(document.getElementById('eStock').value)||0);
+  const cat=document.getElementById('eCat').value;
+  const img=document.getElementById('eImg').value.trim();
+  const desc=document.getElementById('eDesc').value.trim();
+  if(!name||!price){toast('Tên và giá không được trống','error');return}
+  try{
+    await db.collection('products_db').doc(EDIT_ID).update({name,price,stock,category:cat,img,desc});
+    toast('Đã lưu thay đổi!','success');closeM('eModal');
+  }catch(e){toast('Lỗi: '+e.message,'error')}
+}
+async function delProd(id,name){
+  confirm2({ico:'🗑️',tit:'Xóa sản phẩm',dsc:`Xóa <strong>"${name}"</strong>? Không thể hoàn tác.`,cb:async()=>{
+    await db.collection('products_db').doc(id).delete();toast(`Đã xóa "${name}"`,'info');
+  }});
+}
+
+// Sync danh mục vào tất cả select
+function syncCatSelects(){
+  ['pCat','eCat'].forEach(selId=>{
+    const el=document.getElementById(selId);if(!el)return;
+    const cur=el.value;
+    if(CATS.length){
+      el.innerHTML=CATS.map(c=>`<option value="${c._id}">${c.emoji||''} ${c.name}</option>`).join('');
+    } else {
+      el.innerHTML='<option value="">— Chưa có danh mục —</option>';
+    }
+    if(cur) el.value=cur;
+  });
+}
+function syncCatFilter(){
+  const sel=document.getElementById('pCatF');if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Tất cả danh mục</option>'+
+    CATS.map(c=>`<option value="${c._id}" ${cur===c._id?'selected':''}>${c.emoji||''} ${c.name}</option>`).join('');
+}
+
+/* ═══════════ CATEGORIES ═══════════ */
+function renderCatTable(){
+  const tb=document.getElementById('catBody');
+  document.getElementById('catCnt').textContent=`(${CATS.length})`;
+  if(!CATS.length){tb.innerHTML=erow(4,'Chưa có danh mục nào');return}
+  tb.innerHTML=CATS.map(c=>{
+    const cnt=PRODS.filter(p=>p.category===c._id).length;
+    return `
+      <tr>
+        <td style="padding:11px 14px">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:36px;height:36px;border-radius:9px;background:var(--dark3);display:grid;place-items:center;font-size:19px;flex-shrink:0">${c.emoji||'📦'}</div>
+            <div style="font-weight:700">${c.name}</div>
+          </div>
+        </td>
+        <td style="color:var(--muted);font-size:12px">${c.desc||'—'}</td>
+        <td><span class="bdg b-ok">${cnt} SP</span></td>
+        <td>
+          <button class="btn btn-dan" onclick="delCat('${c._id}','${esc(c.name)}')">🗑 Xóa</button>
+        </td>
+      </tr>`;
+  }).join('');
+}
+async function addCat(){
+  const emoji=document.getElementById('cEmoji').value.trim();
+  const name=document.getElementById('cName').value.trim();
+  const desc=document.getElementById('cDescI').value.trim();
+  if(!name){toast('Nhập tên danh mục!','error');return}
+  if(CATS.find(c=>c.name.toLowerCase()===name.toLowerCase())){toast('Danh mục đã tồn tại!','error');return}
+  const btn=document.getElementById('btnAddCat');
+  btn.disabled=true;btn.textContent='Đang lưu...';
+  try{
+    await db.collection('categories').add({emoji:emoji||'📦',name,desc,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    toast(`✅ Đã tạo danh mục "${name}"`,'success');
+    ['cEmoji','cName','cDescI'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){toast('Lỗi: '+e.message,'error')}
+  finally{btn.disabled=false;btn.textContent='✚ Tạo danh mục'}
+}
+async function delCat(id,name){
+  const cnt=PRODS.filter(p=>p.category===id).length;
+  confirm2({ico:'🗑️',tit:'Xóa danh mục',
+    dsc:`Xóa danh mục <strong>"${name}"</strong>?${cnt?`<br><span style="color:#fbbf24">⚠️ ${cnt} sản phẩm đang dùng danh mục này.</span>`:''}`,
+    cb:async()=>{await db.collection('categories').doc(id).delete();toast(`Đã xóa "${name}"`,'info')}
+  });
+}
+
+/* ═══════════ USERS ═══════════ */
+function renderRU(){
+  const tb=document.getElementById('tRU');
+  if(!USERS.length){tb.innerHTML=erow(3,'Chưa có người dùng');return}
+  tb.innerHTML=USERS.slice(0,5).map(u=>`
     <tr>
-      <td style="padding:12px 20px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <div style="width:34px; height:34px; border-radius:50%; background:var(--grad); display:grid; place-items:center; font-size:13px; font-weight:900; flex-shrink:0;">
-            ${(u.displayName || u.email || '?')[0].toUpperCase()}
-          </div>
-          <div style="font-weight:700;">${u.displayName || 'N/A'}
-            ${u._docId === currentUser?.uid ? '<span style="font-size:10px; color:var(--pink); margin-left:6px;">(bạn)</span>' : ''}
-          </div>
-        </div>
-      </td>
-      <td><span class="badge badge-${u.role}">${u.role}</span></td>
-      <td style="color:var(--muted); font-size:12px;">${u.email}</td>
-      <td style="color:var(--muted); font-size:12px;">${formatDate(u.createdAt)}</td>
       <td>
-        <div style="display:flex; gap:6px;">
-          ${u._docId !== currentUser?.uid ? `
-            <button class="btn-sm ${u.role === 'admin' ? 'btn-secondary' : 'btn-purple'}"
-              onclick="toggleRole('${u._docId}', '${u.role}', '${u.displayName || u.email}')">
-              ${u.role === 'admin' ? '👤 Hạ quyền' : '⭐ Nâng admin'}
-            </button>
-            <button class="btn-sm btn-danger" onclick="deleteUser('${u._docId}', '${u.displayName || u.email}')">🗑</button>
-          ` : '<span style="font-size:11px; color:var(--muted);">—</span>'}
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:27px;height:27px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:12px;font-weight:900;flex-shrink:0">${(u.displayName||u.email||'?')[0].toUpperCase()}</div>
+          <div><div style="font-weight:700">${u.displayName||'N/A'}</div><div style="font-size:11px;color:var(--muted)">${u.email}</div></div>
         </div>
       </td>
-    </tr>
-  `).join('');
+      <td><span class="bdg ${u.role==='admin'?'b-admin':'b-cust'}">${u.role}</span></td>
+      <td style="font-size:12px;color:var(--muted)">${fdate(u.createdAt)}</td>
+    </tr>`).join('');
+}
+function renderUsers(){
+  const q=(document.getElementById('uSearch')?.value||'').toLowerCase();
+  const list=USERS.filter(u=>!q||
+    (u.displayName||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q));
+  const tb=document.getElementById('uBody');
+  const me=auth.currentUser?.uid;
+  if(!list.length){tb.innerHTML=erow(5,'Không tìm thấy người dùng');return}
+  tb.innerHTML=list.map(u=>`
+    <tr>
+      <td style="padding:10px 16px">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:13px;font-weight:900;flex-shrink:0">${(u.displayName||u.email||'?')[0].toUpperCase()}</div>
+          <div style="font-weight:700">${u.displayName||'N/A'} ${u._id===me?'<span style="font-size:10px;color:var(--pink);margin-left:5px">(bạn)</span>':''}</div>
+        </div>
+      </td>
+      <td><span class="bdg ${u.role==='admin'?'b-admin':'b-cust'}">${u.role}</span></td>
+      <td style="color:var(--muted);font-size:12px">${u.email}</td>
+      <td style="color:var(--muted);font-size:12px">${fdate(u.createdAt)}</td>
+      <td>
+        ${u._id!==me?`
+          <div style="display:flex;gap:5px">
+            <button class="btn ${u.role==='admin'?'btn-gho':'btn-amb'}" onclick="toggleRole('${u._id}','${u.role}','${esc(u.displayName||'')}')">
+              ${u.role==='admin'?'👤 Hạ quyền':'⭐ Nâng Admin'}
+            </button>
+            <button class="btn btn-dan" onclick="delUser('${u._id}','${esc(u.displayName||'')}')">🗑</button>
+          </div>
+        `:'<span style="font-size:11px;color:var(--muted)">—</span>'}
+      </td>
+    </tr>`).join('');
+}
+async function toggleRole(uid,role,name){
+  const nr=role==='admin'?'customer':'admin';
+  confirm2({ico:nr==='admin'?'⭐':'👤',tit:'Đổi quyền',dsc:`Chuyển <strong>"${name}"</strong> sang <strong>${nr}</strong>?`,cb:async()=>{
+    await db.collection('users').doc(uid).update({role:nr});toast(`Đổi "${name}" → ${nr}`,'success');
+  }});
+}
+async function delUser(uid,name){
+  confirm2({ico:'🗑️',tit:'Xóa người dùng',dsc:`Xóa tài khoản <strong>"${name}"</strong>?`,cb:async()=>{
+    await db.collection('users').doc(uid).delete();toast(`Đã xóa "${name}"`,'info');
+  }});
 }
 
-async function toggleRole(uid, currentRole, name) {
-  const newRole = currentRole === 'admin' ? 'customer' : 'admin';
-  showConfirm({
-    icon: newRole === 'admin' ? '⭐' : '👤',
-    title: `Đổi quyền người dùng`,
-    desc: `Chuyển "${name}" sang vai trò <strong>${newRole}</strong>?`,
-    onConfirm: async () => {
-      await db.collection('users').doc(uid).update({ role: newRole });
-      showToast(`Đã đổi quyền "${name}" → ${newRole}`, 'success');
-    }
-  });
+/* ═══════════ LOGOUT ═══════════ */
+function doLogout(){confirm2({ico:'🚪',tit:'Đăng xuất',dsc:'Bạn chắc muốn đăng xuất?',cb:async()=>{
+  localStorage.removeItem('aurora_user');await auth.signOut();window.location.replace('login.html');
+}})}
+
+/* ═══════════ HELPERS ═══════════ */
+function vnd(n){return n!=null?Number(n).toLocaleString('vi-VN')+'₫':'—'}
+function str(v){return String(v||'')}
+function esc(s){return(s||'').replace(/'/g,"\\'")}
+function esc2(s){return(s||'').replace(/"/g,'&quot;')}
+function fdate(ts){return ts?.toDate?ts.toDate().toLocaleDateString('vi-VN'):'—'}
+function erow(c,m){return`<tr><td colspan="${c}" style="padding:28px;text-align:center;color:var(--muted);font-size:13px">${m}</td></tr>`}
+
+let _tt;
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className=`vis ${type}`;
+  clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('vis'),3200);
 }
-
-async function deleteUser(uid, name) {
-  showConfirm({
-    icon: '🗑️',
-    title: 'Xóa người dùng',
-    desc: `Xóa tài khoản "${name}" khỏi Firestore? (Không xóa Firebase Auth)`,
-    onConfirm: async () => {
-      await db.collection('users').doc(uid).delete();
-      showToast(`Đã xóa người dùng "${name}".`, 'info');
-    }
-  });
+function confirm2({ico,tit,dsc,cb}){
+  document.getElementById('cIco').textContent=ico||'⚠️';
+  document.getElementById('cTit').textContent=tit||'Xác nhận';
+  document.getElementById('cDsc').innerHTML=dsc||'';
+  CONFIRM_CB=cb;
+  document.getElementById('cModal').classList.add('vis');
 }
-
-/* ══════════════════════════════════════
-   LOGOUT
-══════════════════════════════════════ */
-function handleLogout() {
-  showConfirm({
-    icon: '🚪',
-    title: 'Đăng xuất',
-    desc: 'Bạn có chắc muốn đăng xuất khỏi trang quản trị?',
-    onConfirm: async () => {
-      localStorage.removeItem('aurora_user');
-      await auth.signOut();
-      window.location.href = 'login.html';
-    }
-  });
-}
-
-/* ══════════════════════════════════════
-   UI HELPERS
-══════════════════════════════════════ */
-function formatVND(n) {
-  if (!n && n !== 0) return '—';
-  return Number(n).toLocaleString('vi-VN') + '₫';
-}
-
-function formatDate(ts) {
-  if (!ts) return '—';
-  if (ts.toDate) return ts.toDate().toLocaleDateString('vi-VN');
-  return '—';
-}
-
-let _toastTimer;
-function showToast(msg, type = 'info') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = `show ${type}`;
-  clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
-}
-
-function showConfirm({ icon, title, desc, onConfirm }) {
-  document.getElementById('modalIcon').textContent = icon || '⚠️';
-  document.getElementById('modalTitle').textContent = title || 'Xác nhận';
-  document.getElementById('modalDesc').innerHTML = desc || '';
-  _confirmCb = onConfirm;
-  document.getElementById('confirmModal').classList.add('show');
-}
-
-document.getElementById('modalConfirmBtn').onclick = async () => {
-  closeConfirm();
-  if (_confirmCb) await _confirmCb();
-  _confirmCb = null;
-};
-
-function closeConfirm() {
-  document.getElementById('confirmModal').classList.remove('show');
-}
-
-// Close modal on backdrop click
-document.getElementById('confirmModal').addEventListener('click', e => {
-  if (e.target === e.currentTarget) closeConfirm();
-});
+document.getElementById('cOk').onclick=async()=>{closeM('cModal');if(CONFIRM_CB)await CONFIRM_CB();CONFIRM_CB=null};
+function closeM(id){document.getElementById(id).classList.remove('vis')}
+document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('vis')}));
 </script>
 </body>
 </html>
