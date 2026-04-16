@@ -135,13 +135,11 @@ function renderShop() {
     card.className = "productCard";
 
     card.innerHTML = `
-      <a href="product.html?id=${p.id}" style="display:block;text-decoration:none;color:inherit;">
-        <div class="productCard__imgWrap">
-          <img src="${p.img}" alt="${displayName}"
-               onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');">
-          ${p.badge ? `<span class="tag ${p.badge === 'new' || p.badge === 'hot' ? 'tag--soft' : ''}">${p.badge.toUpperCase()}</span>` : ''}
-        </div>
-      </a>
+      <div class="productCard__imgWrap">
+        <img src="${p.img}" alt="${displayName}"
+             onerror="this.style.display='none'; this.parentElement.classList.add('imgFallback');">
+        ${p.badge ? `<span class="tag ${p.badge === 'new' || p.badge === 'hot' ? 'tag--soft' : ''}">${p.badge.toUpperCase()}</span>` : ''}
+      </div>
 
       <div class="productCard__body">
         <div class="productCard__name">${displayName}</div>
@@ -150,21 +148,13 @@ function renderShop() {
           <span class="muted">• ${p.category}</span>
         </div>
 
-        <!-- Hai nút hành động -->
-        <div style="display:flex;gap:8px;margin-top:10px;">
-          <a href="product.html?id=${p.id}"
-             class="btn btn--ghost"
-             style="flex:1;font-size:12px;padding:9px 6px;text-align:center;">
-            ${LABEL.detail[lang] || LABEL.detail.vi}
-          </a>
-          <button
-            class="btn btn--primary shop-add-btn"
-            style="flex:1.3;font-size:12px;padding:9px 6px;"
-            data-id="${p.id}"
-            type="button">
-            ${LABEL.add[lang] || LABEL.add.vi}
-          </button>
-        </div>
+        <button
+          class="btn btn--primary shop-add-btn btn--full"
+          style="margin-top:10px; font-size:13px; padding:10px;"
+          data-id="${p.id}"
+          type="button">
+          ${LABEL.add[lang] || LABEL.add.vi}
+        </button>
       </div>
     `;
 
