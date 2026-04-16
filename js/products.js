@@ -15,28 +15,7 @@ const PRODUCTS = [
     desc:{vi:"Ôm siêu đã, mềm.", ko:"포근한 대형.", fr:"Très doux.", ja:"抱き心地最高。"},
     badge:""
   },
-  { id: 15, category: "plush", price: 150000, img:"assets/img/plush-bunny.jpg", name:{vi:"Thỏ bông tai dài", ko:"긴 귀 토끼", fr:"Lapin longues oreilles", ja:"長耳うさぎ"}, desc:{vi:"Chất liệu nhung mềm.", ko:"부드러운 벨벳.", fr:"Velours doux.", ja:"ベルベット素材。"}, badge:"" },
-  { id: 16, category: "plush", price: 195000, img:"assets/img/plush-cat.jpg", name:{vi:"Mèo bông Luna", ko:"루나 고양이", fr:"Chat Luna", ja:"ルナ猫"}, desc:{vi:"Mắt thêu tinh xảo.", ko:"섬세한 자수.", fr:"Broderie fine.", ja:"刺繍がきれい。"}, badge:"hot" },
-  { id: 17, category: "plush", price: 210000, img:"assets/img/plush-shiba.jpg", name:{vi:"Chó Shiba bông", ko:"시바견 인형", fr:"Peluche Shiba", ja:"柴犬ぬいぐるみ"}, desc:{vi:"Biểu cảm đáng yêu.", ko:"귀여운 표정.", fr:"Expression mignonne.", ja:"可愛い表情。"}, badge:"" },
-  { id: 18, category: "plush", price: 180000, img:"assets/img/plush-dino.jpg", name:{vi:"Khủng long xanh", ko:"초록 공룡", fr:"Dino vert", ja:"緑の恐竜"}, desc:{vi:"Màu sắc tươi sáng.", ko:"밝은 색상.", fr:"Couleurs vives.", ja:"明るい色。"}, badge:"new" },
-  { id: 19, category: "plush", price: 135000, img:"assets/img/plush-hamster.jpg", name:{vi:"Hamster béo", ko:"뚱뚱한 햄스터", fr:"Hamster gras", ja:"太ったハムスター"}, desc:{vi:"Tròn trịa, êm ái.", ko:"폭신폭신함.", fr:"Rond et doux.", ja:"ふわふわ。"}, badge:"" },
-  { id: 20, category: "plush", price: 225000, img:"assets/img/plush-corgi.jpg", name:{vi:"Corgi mông to", ko:"코기 인형", fr:"Peluche Corgi", ja:"コーギーぬいぐるみ"}, desc:{vi:"Thiết kế ngộ nghĩnh.", ko:"재미있는 디자인.", fr:"Design drôle.", ja:"面白いデザイン。"}, badge:"hot" },
-  { id: 21, category: "plush", price: 170000, img:"assets/img/plush-penguin.jpg", name:{vi:"Chim cánh cụt", ko:"펭귄 인형", fr:"Peluche Pingouin", ja:"ペンギンぬいぐるみ"}, desc:{vi:"Dáng đứng dễ thương.", ko:"귀여운 포즈.", fr:"Pose mignonne.", ja:"可愛いポーズ。"}, badge:"" },
-  { id: 22, category: "plush", price: 145000, img:"assets/img/plush-fox.jpg", name:{vi:"Cáo tuyết", ko:"눈여우", fr:"Renard des neiges", ja:"雪ギツネ"}, desc:{vi:"Lông trắng muốt.", ko:"하얀 털.", fr:"Fourrure blanche.", ja:"白い毛。"}, badge:"" },
-  { id: 23, category: "plush", price: 260000, img:"assets/img/plush-panda.jpg", name:{vi:"Gấu Trúc bự", ko:"대형 판다", fr:"Grand Panda", ja:"大パンダ"}, desc:{vi:"Kích thước ôm vừa tay.", ko:"안기 좋은 사이즈.", fr:"Taille parfaite.", ja:"ちょうどいいサイズ。"}, badge:"" },
-  { id: 24, category: "plush", price: 120000, img:"assets/img/plush-elephant.jpg", name:{vi:"Voi con xám", ko:"아기 코끼리", fr:"Bébé éléphant", ja:"子象"}, desc:{vi:"Tai to mềm mại.", ko:"부드러운 큰 귀.", fr:"Grandes oreilles.", ja:"大きな耳。"}, badge:"" },
-  { id: 25, category: "plush", price: 190000, img:"assets/img/plush-whale.jpg", name:{vi:"Cá voi xanh", ko:"파란 고래", fr:"Baleine bleue", ja:"青いクジラ"}, desc:{vi:"Gối ôm lý tưởng.", ko:"베개로 좋음.", fr:"Idéal comme oreiller.", ja:"枕に最適。"}, badge:"new" },
-  { id: 26, category: "plush", price: 155000, img:"assets/img/plush-octopus.jpg", name:{vi:"Bạch tuộc cảm xúc", ko:"문어 인형", fr:"Poulpe réversible", ja:"タコぬいぐるみ"}, desc:{vi:"Hai mặt cảm xúc.", ko:"두 가지 표정.", fr:"Double face.", ja:"リバーシブル。"}, badge:"" },
-  { id: 27, category: "plush", price: 240000, img:"assets/img/plush-koala.jpg", name:{vi:"Gấu Koala", ko:"코알라 인형", fr:"Peluche Koala", ja:"コアラぬいぐるみ"}, desc:{vi:"Lông xù cao cấp.", ko:"고급 인조 모피.", fr:"Fourrure premium.", ja:"高級ファー。"}, badge:"" },
-  { id: 28, category: "plush", price: 165000, img:"assets/img/plush-lion.jpg", name:{vi:"Sư tử nhỏ", ko:"아기 사자", fr:"Lionceau", ja:"子ライオン"}, desc:{vi:"Bờm mịn, không rụng.", ko:"털 안 빠짐.", fr:"Crinière douce.", ja:"たてがみ。"}, badge:"" },
-  { id: 29, category: "plush", price: 175000, img:"assets/img/plush-pig.jpg", name:{vi:"Heo hồng", ko:"분홍 돼지", fr:"Cochon rose", ja:"ピンクの豚"}, desc:{vi:"Dáng tròn ủn ỉn.", ko:"통통한 모양.", fr:"Forme ronde.", ja:"丸い形。"}, badge:"sale" },
-  { id: 30, category: "plush", price: 130000, img:"assets/img/plush-frog.jpg", name:{vi:"Ếch xanh", ko:"초록 개구리", fr:"Grenouille verte", ja:"緑のカエル"}, desc:{vi:"Mắt to vui nhộn.", ko:"재미있는 큰 눈.", fr:"Gros yeux rigolos.", ja:"大きな目。"}, badge:"" },
-  { id: 31, category: "plush", price: 140000, img:"assets/img/plush-duck.jpg", name:{vi:"Vịt vàng", ko:"노란 오리", fr:"Canard jaune", ja:"黄色いアヒル"}, desc:{vi:"Mỏ mềm, dễ thương.", ko:"부드러 부리.", fr:"Bec doux.", ja:"柔らかいクチバシ。"}, badge:"" },
-  { id: 32, category: "plush", price: 200000, img:"assets/img/plush-chicken.jpg", name:{vi:"Gà con chip chip", ko:"병아리 인형", fr:"Peluche Poussin", ja:"ひよこぬいぐるみ"}, desc:{vi:"Nhỏ xinh để bàn.", ko:"데스크용.", fr:"Petit format.", ja:"デスク用。"}, badge:"" },
-  { id: 33, category: "plush", price: 280000, img:"assets/img/plush-alpaca.jpg", name:{vi:"Lạc đà Alpaca", ko:"알파카 인형", fr:"Peluche Alpaga", ja:"アルパカぬいぐるみ"}, desc:{vi:"Cao ráo, lông mịn.", ko:"부드러운 털.", fr:"Poils soyeux.", ja:"シルキーな毛。"}, badge:"hot" },
-  { id: 34, category: "plush", price: 110000, img:"assets/img/plush-star.jpg", name:{vi:"Ngôi sao may mắn", ko:"행운의 별", fr:"Étoile chance", ja:"幸運の星"}, desc:{vi:"Mềm mại, ấm áp.", ko:"따뜻한 느낌.", fr:"Doux et chaud.", ja:"温かい感じ。"}, badge:""
-  },
-
+  
   // 🖊 Pen
   { id: 4, category: "pen", price: 59000, img:"assets/img/but-bi-gel-05.jpg",
     name:{vi:"Bút bi gel 0.5 (set 5 màu)", ko:"젤펜 0.5 (5색)", fr:"Stylo gel 0.5 (x5)", ja:"ジェルペン0.5（5色）"},
@@ -53,28 +32,7 @@ const PRODUCTS = [
     desc:{vi:"Màu nhẹ, đẹp.", ko:"색감 예쁨.", fr:"Couleurs douces.", ja:"優しい色。"},
     badge:"hot"
   },
-  { id: 35, category: "pen", price: 15000, img:"assets/img/pen-brush.jpg", name:{vi:"Bút Brush Calligraphy", ko:"브러쉬 펜", fr:"Stylo Brush", ja:"ブラシペン"}, desc:{vi:"Viết chữ nghệ thuật.", ko:"캘리그라피용.", fr:"Pour la calligraphie.", ja:"カリグラフィー用。"}, badge:"new" },
-  { id: 36, category: "pen", price: 85000, img:"assets/img/pen-fountain.jpg", name:{vi:"Bút máy Aurora", ko:"만년필", fr:"Stylo plume", ja:"万年筆"}, desc:{vi:"Thiết kế sang trọng.", ko:"고급스러운 디자인.", fr:"Design élégant.", ja:"エレガントなデザイン。"}, badge:"hot" },
-  { id: 37, category: "pen", price: 12000, img:"assets/img/pen-pencil.jpg", name:{vi:"Bút chì gỗ 2B", ko:"연필 2B", fr:"Crayon 2B", ja:"鉛筆2B"}, desc:{vi:"Gỗ tốt, dễ gọt.", ko:"깎기 편함.", fr:"Facile à tailler.", ja:"削りやすい。"}, badge:"" },
-  { id: 38, category: "pen", price: 35000, img:"assets/img/pen-multi.jpg", name:{vi:"Bút 10 màu trong 1", ko:"10색 볼펜", fr:"Stylo 10 couleurs", ja:"10色ボールペン"}, desc:{vi:"Tiện lợi, đa năng.", ko:"다기능.", fr:"Multifonction.", ja:"多機能。"}, badge:"" },
-  { id: 39, category: "pen", price: 25000, img:"assets/img/pen-metallic.jpg", name:{vi:"Bút nhũ Metallic", ko:"메탈릭 펜", fr:"Stylo métallisé", ja:"メタリックペン"}, desc:{vi:"Viết lên giấy đen.", ko:"검은 종이용.", fr:"Pour papier noir.", ja:"黒い紙用。"}, badge:"" },
-  { id: 40, category: "pen", price: 28000, img:"assets/img/pen-erasable.jpg", name:{vi:"Bút bi xóa được", ko:"지워지는 볼펜", fr:"Stylo effaçable", ja:"消せるボールペン"}, desc:{vi:"Mực nhiệt tiện lợi.", ko:"지울 수 있음.", fr:"Encre thermique.", ja:"熱で消えるインク。"}, badge:"hot" },
-  { id: 41, category: "pen", price: 18000, img:"assets/img/pen-whiteboard.jpg", name:{vi:"Bút viết bảng trắng", ko:"화이트보드 마커", fr:"Feutre tableau", ja:"ホワイトボードマーカー"}, desc:{vi:"Dễ xóa sạch.", ko:"잘 지워짐.", fr:"Effaçage facile.", ja:"消しやすい。"}, badge:"" },
-  { id: 42, category: "pen", price: 55000, img:"assets/img/pen-dual.jpg", name:{vi:"Bút Dual Tip (2 đầu)", ko:"듀얼 팁 마커", fr:"Marqueur double", ja:"デュアルチップ"}, desc:{vi:"Một đầu to, một nhỏ.", ko:"양면 마커.", fr:"Pointe double.", ja:"ツインタイプ。"}, badge:"" },
-  { id: 43, category: "pen", price: 9000, img:"assets/img/pen-basic.jpg", name:{vi:"Bút bi bấm basic", ko:"기본 볼펜", fr:"Stylo à bille", ja:"ボールペン"}, desc:{vi:"Mực đều, giá rẻ.", ko:"가성비 좋음.", fr:"Bon marché.", ja:"コスパ最高。"}, badge:"" },
-  { id: 44, category: "pen", price: 42000, img:"assets/img/pen-glitter.jpg", name:{vi:"Set bút kim tuyến", ko:"글리터 펜 세트", fr:"Set stylos pailletés", ja:"グリッターペン"}, desc:{vi:"Lấp lánh trang trí.", ko:"반짝이는 장식.", fr:"Paillettes déco.", ja:"デコレーション。"}, badge:"new" },
-  { id: 45, category: "pen", price: 32000, img:"assets/img/pen-fineliner.jpg", name:{vi:"Bút đi nét Fineliner", ko:"파인라이너", fr:"Feutre fin", ja:"ファインライナー"}, desc:{vi:"Vẽ kỹ thuật, chi tiết.", ko:"세밀한 드로잉.", fr:"Dessin détaillé.", ja:"詳細な描画。"}, badge:"" },
-  { id: 46, category: "pen", price: 150000, img:"assets/img/pen-glass.jpg", name:{vi:"Bút thủy tinh", ko:"글라스 펜", fr:"Stylo en verre", ja:"ガラスペン"}, desc:{vi:"Thủ công tinh xảo.", ko:"수공예 유리.", fr:"Fait main.", ja:"ハンドメイド。"}, badge:"hot" },
-  { id: 47, category: "pen", price: 22000, img:"assets/img/pen-scented.jpg", name:{vi:"Bút mực thơm", ko:"향기 나는 펜", fr:"Stylo parfumé", ja:"香るペン"}, desc:{vi:"Hương trái cây dịu.", ko:"과일 향기.", fr:"Odeur fruitée.", ja:"フルーツの香り。"}, badge:"" },
-  { id: 48, category: "pen", price: 68000, img:"assets/img/pen-dot.jpg", name:{vi:"Bút Dot Marker", ko:"도트 마커", fr:"Marqueur à pois", ja:"ドットマーカー"}, desc:{vi:"Tạo chấm màu xinh.", ko:"도트 찍기.", fr:"Faire des points.", ja:"ドットを描く。"}, badge:"" },
-  { id: 49, category: "pen", price: 14000, img:"assets/img/pen-mechanical.jpg", name:{vi:"Bút chì bấm 0.5", ko:"샤프 0.5", fr:"Porte-mine 0.5", ja:"シャープペン0.5"}, desc:{vi:"Vỏ nhựa nhám.", ko:"매트한 질감.", fr:"Texture mate.", ja:"マットな質感。"}, badge:"" },
-  { id: 50, category: "pen", price: 38000, img:"assets/img/pen-neon.jpg", name:{vi:"Set bút dạ quang Neon", ko:"네온 형광펜", fr:"Set Néon", ja:"ネオンセット"}, desc:{vi:"Màu cực nổi bật.", ko:"밝은 형광색.", fr:"Couleurs flashy.", ja:"派手な色。"}, badge:"" },
-  { id: 51, category: "pen", price: 45000, img:"assets/img/pen-invisible.jpg", name:{vi:"Bút mực tàng hình", ko:"비밀 펜", fr:"Stylo invisible", ja:"秘密ペン"}, desc:{vi:"Hiện chữ dưới đèn UV.", ko:"UV 램프 필요.", fr:"Visible sous UV.", ja:"UVライトで。"}, badge:"new" },
-  { id: 52, category: "pen", price: 19000, img:"assets/img/pen-roller.jpg", name:{vi:"Bút Rollerball mượt", ko:"롤러볼 펜", fr:"Stylo roller", ja:"ローラーボール"}, desc:{vi:"Viết không mỏi tay.", ko:"부드러운 필기.", fr:"Écriture facile.", ja:"書きやすい。"}, badge:"" },
-  { id: 53, category: "pen", price: 29000, img:"assets/img/pen-quill.jpg", name:{vi:"Bút lông ngỗng", ko:"깃털 펜", fr:"Stylo plume oiseau", ja:"羽根ペン"}, desc:{vi:"Phong cách cổ điển.", ko:"클래식 스타일.", fr:"Style classique.", ja:"クラシック。"}, badge:"" },
-  { id: 54, category: "pen", price: 11000, img:"assets/img/pen-sketch.jpg", name:{vi:"Bút chì phác thảo", ko:"스케치 연필", fr:"Crayon esquisse", ja:"スケッチ鉛筆"}, desc:{vi:"Độ đậm 4B.", ko:"4B 진하기.", fr:"Gradation 4B.", ja:"4Bの濃さ。"}, badge:""
-  },
-
+  
   // 📒 Notebook
   { id: 7, category: "notebook", price: 79000, img:"assets/img/chiikawa-A5.jpg",
     name:{vi:"Sổ tay Aurora (A5, 120 trang)", ko:"A5 노트(120p)", fr:"Cahier A5 (120p)", ja:"A5ノート(120p)"},
@@ -119,27 +77,7 @@ const PRODUCTS = [
     desc:{vi:"Dán decor, dễ gỡ.", ko:"깔끔하게 제거.", fr:"Facile à retirer.", ja:"剥がしやすい。"},
     badge:""
   },
-  { id: 75, category: "sticker", price: 12000, img:"assets/img/st-cat.jpg", name:{vi:"Sticker Mèo béo", ko:"고양이 스티커", fr:"Stickers Chat", ja:"猫ステッカー"}, desc:{vi:"Chống nước, bền màu.", ko:"방수 기능.", fr:"Imperméable.", ja:"防水。"}, badge:"new" },
-  { id: 76, category: "sticker", price: 15000, img:"assets/img/st-food.jpg", name:{vi:"Sticker Đồ ăn", ko:"음식 스티커", fr:"Stickers Nourriture", ja:"食べ物ステッカー"}, desc:{vi:"Hình bánh, kem...", ko:"디저트 모양.", fr:"Gâteaux, glaces.", ja:"お菓子、アイス。"}, badge:"" },
-  { id: 77, category: "sticker", price: 28000, img:"assets/img/st-box.jpg", name:{vi:"Hộp sticker 100 tờ", ko:"100장 스티커 박스", fr:"Boîte 100 stickers", ja:"100枚ステッカー"}, desc:{vi:"Nhiều hình đa dạng.", ko:"다양한 디자인.", fr:"Designs variés.", ja:"多様なデザイン。"}, badge:"hot" },
-  { id: 78, category: "sticker", price: 8000, img:"assets/img/st-dot.jpg", name:{vi:"Sticker chấm tròn", ko:"도트 스티커", fr:"Stickers ronds", ja:"丸ステッカー"}, desc:{vi:"Dùng đánh dấu lịch.", ko:"달력 표시용.", fr:"Pour calendrier.", ja:"カレンダー用。"}, badge:"" },
-  { id: 79, category: "sticker", price: 22000, img:"assets/img/st-flower.jpg", name:{vi:"Sticker hoa khô", ko:"압화 스티커", fr:"Stickers fleurs", ja:"花ステッカー"}, desc:{vi:"Vẻ đẹp vintage.", ko:"빈티지 스타일.", fr:"Style vintage.", ja:"ビンテージ。"}, badge:"" },
-  { id: 80, category: "sticker", price: 35000, img:"assets/img/st-washi-set.jpg", name:{vi:"Set Washi tape 5 cuộn", ko:"마스킹테이프 세트", fr:"Set 5 washi tapes", ja:"マスキングテープ5個"}, desc:{vi:"Chủ đề thiên hà.", ko:"갤럭시 테마.", fr:"Thème galaxie.", ja:"銀河テーマ。"}, badge:"new" },
-  { id: 81, category: "sticker", price: 18000, img:"assets/img/st-memo.jpg", name:{vi:"Sticker ghi chú", ko:"메모 스티커", fr:"Stickers notes", ja:"メモステッカー"}, desc:{vi:"Viết được lên trên.", ko:"위에 쓰기 가능.", fr:"Écrivable.", ja:"書き込み可能。"}, badge:"" },
-  { id: 82, category: "sticker", price: 14000, img:"assets/img/st-space.jpg", name:{vi:"Sticker vũ trụ", ko:"우주 스티커", fr:"Stickers Espace", ja:"宇宙ステッカー"}, desc:{vi:"Phi hành gia, hành tinh.", ko:"우주인, 행성.", fr:"Astronaute.", ja:"宇宙飛行士。"}, badge:"" },
-  { id: 83, category: "sticker", price: 16000, img:"assets/img/st-alphabet.jpg", name:{vi:"Sticker chữ cái", ko:"알파벳 스티커", fr:"Stickers Lettres", ja:"文字ステッカー"}, desc:{vi:"Ghép tên cá nhân.", ko:"이름 만들기.", fr:"Personnalisable.", ja:"名前作成。"}, badge:"" },
-  { id: 84, category: "sticker", price: 25000, img:"assets/img/st-pet.jpg", name:{vi:"Sticker PET trong suốt", ko:"PET 스티커", fr:"Stickers PET", ja:"PETステッカー"}, desc:{vi:"Tiệp màu với giấy.", ko:"종이와 잘 어울림.", fr:"Transparent.", ja:"透明。"}, badge:"hot" },
-  { id: 85, category: "sticker", price: 10000, img:"assets/img/st-seal.jpg", name:{vi:"Sticker tem thư", ko:"우표 스티커", fr:"Stickers Timbres", ja:"切手ステッカー"}, desc:{vi:"Trang trí bưu thiếp.", ko:"엽서 장식용.", fr:"Pour cartes.", ja:"はがき用。"}, badge:"" },
-  { id: 86, category: "sticker", price: 32000, img:"assets/img/st-lace.jpg", name:{vi:"Sticker ren trắng", ko:"레이스 스티커", fr:"Stickers Dentelle", ja:"レースステッカー"}, desc:{vi:"Phong cách tiểu thư.", ko:"여성스러운 느낌.", fr:"Style dentelle.", ja:"レース。"}, badge:"" },
-  { id: 87, category: "sticker", price: 13000, img:"assets/img/st-summer.jpg", name:{vi:"Sticker mùa hè", ko:"여름 스티커", fr:"Stickers Été", ja:"夏ステッカー"}, desc:{vi:"Kem, biển, dừa.", ko:"바다 테마.", fr:"Thème plage.", ja:"ビーチテーマ。"}, badge:"" },
-  { id: 88, category: "sticker", price: 19000, img:"assets/img/st-journal.jpg", name:{vi:"Sticker cô gái", ko:"소녀 스티커", fr:"Stickers Filles", ja:"女の子ステッカー"}, desc:{vi:"Hình vẽ tay art.", ko:"손그림 아트.", fr:"Art dessiné.", ja:"アート。"}, badge:"" },
-  { id: 89, category: "sticker", price: 45000, img:"assets/img/st-lux.jpg", name:{vi:"Cuộn washi nhũ vàng", ko:"금박 테이프", fr:"Washi doré", ja:"金箔テープ"}, desc:{vi:"Rộng 3cm, rất sang.", ko:"3cm 폭 넓음.", fr:"Largeur 3cm.", ja:"幅3cm。"}, badge:"hot" },
-  { id: 90, category: "sticker", price: 11000, img:"assets/img/st-animal.jpg", name:{vi:"Sticker rừng xanh", ko:"숲속 동물", fr:"Stickers Forêt", ja:"森の動物"}, desc:{vi:"Cáo, gấu, hươu.", ko:"숲속 테마.", fr:"Thème forêt.", ja:"森のテーマ。"}, badge:"" },
-  { id: 91, category: "sticker", price: 17000, img:"assets/img/st-bubble.jpg", name:{vi:"Sticker bong bóng", ko:"거품 스티커", fr:"Stickers Bulles", ja:"泡ステッカー"}, desc:{vi:"Hiệu ứng 3D nhẹ.", ko:"3D 효과.", fr:"Effet 3D.", ja:"3D効果。"}, badge:"" },
-  { id: 92, category: "sticker", price: 21000, img:"assets/img/st-travel.jpg", name:{vi:"Sticker du lịch", ko:"여행 스티커", fr:"Stickers Voyage", ja:"旅行ステッカー"}, desc:{vi:"Vali, bản đồ.", ko:"지도, 가방.", fr:"Cartes, valises.", ja:"地図、バッグ。"}, badge:"" },
-  { id: 93, category: "sticker", price: 14000, img:"assets/img/st-star.jpg", name:{vi:"Sticker sao đêm", ko:"밤하늘 스티커", fr:"Stickers Étoiles", ja:"星ステッカー"}, desc:{vi:"Dạ quang trong tối.", ko:"야광.", fr:"Fluorescent.", ja:"蛍光。"}, badge:"" },
-  { id: 94, category: "sticker", price: 26000, img:"assets/img/st-holo.jpg", name:{vi:"Sticker Hologram", ko:"홀로그램 스티커", fr:"Stickers Holo", ja:"ホログラム"}, desc:{vi:"Đổi màu theo góc nhìn.", ko:"색상 변함.", fr:"Multicolore.", ja:"色が変わる。"}, badge:"new" },
-
+  
   // 📎 Accessories
   { id: 11, category: "accessory", price: 15000, img:"assets/img/kepgiay-chiikawa.jpg",
     name:{vi:"Kẹp giấy (set 20)", ko:"클립(20개)", fr:"Trombones (x20)", ja:"クリップ20個"},
@@ -151,27 +89,7 @@ const PRODUCTS = [
     desc:{vi:"Tẩy sạch, ít vụn.", ko:"깨끗이 지움.", fr:"Efface bien.", ja:"よく消える。"},
     badge:""
   },
-  { id: 95, category: "accessory", price: 35000, img:"assets/img/acc-case.jpg", name:{vi:"Hộp bút vải Canvas", ko:"필통", fr:"Trousse Canvas", ja:"筆箱"}, desc:{vi:"Đựng được nhiều bút.", ko:"수납력 좋음.", fr:"Grande capacité.", ja:"大容量。"}, badge:"hot" },
-  { id: 96, category: "accessory", price: 15000, img:"assets/img/acc-ruler.jpg", name:{vi:"Thước kẻ 15cm", ko:"자 15cm", fr:"Règle 15cm", ja:"定規15cm"}, desc:{vi:"Nhựa trong suốt.", ko:"투명 플라스틱.", fr:"Transparent.", ja:"透明。"}, badge:"" },
-  { id: 97, category: "accessory", price: 45000, img:"assets/img/acc-stapler.jpg", name:{vi:"Máy bấm kim mini", ko:"미니 스테이플러", fr:"Mini agrafeuse", ja:"ミニホッチキス"}, desc:{vi:"Kèm một hộp kim.", ko:"심 포함.", fr:"Avec agrafes.", ja:"針付き。"}, badge:"" },
-  { id: 98, category: "accessory", price: 25000, img:"assets/img/acc-keychain.jpg", name:{vi:"Móc khóa Aurora", ko:"키링", fr:"Porte-clés", ja:"キーホルダー"}, desc:{vi:"Acrylic bóng loáng.", ko:"아크릴 키링.", fr:"En acrylique.", ja:"アクリル。"}, badge:"new" },
-  { id: 99, category: "accessory", price: 18000, img:"assets/img/acc-folder.jpg", name:{vi:"Bìa hồ sơ A4", ko:"L자 파일", fr:"Pochette A4", ja:"クリアファイル"}, desc:{vi:"Giữ tài liệu phẳng.", ko:"문서 보관용.", fr:"Rangement doc.", ja:"書類保管用。"}, badge:"" },
-  { id: 100, category: "accessory", price: 55000, img:"assets/img/acc-sharp.jpg", name:{vi:"Gọt bút chì quay tay", ko:"연필 깎이", fr:"Taille-crayon", ja:"鉛筆削り"}, desc:{vi:"Lưỡi thép bền.", ko:"튼튼한 칼날.", fr:"Lame durable.", ja:"丈夫な刃。"}, badge:"hot" },
-  { id: 101, category: "accessory", price: 12000, img:"assets/img/acc-glue.jpg", name:{vi:"Hồ dán khô", ko:"딱풀", fr:"Bâton de colle", ja:"のり"}, desc:{vi:"Không làm nhăn giấy.", ko:"종이 안 구겨짐.", fr:"Pas de plis.", ja:"シワにならない。"}, badge:"" },
-  { id: 102, category: "accessory", price: 38000, img:"assets/img/acc-tape.jpg", name:{vi:"Dụng cụ cắt băng keo", ko:"테이프 커터", fr:"Dévidoir ruban", ja:"テープカッター"}, desc:{vi:"Dễ sử dụng.", ko:"사용 편리.", fr:"Facile à utiliser.", ja:"使いやすい。"}, badge:"" },
-  { id: 103, category: "accessory", price: 28000, img:"assets/img/acc-bag.jpg", name:{vi:"Túi Tote vải", ko:"에코백", fr:"Sac Tote", ja:"トートバッグ"}, desc:{vi:"Đi học, đi chơi.", ko:"데일리 백.", fr:"Usage quotidien.", ja:"日常使い。"}, badge:"" },
-  { id: 104, category: "accessory", price: 65000, img:"assets/img/acc-desk.jpg", name:{vi:"Kệ để bàn mini", ko:"데스크 정리함", fr:"Organisateur bureau", ja:"デスク整理箱"}, desc:{vi:"3 ngăn tiện lợi.", ko:"3단 수납.", fr:"3 compartiments.", ja:"3段収納。"}, badge:"hot" },
-  { id: 105, category: "accessory", price: 22000, img:"assets/img/acc-clip.jpg", name:{vi:"Kẹp bướm màu sắc", ko:"집게 클립", fr:"Pinces à dessin", ja:"クリップ"}, desc:{vi:"Giữ giấy chắc chắn.", ko:"단단히 고정.", fr:"Fixation forte.", ja:"しっかり固定。"}, badge:"" },
-  { id: 106, category: "accessory", price: 19000, img:"assets/img/acc-tag.jpg", name:{vi:"Thẻ tên hành lý", ko:"네임택", fr:"Étiquette bagage", ja:"ネームタグ"}, desc:{vi:"Chất liệu silicon.", ko:"실리콘 소재.", fr:"Silicone.", ja:"シリコン素材。"}, badge:"" },
-  { id: 107, category: "accessory", price: 42000, img:"assets/img/acc-scissor.jpg", name:{vi:"Kéo văn phòng", ko:"가위", fr:"Ciseaux", ja:"はさみ"}, desc:{vi:"Cán bọc nhựa êm.", ko:"편한 손잡이.", fr:"Manche confort.", ja:"快適なハンドル。"}, badge:"" },
-  { id: 108, category: "accessory", price: 16000, img:"assets/img/acc-correction.jpg", name:{vi:"Bút xóa kéo", ko:"수정 테이프", fr:"Ruban correcteur", ja:"修正テープ"}, desc:{vi:"Xóa nhanh khô liền.", ko:"빨리 마름.", fr:"Séchage rapide.", ja:"すぐ乾く。"}, badge:"new" },
-  { id: 109, category: "accessory", price: 33000, img:"assets/img/acc-badge.jpg", name:{vi:"Huy hiệu cài áo", ko:"배지", fr:"Badge épingle", ja:"バッジ"}, desc:{vi:"Nhiều mẫu xinh.", ko:"귀여운 디자인.", fr:"Jolis modèles.", ja:"可愛いデザイン。"}, badge:"" },
-  { id: 110, category: "accessory", price: 48000, img:"assets/img/acc-mouse.jpg", name:{vi:"Lót chuột cute", ko:"마우스 패드", fr:"Tapis de souris", ja:"マウスパッド"}, desc:{vi:"Chống trượt.", ko:"미끄럼 방지.", fr:"Antidérapant.", ja:"滑り止め。"}, badge:"" },
-  { id: 111, category: "accessory", price: 29000, img:"assets/img/acc-bookmark.jpg", name:{vi:"Kẹp sách kim loại", ko:"책갈피", fr:"Marque-page", ja:"しおり"}, desc:{vi:"Hình cỏ 4 lá.", ko:"네잎클로버.", fr:"Trèfle 4 feuilles.", ja:"四つ葉のクローバー。"}, badge:"" },
-  { id: 112, category: "accessory", price: 75000, img:"assets/img/acc-case-lux.jpg", name:{vi:"Hộp bút 2 tầng", ko:"2단 필통", fr:"Trousse 2 étages", ja:"2段筆箱"}, desc:{vi:"Nhựa cứng cao cấp.", ko:"고급 플라스틱.", fr:"Plastique premium.", ja:"高級プラスチック。"}, badge:"hot" },
-  { id: 113, category: "accessory", price: 14000, img:"assets/img/acc-compass.jpg", name:{vi:"Compa học sinh", ko:"컴퍼스", fr:"Compas scolaire", ja:"コンパス"}, desc:{vi:"Kèm bút chì nhỏ.", ko:"연필 포함.", fr:"Avec crayon.", ja:"鉛筆付き。"}, badge:"" },
-  { id: 114, category: "accessory", price: 31000, img:"assets/img/acc-stand.jpg", name:{vi:"Giá đỡ điện thoại", ko:"폰 거치대", fr:"Support téléphone", ja:"スマホスタンド"}, desc:{vi:"Gập gọn được.", ko:"접이식.", fr:"Pliable.", ja:"折りたたみ式。"}, badge:""
-  },
+  
 
   // 🎁 Combo
   { id: 13, category: "combo", price: 129000, img:"assets/img/Study-kid-chiikawa 1.jpg",
@@ -183,25 +101,5 @@ const PRODUCTS = [
     name:{vi:"Combo “Desk Cute”", ko:"데스크 세트", fr:"Set bureau", ja:"デスクセット"},
     desc:{vi:"Trang trí bàn học xinh.", ko:"책상 꾸미기.", fr:"Décorer le bureau.", ja:"机を可愛く。"},
     badge:"sale"
-  },
-  { id: 115, category: "combo", price: 350000, img:"assets/img/cb-plush-set.jpg", name:{vi:"Combo 'Gia đình Gấu'", ko:"곰 가족 세트", fr:"Famille Ours", ja:"クマ家族セット"}, desc:{vi:"3 gấu đủ size.", ko:"3가지 사이즈.", fr:"3 tailles.", ja:"3サイズセット。"}, badge:"combo" },
-  { id: 116, category: "combo", price: 199000, img:"assets/img/cb-art.jpg", name:{vi:"Combo 'Họa sĩ nhí'", ko:"꼬마 화가 세트", fr:"Kit Petit Artiste", ja:"ちびっこ画家"}, desc:{vi:"Sổ vẽ + bút màu.", ko:"드로잉 북+색연필.", fr:"Cahier + couleurs.", ja:"図画帳+色鉛筆。"}, badge:"new" },
-  { id: 117, category: "combo", price: 250000, img:"assets/img/cb-office.jpg", name:{vi:"Combo 'Văn phòng xanh'", ko:"오피스 그린 세트", fr:"Kit Bureau Vert", ja:"オフィスグリーン"}, desc:{vi:"Sổ + bút + kẹp xanh.", ko:"그린 테마 세트.", fr:"Thème vert.", ja:"グリーンテーマ。"}, badge:"hot" },
-  { id: 118, category: "combo", price: 159000, img:"assets/img/cb-student.jpg", name:{vi:"Combo 'Tựu trường'", ko:"신학기 세트", fr:"Kit Rentrée", ja:"新学期セット"}, desc:{vi:"Đầy đủ dụng cụ cơ bản.", ko:"필수 학용품 세트.", fr:"Essentiels école.", ja:"必須学用品。"}, badge:"sale" },
-  { id: 119, category: "combo", price: 299000, img:"assets/img/cb-gift.jpg", name:{vi:"Hộp quà 'Sweet Love'", ko:"스위트 러브 박스", fr:"Boîte Cadeau Douceur", ja:"スウィートギフト"}, desc:{vi:"Gấu + hoa + thiệp.", ko:"인형+꽃+카드.", fr:"Peluche+fleur+carte.", ja:"ぬいぐるみ+花+カード。"}, badge:"hot" },
-  { id: 120, category: "combo", price: 180000, img:"assets/img/cb-sticker-fan.jpg", name:{vi:"Combo 'Sticker Holic'", ko:"스티커 매니아", fr:"Fan de Stickers", ja:"ステッカーファン"}, desc:{vi:"10 tờ sticker đủ loại.", ko:"10종 스티커.", fr:"10 types stickers.", ja:"10種ステッカー。"}, badge:"combo" },
-  { id: 121, category: "combo", price: 210000, img:"assets/img/cb-journal.jpg", name:{vi:"Combo 'Bullet Starter'", ko:"불렛 저널 스타터", fr:"Starter Bujo", ja:"Bujoスターター"}, desc:{vi:"Sổ Dot + Washi tape.", ko:"노트+마스킹테이프.", fr:"Carnet + Washi.", ja:"ノート+Washi。"}, badge:"new" },
-  { id: 122, category: "combo", price: 145000, img:"assets/img/cb-pen-box.jpg", name:{vi:"Set 'Cầu vồng bút'", ko:"무지개 펜 세트", fr:"Set Arc-en-ciel", ja:"虹色ペンセット"}, desc:{vi:"12 bút gel đủ màu.", ko:"12색 젤펜.", fr:"12 stylos gel.", ja:"12色ジェルペン。"}, badge:"" },
-  { id: 123, category: "combo", price: 320000, img:"assets/img/cb-pink.jpg", name:{vi:"Combo 'Pinky Dream'", ko:"핑키 드림 세트", fr:"Rêve Rose", ja:"ピンキードリーム"}, desc:{vi:"Toàn bộ đồ màu hồng.", ko:"전부 분홍색.", fr:"Tout en rose.", ja:"全部ピンク。"}, badge:"hot" },
-  { id: 124, category: "combo", price: 275000, img:"assets/img/cb-galaxy.jpg", name:{vi:"Combo 'Galaxy Night'", ko:"갤럭시 나이트 세트", fr:"Nuit Galaxie", ja:"ギャラクシーナイト"}, desc:{vi:"Sổ đen + bút nhũ.", ko:"검은 노트+메탈릭펜.", fr:"Carnet noir+stylo.", ja:"黒ノート+ペン。"}, badge:"" },
-  { id: 125, category: "combo", price: 169000, img:"assets/img/cb-cat-lover.jpg", name:{vi:"Combo 'Yêu Mèo'", ko:"고양이 집사 세트", fr:"Kit Fan de Chats", ja:"猫好きセット"}, desc:{vi:"Gấu mèo + sticker mèo.", ko:"고양이 테마.", fr:"Thème chat.", ja:"猫テーマ。"}, badge:"combo" },
-  { id: 126, category: "combo", price: 230000, img:"assets/img/cb-travel.jpg", name:{vi:"Combo 'Travel Kit'", ko:"여행 준비 세트", fr:"Kit Voyage", ja:"旅行セット"}, desc:{vi:"Sổ tay + tag hành lý.", ko:"여행 노트+네임택.", fr:"Notebook+étiquette.", ja:"ノート+タグ。"}, badge:"" },
-  { id: 127, category: "combo", price: 195000, img:"assets/img/cb-minimal.jpg", name:{vi:"Combo 'Minimalist'", ko:"미니멀리스트 세트", fr:"Set Minimaliste", ja:"ミニマリスト"}, desc:{vi:"Trắng & Đen tối giản.", ko:"블랙 & 화이트.", fr:"Noir & Blanc.", ja:"白黒。"}, badge:"" },
-  { id: 128, category: "combo", price: 380000, img:"assets/img/cb-premium.jpg", name:{vi:"Combo 'Aurora Premium'", ko:"프리미엄 세트", fr:"Set Premium", ja:"プレミアムセット"}, desc:{vi:"Sản phẩm tốt nhất.", ko:"최고급 제품 세트.", fr:"Meilleurs produits.", ja:"最高級製品。"}, badge:"hot" },
-  { id: 129, category: "combo", price: 139000, img:"assets/img/cb-exam.jpg", name:{vi:"Combo 'Mùa thi cử'", ko:"시험 대비 세트", fr:"Kit Examen", ja:"試験対策セット"}, desc:{vi:"Bút bi + bút chì + gôm.", ko:"기본 학용품.", fr:"Stylos+crayons.", ja:"文具セット。"}, badge:"sale" },
-  { id: 130, category: "combo", price: 215000, img:"assets/img/cb-deco.jpg", name:{vi:"Combo 'Siêu decor'", ko:"데코 마스터 세트", fr:"Maître Déco", ja:"デコマスター"}, desc:{vi:"Washi + sticker + kéo.", ko:"꾸미기 세트.", fr:"Washi+stickers.", ja:"Washi+ステッカー。"}, badge:"new" },
-  { id: 131, category: "combo", price: 185000, img:"assets/img/cb-summer.jpg", name:{vi:"Combo 'Hơi thở mùa hè'", ko:"여름 향기 세트", fr:"Souffle d'Été", ja:"夏の息吹"}, desc:{vi:"Màu xanh dương mát mẻ.", ko:"시원한 파란색.", fr:"Couleur bleu frais.", ja:"涼しい青。"}, badge:"" },
-  { id: 132, category: "combo", price: 265000, img:"assets/img/cb-study-pro.jpg", name:{vi:"Combo 'Study Pro'", ko:"스터디 프로", fr:"Study Pro", ja:"スタディプロ"}, desc:{vi:"Sổ lò xo + highlight.", ko:"노트+형광펜.", fr:"Cahier+surligneur.", ja:"ノート+マーカー。"}, badge:"hot" },
-  { id: 133, category: "combo", price: 310000, img:"assets/img/cb-birthday.jpg", name:{vi:"Hộp quà 'Sinh nhật'", ko:"생일 선물 박스", fr:"Boîte Anniversaire", ja:"誕生日ギフト"}, desc:{vi:"Kèm thiệp chúc mừng.", ko:"축하 카드 포함.", fr:"Avec carte.", ja:"カード付き。"}, badge:"combo" },
-  { id: 134, category: "combo", price: 125000, img:"assets/img/cb-lucky.jpg", name:{vi:"Combo 'May mắn'", ko:"행운 세트", fr:"Kit Chance", ja:"ラッキーセット"}, desc:{vi:"Các món đồ ngẫu nhiên.", ko:"랜덤 상자.", fr:"Articles aléatoires.", ja:"ランダムアイテム。"}, badge:"new" }
-];
+  }
+];  

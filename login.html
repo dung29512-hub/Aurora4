@@ -241,50 +241,51 @@
   const auth = firebase.auth();
   const db   = firebase.firestore();
 
-  // Cờ để tránh redirect khi đang đăng ký
-  let _isRegistering = false;
-  // Cờ để listener chỉ chạy 1 lần khi load trang
-  let _initialCheckDone = false;
+  // Cờ để tránh xung đột giữa listener tự động và quá trình xử lý thủ công
+  let _isProcessing = false;
 
-  auth.onAuthStateChanged(async user => {
-    // Bỏ qua khi đang đăng ký (tránh redirect giữa chừng)
-    if (_isRegistering) return;
+  /**
+   * Xử lý sau khi xác thực thành công: Lưu dữ liệu local và chuyển hướng người dùng
+   */
+  async function finalizeAuth(user) {
+    try {
+      // Lấy thông tin role từ Firestore
+      const snap = await db.collection('users').doc(user.uid).get();
+      const userData = snap.data();
+      const role = userData?.role || 'customer';
 
-    if (user) {
-      // Lần đầu load trang: nếu đã đăng nhập → redirect luôn
-      // Các lần sau (sau khi bấm login): redirect sau khi lưu localStorage
-      try {
-        const snap = await db.collection('users').doc(user.uid).get();
-        let role = snap.data()?.role || 'customer';
-
-        // Đồng bộ giỏ hàng
-        const cartSnap = await db.collection('carts').doc(user.uid).get();
-        if (cartSnap.exists) {
-          localStorage.setItem('aurora_store_cart', JSON.stringify(cartSnap.data().items || []));
-        }
-
-        // Lưu thông tin user
-        localStorage.setItem('aurora_user', JSON.stringify({
-          uid: user.uid,
-          displayName: user.displayName || snap.data()?.displayName || '',
-          email: user.email,
-          role
-        }));
-
-        // ✅ Redirect theo role
-        const returnUrl = new URLSearchParams(location.search).get('returnUrl');
-        if (role === 'admin') {
-          window.location.href = returnUrl || 'admin-dashboard.html';
-        } else {
-          window.location.href = returnUrl || 'index.html';
-        }
-      } catch(err) {
-        console.error('Auth check error:', err);
-        // Nếu lỗi Firestore, vẫn redirect về trang chủ
-        window.location.href = 'index.html';
+      // Đồng bộ giỏ hàng từ Firestore về LocalStorage
+      const cartSnap = await db.collection('carts').doc(user.uid).get();
+      if (cartSnap.exists) {
+        localStorage.setItem('aurora_store_cart', JSON.stringify(cartSnap.data().items || []));
       }
+
+      // Lưu thông tin phiên đăng nhập
+      localStorage.setItem('aurora_user', JSON.stringify({
+        uid: user.uid,
+        displayName: user.displayName || userData?.displayName || '',
+        email: user.email,
+        role: role
+      }));
+
+      // Điều hướng dựa trên quyền hạn
+      const returnUrl = new URLSearchParams(location.search).get('returnUrl');
+      if (role === 'admin') {
+        window.location.href = returnUrl || 'admin-dashboard.html';
+      } else {
+        window.location.href = returnUrl || 'index.html';
+      }
+    } catch (err) {
+      console.error('Lỗi khi hoàn tất xác thực:', err);
+      window.location.href = 'index.html'; // Fallback về trang chủ nếu có lỗi
     }
-    // Nếu user == null: người dùng chưa đăng nhập, giữ nguyên trang login
+  }
+
+  // Tự động nhận diện trạng thái đăng nhập (ví dụ: khi load trang hoặc sau khi Login)
+  auth.onAuthStateChanged(user => {
+    if (user && !_isProcessing) {
+      finalizeAuth(user);
+    }
   });
 
   /* ── Tab switching ── */
@@ -344,25 +345,25 @@
 
     setLoading('btnRegister', true);
     hideAlert();
-    _isRegistering = true;
+    _isProcessing = true; // Chặn listener redirect tự động để hoàn tất đăng ký Firestore
 
     try {
       const cred = await auth.createUserWithEmailAndPassword(email, pass);
       await cred.user.updateProfile({ displayName: name });
+
+      // Đảm bảo document user đã được tạo trong Firestore
       await db.collection('users').doc(cred.user.uid).set({
         displayName: name,
         email,
         role: 'customer',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      localStorage.setItem('aurora_user', JSON.stringify({
-        uid: cred.user.uid, displayName: name, email, role: 'customer'
-      }));
-      _isRegistering = false;
-      showAlert('🎉 Đăng ký thành công! Đang chuyển hướng...', 'success');
-      setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+
+      showAlert('🎉 Đăng ký thành công! Đang chuẩn bị...', 'success');
+      _isProcessing = false; // Mở lại cờ và gọi finalize
+      finalizeAuth(cred.user);
     } catch (err) {
-      _isRegistering = false;
+      _isProcessing = false;
       setLoading('btnRegister', false);
       showAlert(_firebaseErrMsg(err.code));
     }
