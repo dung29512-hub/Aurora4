@@ -243,11 +243,17 @@
 
   // Cờ để tránh xung đột giữa listener tự động và quá trình xử lý thủ công
   let _isProcessing = false;
+  // Cờ chống gọi finalizeAuth nhiều lần (Firebase có thể kích hoạt onAuthStateChanged nhiều lần)
+  let _isRedirecting = false;
 
   /**
    * Xử lý sau khi xác thực thành công: Lưu dữ liệu local và chuyển hướng người dùng
    */
   async function finalizeAuth(user) {
+    // Guard: ngăn chạy lặp nếu đã đang redirect
+    if (_isRedirecting) return;
+    _isRedirecting = true;
+
     try {
       // Lấy thông tin role từ Firestore
       const snap = await db.collection('users').doc(user.uid).get();
@@ -277,6 +283,7 @@
       }
     } catch (err) {
       console.error('Lỗi khi hoàn tất xác thực:', err);
+      _isRedirecting = false; // Reset để không bị kẹt nếu Firestore lỗi
       window.location.href = 'index.html'; // Fallback về trang chủ nếu có lỗi
     }
   }
@@ -325,10 +332,11 @@
     if (!email || !pass) { showAlert('Vui lòng nhập email và mật khẩu.'); return; }
     setLoading('btnLogin', true);
     hideAlert();
-    _isProcessing = true; // Chặn listener tự động để xử lý tập trung
+    _isProcessing = true; // Chặn listener trong khi đăng nhập thủ công
     try {
       const cred = await auth.signInWithEmailAndPassword(email, pass);
-      finalizeAuth(cred.user);
+      _isProcessing = false;
+      finalizeAuth(cred.user); // Gọi trực tiếp, không phụ thuộc vào listener
     } catch (err) {
       _isProcessing = false;
       setLoading('btnLogin', false);
