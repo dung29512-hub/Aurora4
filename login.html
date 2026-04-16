@@ -325,10 +325,12 @@
     if (!email || !pass) { showAlert('Vui lòng nhập email và mật khẩu.'); return; }
     setLoading('btnLogin', true);
     hideAlert();
+    _isProcessing = true; // Chặn listener tự động để xử lý tập trung
     try {
-      await auth.signInWithEmailAndPassword(email, pass);
-      // onAuthStateChanged sẽ xử lý redirect tiếp theo
+      const cred = await auth.signInWithEmailAndPassword(email, pass);
+      finalizeAuth(cred.user);
     } catch (err) {
+      _isProcessing = false;
       setLoading('btnLogin', false);
       showAlert(_firebaseErrMsg(err.code));
     }
